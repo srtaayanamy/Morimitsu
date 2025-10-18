@@ -7,6 +7,8 @@ import TelaInicial from "../pages/TelaInicial";
 import RegistrarTurma from "../pages/RegistrarTurma";
 import Alunos from "../pages/Alunos";
 import RegistrarAluno from "../pages/RegistrarAluno";
+import Turmas from "../pages/Turmas";
+
 
 
 export default function AppRoutes () {
@@ -20,6 +22,7 @@ export default function AppRoutes () {
       <Route path="/registrar-turma" element={<RegistrarTurma />} />
       <Route path="/alunos" element={<Alunos />} />
       <Route path="/registrar-aluno" element={<RegistrarAluno />} />
+      <Route path="/Turmas" element={<Turmas />} />
 
     </Routes>
   );
