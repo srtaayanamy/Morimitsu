@@ -10,7 +10,7 @@ export default function TelaInicial() {
       <Header />
 
       {/* CONTEÚDO PRINCIPAL */}
-      <main className="p-4 sm:p-6 md:p-8 space-y-5 mx-auto">
+      <main className="p-4 sm:p-6 md:p-8 space-y-3 mx-auto">
         {/* SEÇÃO TURMAS */}
         <section className="bg-[#FFFFFF] border-2 border-white rounded-xl shadow-md p-4 sm:p-6">
           <h2 className="text-lg sm:text-xl text-[#1E1E1E] font-semibold mb-4">Turmas</h2>

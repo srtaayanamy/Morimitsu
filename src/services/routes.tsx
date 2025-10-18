@@ -6,6 +6,8 @@ import NovaSenha from "../pages/NovaSenha";
 import TelaInicial from "../pages/TelaInicial";
 import RegistrarTurma from "../pages/RegistrarTurma";
 import Alunos from "../pages/Alunos";
+import RegistrarAluno from "../pages/RegistrarAluno";
+
 
 export default function AppRoutes () {
   return (
@@ -17,6 +19,8 @@ export default function AppRoutes () {
       <Route path="/inicio" element={<TelaInicial />} />
       <Route path="/registrar-turma" element={<RegistrarTurma />} />
       <Route path="/alunos" element={<Alunos />} />
+      <Route path="/registrar-aluno" element={<RegistrarAluno />} />
+
     </Routes>
   );
 };

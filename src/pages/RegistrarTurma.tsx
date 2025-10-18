@@ -144,7 +144,7 @@ export default function RegistrarTurma() {
             </button>
             <ImageIcon className="w-10 h-10 mx-auto text-gray-600 mb-4" />
             <p className="text-gray-700 font-medium">
-              seletor de imagem futuramente
+              imagem
             </p>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function RegistrarTurma() {
             </button>
             <Clock className="w-10 h-10 mx-auto text-gray-600 mb-4" />
             <p className="text-gray-700 font-medium">
-              seletor de horário futuramente
+              horário
             </p>
           </div>
         </div>
