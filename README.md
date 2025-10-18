@@ -1,4 +1,4 @@
-# 📚 SMorimitsu Jiu-Jitsu
+# 📚 Morimitsu Jiu-Jitsu
 
 ## 📦 Pré-requisitos
 
