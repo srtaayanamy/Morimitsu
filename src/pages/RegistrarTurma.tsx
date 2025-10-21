@@ -21,7 +21,7 @@ export default function RegistrarTurma() {
   const [nome, setNome] = useState('');
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(0);
-  const [erro, setErro] = useState<string | boolean>('');
+  const [erro, setErro] = useState<string | boolean>(''); //pq em boolean? 
 
   //Define a função de navegação
   const navigate = useNavigate();

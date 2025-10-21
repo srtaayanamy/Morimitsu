@@ -4,30 +4,30 @@ import { useEffect, useState } from "react";
 import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 
-export default function Alunos() {
 
+export default function Alunos() {
   //Variáveis de estado
-    const [alunos, setAlunos] = useState<Aluno[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-  
-    //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
-    useEffect(() => {
-      const fetchTurmas = async () => {
-        setLoading(true);
-        const result = await listarAlunos();
-  
-        if (result === false) {
-          setError("Erro ao carregar turmas.");
-        } else {
-          setAlunos(result || []);
-        }
-  
-        setLoading(false);
-      };
-  
-      fetchTurmas();
-    }, []);
+  const [alunos, setAlunos] = useState<Aluno[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
+  useEffect(() => {
+    const fetchTurmas = async () => {
+      setLoading(true);
+      const result = await listarAlunos();
+
+      if (result === false) {
+        setError("Erro ao carregar turmas.");
+      } else {
+        setAlunos(result || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchTurmas();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
@@ -55,34 +55,52 @@ export default function Alunos() {
         {loading && <p>Carregando alunos...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && (
-          <div className="space-y-3">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
             {alunos.length === 0 ? (
               <p>Nenhum aluno encontrado.</p>
             ) : (
-              alunos.map((aluno) => (
-                <div
-                  key={aluno.email}
-                  className="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-medium text-lg">{aluno.nome}</p>
-                    <p className="text-sm text-gray-500">
-                      Faixa: {aluno.faixa}  {aluno.grau}  Apelido: {aluno.apelido}
-                    </p>
-                  </div>
-                  <Link
-                    to={`/editar-turma/${aluno.id}`}
-                    className="text-sm text-[#911418] hover:underline"
-                  >
-                    Acessar
-                  </Link>
-                </div>
-              ))
+              <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto">
+                <table className="w-full text-left border-separate border-spacing-y-2">
+                  <thead>
+                    <tr>
+                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                        Nome
+                      </th>
+                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                        Apelido
+                      </th>
+                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                        Faixa atual
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {alunos.map((aluno) => (
+                      <tr
+                        key={aluno.email}
+                        className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
+                      >
+                        <td className="py-3 px-6 rounded-l-xl">
+                          <Link
+                            to={`/editar-turma/${aluno.id}`}
+                            className="text-[#911418] hover:underline font-medium"
+                          >
+                            {aluno.nome}
+                          </Link>
+                        </td>
+                        <td className="py-3 px-6">{aluno.apelido}</td>
+                        <td className="py-3 px-6 rounded-r-xl">
+                          {aluno.faixa} {aluno.grau}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}
       </main>
     </div>
-    
   );
 }

@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { verificarLogin } from "../utils/VerficarLogin";
-
+import { ErrorMessage } from "../components/ErrorMessage";
 
 /* Componente principal de Login */
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   //Variaveis de estado e navigate
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [erro, setErro] = useState<string | boolean>('');
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState<string | boolean>("");
   const navigate = useNavigate();
 
   //Função que redireciona o usuário se o email e senha estiverem corretos
@@ -72,7 +72,7 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   className="border border-gray-200 rounded-md w-full px-3 py-2 text-sm text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-[#911418]"
-                  onChange={e => setSenha(e.target.value)}
+                  onChange={(e) => setSenha(e.target.value)}
                 />
                 <button
                   type="button"
@@ -87,6 +87,9 @@ export default function Login() {
                 </button>
               </div>
             </div>
+
+            {/* Mensagem de erro */}
+            <ErrorMessage message={erro} />
 
             {/* Link Esqueceu Senha */}
             <div className="flex justify-end">
@@ -144,4 +147,3 @@ function FormField({
     </div>
   );
 }
-

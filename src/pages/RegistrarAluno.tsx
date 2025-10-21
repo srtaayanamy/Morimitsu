@@ -7,52 +7,49 @@ import { type Aluno } from "../types/Aluno";
 import { cadastrarAluno } from "../utils/CadastrarAluno";
 import { listarTurmas } from "../hooks/ListaTurmas";
 import { faixasEGraus } from "../types/Rank";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function RegistrarAluno() {
-
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   //Variáveis de estado
-  const [nome, setNome]= useState<string>("");
-  const [apelido, setApelido]= useState<string>("");
+  const [nome, setNome] = useState<string>("");
+  const [apelido, setApelido] = useState<string>("");
   const [dataNascimento, setDataNascimento] = useState<string>("");
-  const [telefone, setTelefone] = useState<string>('');
-  const [sexo, setSexo] = useState<string>('');
-  const [CPF, setCPF] = useState<string>('');
-  const [faixa, setFaixa] = useState<string>('');
+  const [telefone, setTelefone] = useState<string>("");
+  const [sexo, setSexo] = useState<string>("");
+  const [CPF, setCPF] = useState<string>("");
+  const [faixa, setFaixa] = useState<string>("");
   const [grau, setGrau] = useState<number>();
   const [frequencia, setFrequencia] = useState<number>(0);
-  const [responsavel, setResponsavel] = useState<string>('');
-  const [contato, setContato] = useState<string>('');
-  const [matricula, setMatricula] = useState<number>()
-  const [email, setEmail]= useState<string>("");
+  const [responsavel, setResponsavel] = useState<string>("");
+  const [contato, setContato] = useState<string>("");
+  const [matricula, setMatricula] = useState<number>();
+  const [email, setEmail] = useState<string>("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
-  const [turmasVinculadas, setTurmasVinculadas]= useState<Turma[]>([]);
-  const [turmaSelecionada, setTurmaSelecionada] = useState<string>('')
+  const [turmasVinculadas, setTurmasVinculadas] = useState<Turma[]>([]);
+  const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
-    useEffect(() => {
-      const fetchTurmas = async () => {
+  useEffect(() => {
+    const fetchTurmas = async () => {
+      const result = await listarTurmas();
 
-        const result = await listarTurmas();
-  
-        if (result === false) {
-          setError("Erro ao carregar turmas.");
-        } else {
-          setTurmas(result);
-        }
+      if (result === false) {
+        setError("Erro ao carregar turmas.");
+      } else {
+        setTurmas(result);
+      }
+    };
 
-      };
-  
-      fetchTurmas();
-    }, []);
-
+    fetchTurmas();
+  }, []);
 
   //Função para adicionar turma selecionada na lista de turmas
   function adicionarTurmaSelecionada() {
-    if (turmaSelecionada === '') return;
+    if (turmaSelecionada === "") return;
 
     // Encontra a turma correspondente
     const turma = turmas.find((t) => t.id === turmaSelecionada);
@@ -63,7 +60,7 @@ export default function RegistrarAluno() {
 
     // Adiciona à lista
     setTurmasVinculadas((prev) => [...prev, turma]);
-    setTurmaSelecionada(""); 
+    setTurmaSelecionada("");
   }
 
   async function handleRegisterAluno() {
@@ -78,22 +75,22 @@ export default function RegistrarAluno() {
       grau,
       frequencia,
       Responsavel: responsavel,
-      telefoneResponsavel:contato,
+      telefoneResponsavel: contato,
       matricula,
       email,
       observacao,
       turmas: turmasVinculadas,
     };
-    const result = await cadastrarAluno(novoAluno)
-    
-    if(result){
-      console.log('Aluno criado com sucesso')
-      navigate('/alunos')
-    } else if(result !== false){
-      setError('Aluno já existe.')
+    const result = await cadastrarAluno(novoAluno);
+
+    if (result) {
+      console.log("Aluno criado com sucesso");
+      navigate("/alunos");
+    } else if (result !== false) {
+      setError("Aluno já existe.");
       return;
-    } else{
-      setError('Erro ao registrar aluno. Tente novamente.')
+    } else {
+      setError("Erro ao registrar aluno. Tente novamente.");
       return;
     }
   }
@@ -115,18 +112,29 @@ export default function RegistrarAluno() {
           </h1>
         </div>
 
+        {/* Mensagem de erro */}
+        {error && <ErrorMessage message={error} />}
+
         {/* Formulário principal */}
         <div className="bg-white rounded-2xl p-5 md:p-8 space-y-6 shadow-sm flex-1">
           {/* Linha 1 - Nome e apelido */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>Nome completo:</label>
-              <input type="text" className={inputBase} onChange={e => setNome(e.target.value)}/>
+              <input
+                type="text"
+                className={inputBase}
+                onChange={(e) => setNome(e.target.value)}
+              />
             </div>
 
             <div>
               <label className={labelBase}>Apelido / Nome social:</label>
-              <input type="text" className={inputBase} onChange={e => setApelido(e.target.value)}/>
+              <input
+                type="text"
+                className={inputBase}
+                onChange={(e) => setApelido(e.target.value)}
+              />
             </div>
           </div>
 
@@ -134,12 +142,20 @@ export default function RegistrarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>Data de Nascimento:</label>
-              <input type="date" className={inputBase} onChange={e => setDataNascimento(e.target.value)}/>
+              <input
+                type="date"
+                className={inputBase}
+                onChange={(e) => setDataNascimento(e.target.value)}
+              />
             </div>
 
             <div>
               <label className={labelBase}>Telefone:</label>
-              <input type="tel" className={inputBase} onChange={e => setTelefone(e.target.value)}/>
+              <input
+                type="tel"
+                className={inputBase}
+                onChange={(e) => setTelefone(e.target.value)}
+              />
             </div>
 
             <div>
@@ -166,35 +182,45 @@ export default function RegistrarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>CPF:</label>
-              <input type="text" className={inputBase} onChange={e => setCPF(e.target.value)}/>
+              <input
+                type="text"
+                className={inputBase}
+                onChange={(e) => setCPF(e.target.value)}
+              />
             </div>
 
             <div>
               <label className={labelBase}>Faixa / grau:</label>
               <select
-              className={inputBase}
-              value={faixa && grau ? `${faixa}-${grau}` : ""}
-              onChange={(e) => {
-                const [f, g] = e.target.value.split("-");
-                setFaixa(f);
-                setGrau(Number(g));
-              }}
+                className={inputBase}
+                value={faixa && grau ? `${faixa}-${grau}` : ""}
+                onChange={(e) => {
+                  const [f, g] = e.target.value.split("-");
+                  setFaixa(f);
+                  setGrau(Number(g));
+                }}
               >
-                {faixasEGraus.map((item, index) => ( item.grau?(
-                  <option key={index} value={`${item.faixa}-${item.grau}`}>
-                    {item.faixa} {item.grau}°
-                  </option>
-                ):(
-                  <option key={index} value={`${item.faixa}`}>
-                    {item.faixa}
-                  </option>
-                )))}
+                {faixasEGraus.map((item, index) =>
+                  item.grau ? (
+                    <option key={index} value={`${item.faixa}-${item.grau}`}>
+                      {item.faixa} {item.grau}°
+                    </option>
+                  ) : (
+                    <option key={index} value={`${item.faixa}`}>
+                      {item.faixa}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 
             <div>
               <label className={labelBase}>Frequência inicial:</label>
-              <input type="text" className={inputBase} onChange={e => setFrequencia(Number(e.target.value))}/>
+              <input
+                type="text"
+                className={inputBase}
+                onChange={(e) => setFrequencia(Number(e.target.value))}
+              />
             </div>
           </div>
 
@@ -209,20 +235,24 @@ export default function RegistrarAluno() {
                   type="text"
                   placeholder="Responsável (ex: Carla - Mãe)"
                   className={inputBase}
-                  onChange={e => setResponsavel(e.target.value)}
+                  onChange={(e) => setResponsavel(e.target.value)}
                 />
                 <input
                   type="text"
                   placeholder="Telefone (ex: (88) 9 9999-9999)"
                   className={inputBase}
-                  onChange={e => setContato(e.target.value)}
+                  onChange={(e) => setContato(e.target.value)}
                 />
               </div>
             </div>
 
             <div>
               <label className={labelBase}>Matrícula (opcional):</label>
-              <input type="text" className={inputBase} onChange={e => setMatricula(Number(e.target.value))}/>
+              <input
+                type="text"
+                className={inputBase}
+                onChange={(e) => setMatricula(Number(e.target.value))}
+              />
             </div>
           </div>
 
@@ -230,16 +260,22 @@ export default function RegistrarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>E-mail:</label>
-              <input type="email" className={inputBase} onChange={e => setEmail(e.target.value)}/>
+              <input
+                type="email"
+                className={inputBase}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
 
             <div>
               <label className={labelBase}>Vincular a turma:</label>
               <div className="relative flex items-center">
-                <select 
-                className={`${inputBase} pr-16 appearance-none`}
-                value={turmaSelecionada}
-                onChange={(e) => setTurmaSelecionada(e.target.value ? e.target.value : "")}
+                <select
+                  className={`${inputBase} pr-16 appearance-none`}
+                  value={turmaSelecionada}
+                  onChange={(e) =>
+                    setTurmaSelecionada(e.target.value ? e.target.value : "")
+                  }
                 >
                   <option value="">Selecione</option>
 
@@ -248,7 +284,6 @@ export default function RegistrarAluno() {
                       {turma.nome}
                     </option>
                   ))}
-
                 </select>
 
                 {/* Ícone de expandir */}
@@ -267,7 +302,10 @@ export default function RegistrarAluno() {
                 </svg>
 
                 {/* Ícone de adicionar */}
-                <Plus className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-black cursor-pointer" onClick={adicionarTurmaSelecionada}/>
+                <Plus
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-black cursor-pointer"
+                  onClick={adicionarTurmaSelecionada}
+                />
               </div>
             </div>
           </div>
@@ -275,7 +313,11 @@ export default function RegistrarAluno() {
           {/* Observações */}
           <div>
             <label className={labelBase}>Observações do aluno:</label>
-            <textarea rows={3} className={`${inputBase} resize-none`} onChange={e => setoObservacao(e.target.value)}/>
+            <textarea
+              rows={3}
+              className={`${inputBase} resize-none`}
+              onChange={(e) => setoObservacao(e.target.value)}
+            />
           </div>
         </div>
         {/* Botões finais */}
@@ -293,7 +335,6 @@ export default function RegistrarAluno() {
           >
             Concluir cadastro
           </button>
-          
         </div>
       </main>
     </div>
