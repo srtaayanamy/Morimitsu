@@ -31,8 +31,8 @@ export default function Login() {
             {/* Campo Usuário */}
             <FormField
               id="username"
-              label="Nome de usuário:"
-              type="text"
+              label="E-mail do usuário:"
+              type="email"
               autoComplete="username"
             />
 
