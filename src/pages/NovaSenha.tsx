@@ -1,14 +1,20 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginHeader from "../components/LoginHeader";
+import { mudarSenha } from "../utils/MudarSenha";
 
-// Componente reutilizável para campos de formulário
+// Campo de senha reutilizável, agora com suporte a onChange
 function PasswordField({
   id,
   label,
+  value,
+  onChange,
   className = "",
 }: {
   id: string;
   label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }) {
   return (
@@ -22,6 +28,8 @@ function PasswordField({
       <input
         type="password"
         id={id}
+        value={value}
+        onChange={onChange}
         className="
           w-full border border-gray-200 rounded-md px-3 py-2
           focus:outline-none focus:ring-2 focus:ring-[#7A0000]
@@ -33,6 +41,48 @@ function PasswordField({
 }
 
 export default function NovaSenha() {
+
+  //Variáveis de estado
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [erro, setErro] = useState("");
+
+  //Definindo intâncias para as funções location e navigate
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const codigo = location.state?.codigo;
+  const codigoDigitado = location.state?.codigoDigitado;
+
+  async function handleRedefinirSenha() {
+
+    //Verifica os campos de senha e se as senha são iguais
+    if (!novaSenha || !confirmarSenha) {
+      setErro("Preencha todos os campos.");
+      return;
+    }
+
+    if (novaSenha !== confirmarSenha) {
+      setErro("As senhas não coincidem.");
+      return;
+    }
+
+    try {
+      const sucesso = await mudarSenha(novaSenha, codigo, codigoDigitado);
+
+      if (sucesso) {
+        console.log("Senha alterada com sucesso!");
+        navigate("/");
+      } else {
+        setErro("Falha ao redefinir a senha. Verifique os dados.");
+      }
+
+    } catch (error) {
+      console.error("Erro ao redefinir senha:", error);
+      setErro("Ocorreu um erro. Tente novamente.");
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen w-screen bg-[#F2F2F2] font-[Outfit]">
       {/* Header vermelho */}
@@ -54,28 +104,40 @@ export default function NovaSenha() {
           </h2>
 
           {/* Campos de senha */}
-          <form className="text-left mb-6 sm:mb-8">
-            <PasswordField id="novaSenha" label="Nova senha:" />
-            <PasswordField id="confirmarSenha" label="Confirme a nova senha:" />
+          <form
+            className="text-left mb-6 sm:mb-8"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <PasswordField
+              id="novaSenha"
+              label="Nova senha:"
+              value={novaSenha}
+              onChange={(e) => setNovaSenha(e.target.value)}
+            />
+            <PasswordField
+              id="confirmarSenha"
+              label="Confirme a nova senha:"
+              value={confirmarSenha}
+              onChange={(e) => setConfirmarSenha(e.target.value)}
+            />
           </form>
-
+          
           {/* Botão redefinir */}
-          <Link to="/">
-            <button
-              type="submit"
-              className="
-                bg-[#A4161A] text-white 
-                w-full py-2.5 sm:py-3 
-                rounded-md font-medium 
-                hover:bg-[#7A0000] transition text-base shadow-sm
-              "
-            >
-              Redefinir senha
-            </button>
-          </Link>
+          <button
+            type="button"
+            className="
+              bg-[#A4161A] text-white 
+              w-full py-2.5 sm:py-3 
+              rounded-md font-medium 
+              hover:bg-[#7A0000] transition text-base shadow-sm
+            "
+            onClick={handleRedefinirSenha}
+          >
+            Redefinir senha
+          </button>
 
           {/* Link voltar */}
-          <Link
+          <Link 
             to="/"
             className="
               text-sm text-gray-500 hover:text-[#7A0000] 

@@ -1,8 +1,29 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import LoginHeader from "../components/LoginHeader";
+import { useState } from "react";
+import { EnviarEmail } from "../utils/EnviarEmail";
 
 export default function RecuperarSenha() {
+
+  //Variaveis de estado e navigate
+  const [email, setEmail] = useState('');
+  const [erro, setErro] = useState<string | boolean>('');
+  const navigate = useNavigate();
+
+  async function handleEnviarEmail(){
+    const codigo = await EnviarEmail(email)
+  
+    if(codigo !== null){
+      console.log("Email enviado com sucesso")
+      navigate('/ConfirmarEmail', {state:{codigo: codigo}})
+    }
+    else{
+      console.log("Ocorreu um erro")
+      setErro('Ocorreu um erro. Tente novamente.')
+    }
+    }
+    
   return (
     <div className="flex flex-col h-screen w-screen bg-[#F2F2F2] font-[Outfit]">
       {/* Header vermelho */}
@@ -26,15 +47,16 @@ export default function RecuperarSenha() {
               label="E-mail:"
               type="email"
               autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
 
             {/* Botão */}
-            <Link
-              to="/confirmar-email"
+            <button
               className="bg-[#911418] text-white w-full py-2.5 rounded-md font-medium hover:bg-[#7A0000] transition text-center block shadow-sm"
+              onClick={handleEnviarEmail}
             >
               Receber código
-            </Link>
+            </button>
 
             {/* Link Voltar */}
             <Link
@@ -56,6 +78,7 @@ type FormFieldProps = {
   label: string;
   type?: string;
   autoComplete?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function FormField({
@@ -63,6 +86,7 @@ function FormField({
   label,
   type = "text",
   autoComplete,
+  onChange,
 }: FormFieldProps) {
   return (
     <div className="w-full text-left mb-6">
@@ -74,6 +98,7 @@ function FormField({
         type={type}
         autoComplete={autoComplete}
         className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-[#911418]"
+        onChange={onChange}
       />
     </div>
   );

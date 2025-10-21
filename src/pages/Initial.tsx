@@ -1,11 +1,35 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { verificarLogin } from "../utils/VerficarLogin";
+
 
 /* Componente principal de Login */
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+
+  //Variaveis de estado e navigate
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState<string | boolean>('');
+  const navigate = useNavigate();
+
+  //Função que redireciona o usuário se o email e senha estiverem corretos
+  async function handleLogin(){
+    const result = await verificarLogin(email, senha)
+
+    //Analisa o retorna da função e toma uma ação com base no retorno
+    if(result=== true){
+      console.log("Login feito")
+      navigate('/inicio')
+      return;
+
+    } else if(result!== false){
+      setErro(result)
+      return;
+    }
+  }
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
@@ -34,6 +58,7 @@ export default function Login() {
               label="E-mail do usuário:"
               type="email"
               autoComplete="username"
+              onChange={(e) => setEmail(e.target.value)}
             />
 
             {/* Campo Senha */}
@@ -47,6 +72,7 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   className="border border-gray-200 rounded-md w-full px-3 py-2 text-sm text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-[#911418]"
+                  onChange={e => setSenha(e.target.value)}
                 />
                 <button
                   type="button"
@@ -73,13 +99,13 @@ export default function Login() {
             </div>
 
             {/* Botão Entrar */}
-            <Link
-              to="/inicio"
-              aria-label="Entrar"
+            <button
+              type="button"
+              onClick={handleLogin}
               className="mt-1 mx-auto w-44 h-11 md:w-60 md:h-14 bg-[#911418] text-white rounded-lg font-medium flex items-center justify-center hover:bg-[#7a1014] transition text-base shadow-sm"
             >
               Entrar
-            </Link>
+            </button>
           </form>
         </div>
       </div>
@@ -93,6 +119,7 @@ type FormFieldProps = {
   label: string;
   type?: string;
   autoComplete?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function FormField({
@@ -100,6 +127,7 @@ function FormField({
   label,
   type = "text",
   autoComplete,
+  onChange,
 }: FormFieldProps) {
   return (
     <div className="flex flex-col text-left">
@@ -111,7 +139,9 @@ function FormField({
         type={type}
         autoComplete={autoComplete}
         className="border border-gray-200 rounded-md px-3 py-2 text-sm text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-[#911418]"
+        onChange={onChange}
       />
     </div>
   );
 }
+

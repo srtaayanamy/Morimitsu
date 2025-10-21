@@ -1,10 +1,35 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import LoginHeader from "../components/LoginHeader";
 
 export default function ConfirmarEmail() {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+
+  //Variável de estado e navigate
+  const [erro, setErro] = useState('');
+  const navigate = useNavigate();
+
+  //Recebe e armazena o codigo e email recibidos da tela anterior
+  const location = useLocation();
+  const codigoRecebido = location.state?.codigo;
+
+  const VerificarCodigo=()=>{
+    // Junta os 4 inputs em uma string
+    const codigoDigitado = inputsRef.current.map(input => input?.value || "").join("");
+
+    // Valida se o usuário digitou 4 dígitos
+    if (codigoDigitado.length !== 4) {
+      setErro('Digite o código completo!')
+      return;
+    }
+    if(codigoDigitado === codigoRecebido){
+      navigate("/NovaSenha", {state:{codigo:codigoRecebido, codigoDigitado: codigoDigitado}})
+      return;
+    }
+    setErro('Código inválido!')
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
@@ -85,6 +110,7 @@ export default function ConfirmarEmail() {
             <button
               type="button"
               className="w-full py-3 text-base font-medium rounded-xl shadow-md bg-[#A4161A] text-white hover:bg-[#7A0000] transition"
+              onClick={VerificarCodigo}
             >
               Avançar
             </button>

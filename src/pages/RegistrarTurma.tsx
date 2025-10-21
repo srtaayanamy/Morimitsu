@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, Clock, Image as ImageIcon } from "lucide-react";
 import Header from "../components/Header";
 import ImageOverlay from "../components/ImageOverlay";
 import ClockOverlay from "../components/ClockOverlay";
+import { cadastrarTurma } from "../utils/CadastrarTurma";
 
 export default function RegistrarTurma() {
   // Estados de exibição de overlays
@@ -16,6 +17,34 @@ export default function RegistrarTurma() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [inicio, setInicio] = useState("00:00h");
   const [fim, setFim] = useState("00:00h");
+  const [imagem, setImagem] = useState('');
+  const [nome, setNome] = useState('');
+  const [idadeMin, setIdadeMin] = useState(0);
+  const [idadeMax, setIdadeMax] = useState(0);
+  const [erro, setErro] = useState<string | boolean>('');
+
+  //Define a função de navegação
+  const navigate = useNavigate();
+
+  //Guarda a imagem selecionada
+  useEffect(() => {
+    if (selectedImage !== null) {
+      setImagem(`/src/assets/presets/capaturma${selectedImage + 1}.png`);
+    }
+  }, [selectedImage]);
+
+  async function RegisterTurma(){
+    const sucesso = await cadastrarTurma(nome, idadeMin, idadeMax, inicio, fim, imagem);
+
+    if(sucesso){
+      console.log("Cadastro feito")
+      navigate('/inicio')
+    }
+    else{
+      console.log("Deu errado")
+      alert("Algum campo obrigatório não preenchido!");
+    }
+  }
 
   // Função para confirmar o horário (chamada pelo overlay)
   const handleConfirmTime = (time: string) => {
@@ -64,10 +93,17 @@ export default function RegistrarTurma() {
 
           {/* Botões desktop */}
           <div className="hidden md:flex gap-3">
-            <ActionButton label="Cancelar" variant="secondary" />
-            <Link to="/inicio">
+
+            <button onClick={() => navigate(-1)}>
+              <ActionButton label="Cancelar" variant="secondary" />
+            </button>
+
+            <button 
+              type= "button"
+              onClick={RegisterTurma}
+            >
               <ActionButton label="Concluir cadastro" />
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -101,6 +137,7 @@ export default function RegistrarTurma() {
               <input
                 type="text"
                 className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                onChange={e => setNome(e.target.value)}
               />
             </div>
 
@@ -128,11 +165,21 @@ export default function RegistrarTurma() {
                 <label className="block text-sm font-semibold mb-2">
                   Idade {tipo}:
                 </label>
-                <input
-                  type="number"
-                  min="0"
-                  className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
-                />
+                 {tipo === "mínima" ? (
+                    <input
+                    type="number"
+                    min="0"
+                    className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                    onChange={e => setIdadeMin(Number(e.target.value))}
+                    />
+                  ) : (
+                    <input
+                    type="number"
+                    min="0"
+                    className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
+                    onChange={e => setIdadeMax(Number(e.target.value))}
+                    />
+                  )}
               </div>
             ))}
 
@@ -158,14 +205,21 @@ export default function RegistrarTurma() {
 
           {/* Botões mobile */}
           <div className="flex justify-center gap-3 pt-4 md:hidden">
-            <ActionButton
+            
+            <button onClick={() => navigate(-1)}>
+              <ActionButton
               label="Cancelar"
               variant="secondary"
               className="text-sm"
-            />
-            <Link to="/inicio">
+              />
+            </button>
+            
+            <button 
+              type= "button"
+              onClick={RegisterTurma}
+            >
               <ActionButton label="Concluir cadastro" className="text-sm" />
-            </Link>
+            </button>
           </div>
         </div>
       </main>

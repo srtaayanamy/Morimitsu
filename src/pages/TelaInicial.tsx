@@ -2,8 +2,35 @@ import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Header from "../components/Header";
 import SectionCard from "../components/SectionCard";
+import { useEffect, useState } from "react";
+import { listarTurmas } from "../hooks/ListaTurmas";
+import type { Turma } from "../types/Turma";
 
 export default function TelaInicial() {
+
+  //Variáveis de estado
+  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
+  useEffect(() => {
+      const fetchTurmas = async () => {
+        setLoading(true);
+        const result = await listarTurmas();
+  
+        if (result === false) {
+          setError("Erro ao carregar turmas.");
+        } else {
+          setTurmas(result);
+        }
+  
+        setLoading(false);
+      };
+  
+      fetchTurmas();
+    }, []);
+
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000]">
       {/* HEADER - Menu */}
