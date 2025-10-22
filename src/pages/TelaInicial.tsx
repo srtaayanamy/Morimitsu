@@ -5,31 +5,31 @@ import SectionCard from "../components/SectionCard";
 import { useEffect, useState } from "react";
 import { listarTurmas } from "../hooks/ListaTurmas";
 import type { Turma } from "../types/Turma";
+import TurmaCard from "../components/TurmaCard";
 
 export default function TelaInicial() {
-
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
-      const fetchTurmas = async () => {
-        setLoading(true);
-        const result = await listarTurmas();
-  
-        if (result === false) {
-          setError("Erro ao carregar turmas.");
-        } else {
-          setTurmas(result);
-        }
-  
-        setLoading(false);
-      };
-  
-      fetchTurmas();
-    }, []);
+    const fetchTurmas = async () => {
+      setLoading(true);
+      const result = await listarTurmas();
+
+      if (result === false) {
+        setError("Erro ao carregar turmas.");
+      } else {
+        setTurmas(result);
+      }
+
+      setLoading(false);
+    };
+
+    fetchTurmas();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000]">
@@ -40,14 +40,32 @@ export default function TelaInicial() {
       <main className="p-4 sm:p-6 md:p-8 space-y-3 mx-auto">
         {/* SEÇÃO TURMAS */}
         <SectionCard title="Turmas">
-          <div className="flex flex-wrap gap-4 sm:gap-5">
+          <div className="flex flex-nowrap gap-4 sm:gap-5 overflow-x-auto pb-3 sm:pb-4 px-1 sm:px-2 scrollbar-hide">
             {/* CARD CRIAR TURMA */}
-            <Link to="/registrar-turma">
-              <button className="bg-[#1D1E1E] text-white font-semibold rounded-xl px-5 sm:px-6 py-6 sm:py-8 flex flex-col items-center justify-center w-36 sm:w-44 hover:opacity-90 transition">
-                <Plus className="w-6 h-6 sm:w-7 sm:h-7 mb-2" />
+            <Link to="/registrar-turma" className="flex-shrink-0">
+              <button
+                className="w-36 sm:w-44 h-30 sm:h-30 bg-[#1D1E1E] rounded-xl flex flex-col items-center justify-center 
+                   text-white font-semibold hover:opacity-90 transition cursor-pointer"
+              >
+                <Plus className="w-8 h-8 sm:w-10 sm:h-10 mb-2" />
                 Criar turma
               </button>
             </Link>
+
+            {/* CARDS DAS TURMAS DA API */}
+            {loading && <p>Carregando turmas...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+            {!loading &&
+              !error &&
+              turmas.map((turma) => (
+                <div key={turma.id} className="flex-shrink-0">
+                  <TurmaCard
+                    id={turma.id}
+                    nome={turma.nome}
+                    // imagem={turma.URLImage}
+                  />
+                </div>
+              ))}
           </div>
         </SectionCard>
 
