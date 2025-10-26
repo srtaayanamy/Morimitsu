@@ -63,7 +63,7 @@ export default function Turmas() {
                   nome={turma.nome}
                   idadeMin={turma.idadeMin}
                   idadeMax={turma.idadeMax}
-                  // icone={turma.imagem}
+                  imagem={turma.URLImage}
                 />
               ))
             )}

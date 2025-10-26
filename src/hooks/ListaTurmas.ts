@@ -12,17 +12,17 @@ export async function listarTurmas(): Promise<Turma[] | false> {
       },
     });
 
-    // Supondo que o backend retorna { classes: [...] }
-    const turmasBack = response.data.classes || response.data;
+    const turmasBack = response.data.classes;
 
-    // Conversão de campos do backend -> frontend
+    // Conversão de campos do backend para o frontend
     const turmas: Turma[] = turmasBack.map((t: any) => ({
       id: t.id,
       nome: t.name,
       idadeMin: t.minAge,
       idadeMax: t.maxAge,
-      URLImage: t.iconURL
+      URLImage: t.icon_url
     }));
+    console.log(turmas)
 
     return turmas;
   } catch (error) {

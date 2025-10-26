@@ -44,8 +44,7 @@ export default function TelaInicial() {
             {/* CARD CRIAR TURMA */}
             <Link to="/registrar-turma" className="flex-shrink-0">
               <button
-                className="w-36 sm:w-44 h-30 sm:h-30 bg-[#1D1E1E] rounded-xl flex flex-col items-center justify-center 
-                   text-white font-semibold hover:opacity-90 transition cursor-pointer"
+                className="w-36 sm:w-44 h-30 sm:h-35 bg-[#1D1E1E] rounded-xl flex flex-col items-center justify-center text-white font-semibold hover:opacity-90 transition cursor-pointer"
               >
                 <Plus className="w-8 h-8 sm:w-10 sm:h-10 mb-2" />
                 Criar turma
@@ -62,7 +61,7 @@ export default function TelaInicial() {
                   <TurmaCard
                     id={turma.id}
                     nome={turma.nome}
-                    // imagem={turma.URLImage}
+                    imagem={turma.URLImage}
                   />
                 </div>
               ))}

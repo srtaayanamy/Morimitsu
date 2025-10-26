@@ -1,6 +1,6 @@
 import api from "../services/api";
 
-function varificarEmail(email: string): boolean {
+function verificarEmail(email: string): boolean {
   // Expressão regular para validar formato de email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -9,12 +9,15 @@ function varificarEmail(email: string): boolean {
 export async function verificarLogin(email: string, senha:string){
 
     //Verifica se a senha e o e-mail tem formatos válidos
+    const resultado= verificarEmail(email);
+    
+    if(resultado=== false){
+        return 'Formato de email inválido'
+    }
     if(senha.length<8){
         return 'Senha deve ter 8 ou mais caracteres!'
     }
-    if(varificarEmail(email)=== false){
-        return 'Formato de email inválido'
-    }
+    
 
     try{
         const response = await api.post("/user/login", {Email: email, Password: senha })

@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import ImageOverlay from "../components/ImageOverlay";
 import ClockOverlay from "../components/ClockOverlay";
 import { cadastrarTurma } from "../utils/CadastrarTurma";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function RegistrarTurma() {
   // Estados de exibição de overlays
@@ -21,7 +22,7 @@ export default function RegistrarTurma() {
   const [nome, setNome] = useState('');
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(0);
-  const [erro, setErro] = useState<string | boolean>(''); //pq em boolean? 
+  const [error, setErro] = useState<string | boolean>(''); //pq em boolean? 
 
   //Define a função de navegação
   const navigate = useNavigate();
@@ -34,15 +35,18 @@ export default function RegistrarTurma() {
   }, [selectedImage]);
 
   async function RegisterTurma(){
-    const sucesso = await cadastrarTurma(nome, idadeMin, idadeMax, inicio, fim, imagem);
+    console.log(imagem)
+    const result = await cadastrarTurma(nome, idadeMin, idadeMax, inicio, fim, imagem);
 
-    if(sucesso){
+    if(result){
       console.log("Cadastro feito")
       navigate('/inicio')
-    }
-    else{
+    } else if(result!== false){
       console.log("Deu errado")
-      alert("Algum campo obrigatório não preenchido!");
+      setErro(result)
+      return;
+    } else{
+      setErro('Preencha todos os campos obrigatórios.')
     }
   }
 
@@ -94,18 +98,16 @@ export default function RegistrarTurma() {
           {/* Botões desktop */}
           <div className="hidden md:flex gap-3">
 
-            <button onClick={() => navigate(-1)}>
-              <ActionButton label="Cancelar" variant="secondary" />
-            </button>
+            <ActionButton label="Cancelar" variant="secondary" onClick={() => navigate(-1)}/>
 
-            <button 
-              type= "button"
-              onClick={RegisterTurma}
-            >
-              <ActionButton label="Concluir cadastro" />
-            </button>
+            <ActionButton label="Concluir cadastro" onClick={RegisterTurma}/>
+            
           </div>
         </div>
+
+
+        {/* Mensagem de erro */}
+        {error && <ErrorMessage message={error} />}
 
         {/* Bloco principal */}
         <div className="bg-white rounded-2xl p-5 md:p-8 space-y-6 shadow-sm">
@@ -206,20 +208,20 @@ export default function RegistrarTurma() {
           {/* Botões mobile */}
           <div className="flex justify-center gap-3 pt-4 md:hidden">
             
-            <button onClick={() => navigate(-1)}>
-              <ActionButton
+            
+            <ActionButton
               label="Cancelar"
               variant="secondary"
               className="text-sm"
-              />
-            </button>
+              onClick={() => navigate(-1)}
+            />
             
-            <button 
-              type= "button"
+            <ActionButton 
+              label="Concluir cadastro" 
+              className="text-sm" 
               onClick={RegisterTurma}
-            >
-              <ActionButton label="Concluir cadastro" className="text-sm" />
-            </button>
+            />
+            
           </div>
         </div>
       </main>
