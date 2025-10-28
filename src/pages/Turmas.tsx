@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import TurmaItem from "../components/TurmaItem";
 import { listarTurmas } from "../hooks/ListaTurmas";
 import { type Turma } from "../types/Turma";
+import PageTitle from "../components/PageTitle";
 
 export default function Turmas() {
   const [turmas, setTurmas] = useState<Turma[]>([]);
@@ -33,11 +34,7 @@ export default function Turmas() {
 
       <main className="flex-1 p-4 md:p-8 space-y-5">
         {/* Cabeçalho */}
-        <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
-          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#1E1E1E]">
-            Turmas
-          </h1>
-
+        <PageTitle title="Turmas">
           <Link to="/registrar-turma">
             <button
               type="button"
@@ -46,7 +43,7 @@ export default function Turmas() {
               Criar Turma
             </button>
           </Link>
-        </div>
+        </PageTitle>
 
         {/* Lista */}
         {loading && <p>Carregando turmas...</p>}

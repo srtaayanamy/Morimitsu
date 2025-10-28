@@ -6,6 +6,7 @@ import ImageOverlay from "../components/ImageOverlay";
 import ClockOverlay from "../components/ClockOverlay";
 import { cadastrarTurma } from "../utils/CadastrarTurma";
 import { ErrorMessage } from "../components/ErrorMessage";
+import PageTitle from "../components/PageTitle";
 
 export default function RegistrarTurma() {
   // Estados de exibição de overlays
@@ -18,11 +19,11 @@ export default function RegistrarTurma() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [inicio, setInicio] = useState("00:00h");
   const [fim, setFim] = useState("00:00h");
-  const [imagem, setImagem] = useState('');
-  const [nome, setNome] = useState('');
+  const [imagem, setImagem] = useState("");
+  const [nome, setNome] = useState("");
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(0);
-  const [error, setErro] = useState<string | boolean>(''); //pq em boolean? 
+  const [error, setErro] = useState<string | boolean>(""); //pq em boolean?
 
   //Define a função de navegação
   const navigate = useNavigate();
@@ -34,19 +35,26 @@ export default function RegistrarTurma() {
     }
   }, [selectedImage]);
 
-  async function RegisterTurma(){
-    console.log(imagem)
-    const result = await cadastrarTurma(nome, idadeMin, idadeMax, inicio, fim, imagem);
+  async function RegisterTurma() {
+    console.log(imagem);
+    const result = await cadastrarTurma(
+      nome,
+      idadeMin,
+      idadeMax,
+      inicio,
+      fim,
+      imagem
+    );
 
-    if(result){
-      console.log("Cadastro feito")
-      navigate('/inicio')
-    } else if(result!== false){
-      console.log("Deu errado")
-      setErro(result)
+    if (result) {
+      console.log("Cadastro feito");
+      navigate("/inicio");
+    } else if (result !== false) {
+      console.log("Deu errado");
+      setErro(result);
       return;
-    } else{
-      setErro('Preencha todos os campos obrigatórios.')
+    } else {
+      setErro("Preencha todos os campos obrigatórios.");
     }
   }
 
@@ -90,21 +98,18 @@ export default function RegistrarTurma() {
 
       <main className="p-4 md:p-8 space-y-5">
         {/* Cabeçalho */}
-        <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between">
-          <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">
-            Cadastro de turma
-          </h1>
-
+        <PageTitle title="Cadastro de turma">
           {/* Botões desktop */}
           <div className="hidden md:flex gap-3">
+            <ActionButton
+              label="Cancelar"
+              variant="secondary"
+              onClick={() => navigate(-1)}
+            />
 
-            <ActionButton label="Cancelar" variant="secondary" onClick={() => navigate(-1)}/>
-
-            <ActionButton label="Concluir cadastro" onClick={RegisterTurma}/>
-            
+            <ActionButton label="Concluir cadastro" onClick={RegisterTurma} />
           </div>
-        </div>
-
+        </PageTitle>
 
         {/* Mensagem de erro */}
         {error && <ErrorMessage message={error} />}
@@ -139,7 +144,7 @@ export default function RegistrarTurma() {
               <input
                 type="text"
                 className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
-                onChange={e => setNome(e.target.value)}
+                onChange={(e) => setNome(e.target.value)}
               />
             </div>
 
@@ -167,21 +172,21 @@ export default function RegistrarTurma() {
                 <label className="block text-sm font-semibold mb-2">
                   Idade {tipo}:
                 </label>
-                 {tipo === "mínima" ? (
-                    <input
+                {tipo === "mínima" ? (
+                  <input
                     type="number"
                     min="0"
                     className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
-                    onChange={e => setIdadeMin(Number(e.target.value))}
-                    />
-                  ) : (
-                    <input
+                    onChange={(e) => setIdadeMin(Number(e.target.value))}
+                  />
+                ) : (
+                  <input
                     type="number"
                     min="0"
                     className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-[#8B0000]"
-                    onChange={e => setIdadeMax(Number(e.target.value))}
-                    />
-                  )}
+                    onChange={(e) => setIdadeMax(Number(e.target.value))}
+                  />
+                )}
               </div>
             ))}
 
@@ -207,21 +212,18 @@ export default function RegistrarTurma() {
 
           {/* Botões mobile */}
           <div className="flex justify-center gap-3 pt-4 md:hidden">
-            
-            
             <ActionButton
               label="Cancelar"
               variant="secondary"
               className="text-sm"
               onClick={() => navigate(-1)}
             />
-            
-            <ActionButton 
-              label="Concluir cadastro" 
-              className="text-sm" 
+
+            <ActionButton
+              label="Concluir cadastro"
+              className="text-sm"
               onClick={RegisterTurma}
             />
-            
           </div>
         </div>
       </main>

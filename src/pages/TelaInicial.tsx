@@ -43,16 +43,20 @@ export default function TelaInicial() {
           <div className="flex flex-nowrap gap-4 sm:gap-5 overflow-x-auto pb-3 sm:pb-4 px-1 sm:px-2 scrollbar-hide">
             {/* CARD CRIAR TURMA */}
             <Link to="/registrar-turma" className="flex-shrink-0">
-              <button
-                className="w-36 sm:w-44 h-30 sm:h-35 bg-[#1D1E1E] rounded-xl flex flex-col items-center justify-center text-white font-semibold hover:opacity-90 transition cursor-pointer"
-              >
+              <button className="w-36 sm:w-44 h-30 sm:h-35 bg-[#1D1E1E] rounded-xl flex flex-col items-center justify-center text-white font-semibold hover:opacity-90 transition cursor-pointer">
                 <Plus className="w-8 h-8 sm:w-10 sm:h-10 mb-2" />
                 Criar turma
               </button>
             </Link>
 
             {/* CARDS DAS TURMAS DA API */}
-            {loading && <p>Carregando turmas...</p>}
+            {loading && (
+              <div className="flex items-center justify-start w-full h-40">
+                <p className="text-gray-600 text-lg animate-pulse">
+                  Carregando turmas...
+                </p>
+              </div>
+            )}
             {error && <p className="text-red-500">{error}</p>}
             {!loading &&
               !error &&

@@ -82,8 +82,8 @@ export default function Alunos() {
                       >
                         <td className="py-3 px-6 rounded-l-xl">
                           <Link
-                            to={`/editar-turma/${aluno.id}`}
-                            className="text-[#911418] hover:underline font-medium"
+                            to="/visualizar-aluno"
+                            className="text-[#000000] hover:underline font-medium"
                           >
                             {aluno.nome}
                           </Link>

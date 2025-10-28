@@ -8,6 +8,7 @@ import { cadastrarAluno } from "../utils/CadastrarAluno";
 import { listarTurmas } from "../hooks/ListaTurmas";
 import { faixasEGraus } from "../types/Rank";
 import { ErrorMessage } from "../components/ErrorMessage";
+import PageTitle from "../components/PageTitle";
 
 export default function RegistrarAluno() {
   const navigate = useNavigate();
@@ -106,11 +107,23 @@ export default function RegistrarAluno() {
 
       <main className="flex-1 p-4 md:p-8 flex flex-col space-y-3">
         {/* Cabeçalho */}
-        <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
-          <h1 className="text-xl md:text-2xl font-semibold text-[#1E1E1E]">
-            Cadastro de aluno
-          </h1>
-        </div>
+        <PageTitle title="Cadastro de aluno">
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
+              onClick={handleRegisterAluno}
+            >
+              Concluir cadastro
+            </button>
+          </div>
+        </PageTitle>
 
         {/* Mensagem de erro */}
         {error && <ErrorMessage message={error} />}
@@ -319,22 +332,6 @@ export default function RegistrarAluno() {
               onChange={(e) => setoObservacao(e.target.value)}
             />
           </div>
-        </div>
-        {/* Botões finais */}
-        <div className="flex justify-end gap-3 mt-4">
-          <button
-            type="button"
-            className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
-            onClick={handleRegisterAluno}
-          >
-            Concluir cadastro
-          </button>
         </div>
       </main>
     </div>

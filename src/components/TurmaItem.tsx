@@ -5,7 +5,7 @@ interface TurmaItemProps {
   nome: string;
   idadeMin: number;
   idadeMax: number;
-  imagem?: string; // caminho para imagem
+  imagem?: string;
 }
 
 export default function TurmaItem({ id, nome, idadeMin, idadeMax, imagem }: TurmaItemProps) {
@@ -13,7 +13,7 @@ export default function TurmaItem({ id, nome, idadeMin, idadeMax, imagem }: Turm
 
   return (
     <div
-      onClick={() => navigate(`/turma/${id}`)}
+      onClick={() => navigate("/visualizar-turma")}
       className="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md transition"
     >
       {/* Ícone da turma */}

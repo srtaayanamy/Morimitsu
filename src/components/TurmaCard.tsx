@@ -13,7 +13,7 @@ export default function TurmaCard({ id, nome, imagem }: TurmaCardProps) {
     <div
       onClick={() => navigate(`/turma/${id}`)}
       className="w-36 sm:w-44 h-35 sm:h-35 bg-[#7F1A17] rounded-xl flex flex-col items-center justify-center
-                 text-white font-semibold cursor-pointer hover:opacity-90 transition text-center px-2"
+                 text-white font-semibold cursor-pointer hover:opacity-10 transition text-center px-2"
     >
       {imagem ? (
         <img
