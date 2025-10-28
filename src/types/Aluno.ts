@@ -1,4 +1,4 @@
-import { type Turma } from "./Turma";
+
 
 //Interface de aluno
 export interface Aluno{
@@ -7,6 +7,7 @@ export interface Aluno{
     apelido?: string;
     email:string;
     dataNascimento: string;
+    idade?: number;
     telefone: string;
     sexo: string;
     CPF: string;
@@ -15,7 +16,7 @@ export interface Aluno{
     frequencia: number;
     Responsavel?: string;
     telefoneResponsavel?: string;
-    matricula?: number; 
+    matricula?: string; 
     observacao?: string;
-    turmas?: Turma[];
+    turmas?: string[];
 }

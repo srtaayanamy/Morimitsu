@@ -18,6 +18,7 @@ export async function listarAlunos() {
             const alunos: Aluno[] = response.data.data.map((item: any) => {
                 const s = item.student;
                 return {
+                    id: s.id,
                     nome: s.personal?.name || "",
                     apelido: s.nickname || "",
                     email: s.email || "",

@@ -1,7 +1,30 @@
 import Header from "../components/Header";
 import { SquarePen } from "lucide-react";
+import { pegaDadosTurma } from "../utils/getDadosTurma";
+import { useEffect, useState } from "react";
+import type { Turma } from "../types/Turma";
 
 export default function VisualizarTurma() {
+
+  //Declara variáveis de estado
+  const id= '';
+  const [erro, setErro]= useState('');
+  const [turma, setTurma] = useState<Turma>();
+
+  //Pega informações do aluno
+  useEffect(() => {
+    async function fetchTurma() {
+      const result = await pegaDadosTurma(id);
+      if (typeof result=== 'string') {
+        setErro(result)
+      } else{
+        setTurma(result)
+      }
+    }
+    fetchTurma
+  }, [id]);  
+
+
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#1E1E1E] flex flex-col">
       <Header />

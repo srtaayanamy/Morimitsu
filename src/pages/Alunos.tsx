@@ -77,7 +77,7 @@ export default function Alunos() {
                   <tbody>
                     {alunos.map((aluno) => (
                       <tr
-                        key={aluno.email}
+                        key={aluno.id}
                         className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
                       >
                         <td className="py-3 px-6 rounded-l-xl">

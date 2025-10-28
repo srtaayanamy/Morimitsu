@@ -3,8 +3,30 @@ import { SquarePen } from "lucide-react";
 import { Avatar } from "../components/Avatar";
 import { InfoField } from "../components/InfoField";
 import { ProgressBar } from "../components/ProgressBar";
+import type { Aluno } from "../types/Aluno";
+import { pegaDadosAluno } from "../utils/getDadosAluno";
+import { useEffect, useState } from "react";
 
 export default function VisualizarAluno() {
+
+  //Declara variáveis de estado
+  const id= '';
+  const [erro, setErro]= useState('');
+  const [aluno, setAluno] = useState<Aluno>();
+
+  //Pega informações do aluno
+  useEffect(() => {
+    async function fetchAluno() {
+      const result = await pegaDadosAluno(id);
+      if (typeof result=== 'string') {
+        setErro(result)
+      } else{
+        setAluno(result)
+      }
+    }
+    fetchAluno
+  }, [id]);
+
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
       <Header />

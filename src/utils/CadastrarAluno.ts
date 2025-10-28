@@ -17,7 +17,9 @@ export async function cadastrarAluno(aluno: Aluno) {
                 parentsContact: aluno.telefoneResponsavel, 
                 parentName: aluno.Responsavel, 
                 rating: aluno.grau, 
-                classId:aluno.turmas?aluno.turmas[0]:undefined})
+                classId:aluno.turmas?aluno.turmas: undefined,
+                sex: aluno.sexo
+            })
 
         //Analisa o resultado da requisição e checa se o aluno foi criado ou não
         if (response.status=== 201){

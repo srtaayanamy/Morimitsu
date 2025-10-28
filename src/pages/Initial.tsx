@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { verificarLogin } from "../utils/VerficarLogin";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { useAuth } from "../hooks/Autenticao";
 
 /* Componente principal de Login */
 export default function Login() {
@@ -13,7 +14,17 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | boolean>("");
+  const verificaLogin = useAuth();
   const navigate = useNavigate();
+
+  //Verifica se o usuário já está logado
+  useEffect(() => {
+    if (verificaLogin.isLoggedIn) {
+      navigate("/inicio");
+    }
+  }, [verificaLogin.isLoggedIn, navigate]);
+
+
 
   //Função que redireciona o usuário se o email e senha estiverem corretos
   async function handleLogin(){
