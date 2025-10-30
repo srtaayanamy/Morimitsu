@@ -13,7 +13,7 @@ export default function TurmaItem({ id, nome, idadeMin, idadeMax, imagem }: Turm
 
   return (
     <div
-      onClick={() => navigate("/visualizar-turma")}
+      onClick={() => navigate(`/visualizar-turma/${id}`)}
       className="bg-white p-4 rounded-2xl shadow-sm flex items-center gap-4 cursor-pointer hover:shadow-md transition"
     >
       {/* Ícone da turma */}

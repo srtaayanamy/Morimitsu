@@ -34,7 +34,7 @@ export default function AppRoutes () {
       <Route path="/registrar-aluno" element={<RegistrarAluno />} />
       <Route path="/Turmas" element={<Turmas />} />
       <Route path="/visualizar-aluno/:id" element={<VisualizarAluno />} />
-      <Route path="/visualizar-turma" element={<VisualizarTurma />} />
+      <Route path="/visualizar-turma/:id" element={<VisualizarTurma />} />
       <Route path="/professores" element={<Professores />} />
       
       {/* rotas pai/filho de configuração */}

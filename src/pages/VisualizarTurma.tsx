@@ -2,28 +2,26 @@ import Header from "../components/Header";
 import { SquarePen } from "lucide-react";
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import type { Turma } from "../types/Turma";
 
 export default function VisualizarTurma() {
-
-  //Declara variáveis de estado
-  const id= '';
-  const [erro, setErro]= useState('');
+  const { id } = useParams(); // pega id da URL
+  const [erro, setErro] = useState("");
   const [turma, setTurma] = useState<Turma>();
 
-  //Pega informações do aluno
   useEffect(() => {
     async function fetchTurma() {
+      if (!id) return; // evita chamada sem id
       const result = await pegaDadosTurma(id);
-      if (typeof result=== 'string') {
-        setErro(result)
-      } else{
-        setTurma(result)
+      if (typeof result === "string") {
+        setErro(result);
+      } else {
+        setTurma(result);
       }
     }
-    fetchTurma
-  }, [id]);  
-
+    fetchTurma(); // chamar a função
+  }, [id]);
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#1E1E1E] flex flex-col">
@@ -33,7 +31,7 @@ export default function VisualizarTurma() {
         {/* Cabeçalho */}
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
           <h1 className="text-2xl md:text-3xl font-semibold leading-tight">
-            {/* Nome da turma */}
+            {turma?.nome || "Carregando..."}
           </h1>
           <button className="bg-transparent hover:opacity-80 transition">
             <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
@@ -42,30 +40,43 @@ export default function VisualizarTurma() {
 
         {/* Card principal */}
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm flex flex-col items-center space-y-6">
-          {/* Avatar / imagem da turma */}
-          <div className="w-36 h-36 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-            {/* imagem da turma futuramente */}
-          </div>
+          {turma?.URLImage ? (
+            <img
+              src={turma.URLImage}
+              alt={`Imagem da turma ${turma.nome}`}
+              className="w-36 h-36 rounded-full object-cover border border-gray-200"
+            />
+          ) : (
+            <div className="w-36 h-36 rounded-full bg-[#F5F5F5] flex items-center justify-center text-gray-400">
+              Sem imagem
+            </div>
+          )}
 
-          {/* Professor responsável */}
           <div className="text-center">
             <p className="text-sm font-medium">Professor responsável:</p>
-            <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 w-56"></p>
+            <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 w-56">
+              {turma?.professores?.[0]?.nome || "-"}
+            </p>
           </div>
 
-          {/* Informações da turma */}
           <div className="w-full flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6 text-center">
             <div className="flex-1">
               <p className="text-sm font-medium">Total de alunos:</p>
-              <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 mx-auto w-40"></p>
+              <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 mx-auto w-40">
+                {turma?.numAlunos ?? "-"}
+              </p>
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">Faixa etária:</p>
-              <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 mx-auto w-40"></p>
+              <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 mx-auto w-40">
+                {turma ? `${turma.idadeMin} - ${turma.idadeMax}` : "-"}
+              </p>
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">Horário da aula:</p>
-              <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 mx-auto w-40"></p>
+              <p className="bg-[#F5F5F5] rounded-xl p-3 mt-1 mx-auto w-40">
+                {turma ? `${turma.horarioInicio} - ${turma.horarioFim}` : "-"}
+              </p>
             </div>
           </div>
         </div>
@@ -87,7 +98,6 @@ export default function VisualizarTurma() {
             </div>
           </div>
 
-          {/* Tabela de alunos */}
           <div className="overflow-x-auto">
             <table className="min-w-full border-separate border-spacing-y-2">
               <thead>
@@ -98,14 +108,21 @@ export default function VisualizarTurma() {
                 </tr>
               </thead>
               <tbody>
-                {/* Linhas vazias para receber dados no futuro */}
-                {[...Array(4)].map((_, i) => (
-                  <tr key={i} className="bg-[#F5F5F5] rounded-xl">
-                    <td className="p-3 rounded-l-xl"></td>
-                    <td className="p-3"></td>
-                    <td className="p-3 rounded-r-xl"></td>
+                {turma?.alunos?.length ? (
+                  turma.alunos.map((aluno) => (
+                    <tr key={aluno.id} className="bg-[#F5F5F5] rounded-xl">
+                      <td className="p-3 rounded-l-xl">{aluno.nome}</td>
+                      <td className="p-3">{aluno.apelido}</td>
+                      <td className="p-3 rounded-r-xl">{aluno.faixa}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="text-center p-3 text-gray-500">
+                      {erro || "Nenhum aluno encontrado."}
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

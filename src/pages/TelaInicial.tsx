@@ -12,10 +12,6 @@ export default function TelaInicial() {
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-<<<<<<< Updated upstream
-=======
-  const verificaLogin = useAuth();
->>>>>>> Stashed changes
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
