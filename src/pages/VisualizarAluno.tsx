@@ -6,26 +6,42 @@ import { ProgressBar } from "../components/ProgressBar";
 import type { Aluno } from "../types/Aluno";
 import { pegaDadosAluno } from "../utils/getDadosAluno";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"; // para pegar o id da URL
 
 export default function VisualizarAluno() {
-
-  //Declara variáveis de estado
-  const id= '';
-  const [erro, setErro]= useState('');
+  const { id } = useParams<{ id: string }>(); // pega o ID da URL
+  const [erro, setErro] = useState("");
   const [aluno, setAluno] = useState<Aluno>();
 
-  //Pega informações do aluno
   useEffect(() => {
     async function fetchAluno() {
+      if (!id) return; // evita buscar se não tiver ID
       const result = await pegaDadosAluno(id);
-      if (typeof result=== 'string') {
-        setErro(result)
-      } else{
-        setAluno(result)
+      console.log("Resposta da API:", result);
+      if (typeof result === "string") {
+        setErro(result);
+      } else {
+        setAluno(result);
       }
     }
-    fetchAluno
+    fetchAluno(); // executa a função
   }, [id]);
+
+  if (erro) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600 font-semibold">
+        {erro}
+      </div>
+    );
+  }
+
+  if (!aluno) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Carregando dados do aluno...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
@@ -35,7 +51,7 @@ export default function VisualizarAluno() {
         {/* Cabeçalho */}
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
           <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
-            {/* Nome do aluno */}
+            {aluno.nome} {aluno.apelido ? `(${aluno.apelido})` : ""}
           </h1>
           <button className="bg-transparent hover:opacity-80 transition">
             <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
@@ -46,7 +62,7 @@ export default function VisualizarAluno() {
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             {/* Avatar */}
-            <Avatar />
+            <Avatar sexo={aluno.sexo} dataNascimento={aluno.dataNascimento} />
 
             {/* Faixa e progresso */}
             <div className="flex-1 space-y-4 w-full">
@@ -54,7 +70,9 @@ export default function VisualizarAluno() {
                 <p className="font-semibold text-sm md:text-base">
                   Faixa / grau:
                 </p>
-                <p className="bg-[#F5F5F5] rounded-xl p-6 mt-1"></p>
+                <p className="bg-[#F5F5F5] rounded-xl p-6 mt-1">
+                  {aluno.faixa} / {aluno.grau}
+                </p>
               </div>
 
               <div>
@@ -62,35 +80,56 @@ export default function VisualizarAluno() {
                   Progresso / Frequência:
                 </p>
                 <div className="mt-2">
-                  <ProgressBar />
+                  <ProgressBar percent={aluno.frequencia} />
                 </div>
-                <p className="text-sm text-right mt-1 text-[#1E1E1E]"></p>
+                <p className="text-sm text-right mt-1 text-[#1E1E1E]">
+                  {aluno.frequencia}%
+                </p>
               </div>
             </div>
           </div>
 
           {/* Informações detalhadas */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InfoField label="Data de Nascimento:" />
-            <InfoField label="Telefone:" />
-            <InfoField label="CPF:" />
-            <InfoField label="Matrícula (opcional):" />
+            <InfoField
+              label="Data de Nascimento:"
+              value={
+                aluno.dataNascimento
+                  ? new Date(aluno.dataNascimento).toLocaleDateString("pt-BR")
+                  : ""
+              }
+            />
+
+            <InfoField label="Telefone:" value={aluno.telefone} />
+            <InfoField label="CPF:" value={aluno.CPF} />
+            <InfoField label="Matrícula (opcional):" value={aluno.matricula} />
             <div className="md:col-span-2">
               <p className="font-semibold text-sm md:text-base">
                 Responsável / Contato emergencial:
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
-                <p className="bg-[#F5F5F5] rounded-xl p-6"></p>
-                <p className="bg-[#F5F5F5] rounded-xl p-6"></p>
+                <p className="bg-[#EFEFEF] rounded-xl p-6">
+                  {aluno.Responsavel}
+                </p>
+                <p className="bg-[#EFEFEF] rounded-xl p-6">
+                  {aluno.telefoneResponsavel}
+                </p>
               </div>
             </div>
-            {/* implementar como combobox */}
-            <InfoField label="Turmas que participa:" />
-            <InfoField label="Sexo:" />
-            <InfoField label="E-mail:" />
+            {/* Combobox futura para turmas */}
+            <InfoField
+              label="Turmas que participa:"
+              value={aluno.turmas?.join(", ")}
+            />
+            {/* Sexo será adicionado depois */}
+            <InfoField label="E-mail:" value={aluno.email} />
           </div>
 
-          <InfoField label="Observações do aluno:" multiline />
+          <InfoField
+            label="Observações do aluno:"
+            value={aluno.observacao}
+            multiline
+          />
         </div>
       </main>
     </div>

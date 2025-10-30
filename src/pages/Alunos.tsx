@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 
-
 export default function Alunos() {
   //Variáveis de estado
   const [alunos, setAlunos] = useState<Aluno[]>([]);
@@ -82,7 +81,7 @@ export default function Alunos() {
                       >
                         <td className="py-3 px-6 rounded-l-xl">
                           <Link
-                            to="/visualizar-aluno"
+                            to={`/visualizar-aluno/${aluno.id}`}
                             className="text-[#000000] hover:underline font-medium"
                           >
                             {aluno.nome}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import Header from "../components/Header";
 import SectionCard from "../components/SectionCard";
 import { useEffect, useState } from "react";
@@ -12,6 +12,10 @@ export default function TelaInicial() {
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< Updated upstream
+=======
+  const verificaLogin = useAuth();
+>>>>>>> Stashed changes
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
@@ -51,10 +55,8 @@ export default function TelaInicial() {
 
             {/* CARDS DAS TURMAS DA API */}
             {loading && (
-              <div className="flex items-center justify-start w-full h-40">
-                <p className="text-gray-600 text-lg animate-pulse">
-                  Carregando turmas...
-                </p>
+              <div className="flex items-center justify-center w-full h-40">
+                <Loader2 className="w-8 h-8 text-gray-600 animate-spin" />
               </div>
             )}
             {error && <p className="text-red-500">{error}</p>}

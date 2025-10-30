@@ -30,7 +30,11 @@ export default function Header() {
           className="p-2 hover:bg-[#9b1a1a] rounded-lg transition"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </div>
 
@@ -60,12 +64,17 @@ export default function Header() {
         </div>
 
         {/* ÍCONES DESKTOP */}
-        <button className="hover:text-gray-200 transition">
-          <Bell className="w-5 h-5" />
-        </button>
-        <button className="hover:text-gray-200 transition">
-          <Settings className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-4">
+          <button className="hover:text-gray-200 transition flex items-center justify-center">
+            <Bell className="w-5 h-5" />
+          </button>
+          <Link
+            to="/configuracoes"
+            className="hover:text-gray-200 transition flex items-center justify-center"
+          >
+            <Settings className="w-5 h-5" />
+          </Link>
+        </div>
       </nav>
 
       {/* MENU LATERAL MOBILE */}
@@ -114,7 +123,7 @@ export default function Header() {
             Turmas
           </Link>
           <Link
-            to="/configuracoes"
+            to="/configuration"
             className="hover:text-gray-300"
             onClick={() => setIsMenuOpen(false)}
           >
