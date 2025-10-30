@@ -5,9 +5,7 @@ export async function cadastrarAluno(aluno: Aluno) {
     try{   
 
         if(aluno.nome==='' || aluno.email==='' || aluno.CPF==='' || aluno.sexo===''){
-
             return 'Por favor preencha todos os campos obrigatórios!'
-            
         }
 
         //Corrige o sexo para o que a API exige
