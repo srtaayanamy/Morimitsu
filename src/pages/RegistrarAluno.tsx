@@ -20,15 +20,15 @@ export default function RegistrarAluno() {
   const [telefone, setTelefone] = useState<string>("");
   const [sexo, setSexo] = useState<string>("");
   const [CPF, setCPF] = useState<string>("");
-  const [faixa, setFaixa] = useState<string>("");
+  const [faixa, setFaixa] = useState<string>("BRANCA");
   const [grau, setGrau] = useState<number>();
   const [frequencia, setFrequencia] = useState<number>(0);
   const [responsavel, setResponsavel] = useState<string>("");
   const [contato, setContato] = useState<string>("");
-  const [matricula, setMatricula] = useState<number>();
+  const [matricula, setMatricula] = useState<string>();
   const [email, setEmail] = useState<string>("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
-  const [turmasVinculadas, setTurmasVinculadas] = useState<Turma[]>([]);
+  const [turmasVinculadas, setTurmasVinculadas] = useState<string[]>([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -57,10 +57,10 @@ export default function RegistrarAluno() {
     if (!turma) return;
 
     // Evita duplicatas
-    if (turmasVinculadas.some((t) => t.id === turma.id)) return;
+    if (turmasVinculadas.some((t) => t === turma.id)) return;
 
     // Adiciona à lista
-    setTurmasVinculadas((prev) => [...prev, turma]);
+    setTurmasVinculadas((prev) => [...prev, turma.id]);
     setTurmaSelecionada("");
   }
 
@@ -84,14 +84,11 @@ export default function RegistrarAluno() {
     };
     const result = await cadastrarAluno(novoAluno);
 
-    if (result) {
+    if (result=== true) {
       console.log("Aluno criado com sucesso");
       navigate("/alunos");
-    } else if (result !== false) {
-      setError("Aluno já existe.");
-      return;
     } else {
-      setError("Erro ao registrar aluno. Tente novamente.");
+      setError(result);
       return;
     }
   }
@@ -264,7 +261,7 @@ export default function RegistrarAluno() {
               <input
                 type="text"
                 className={inputBase}
-                onChange={(e) => setMatricula(Number(e.target.value))}
+                onChange={(e) => setMatricula(e.target.value)}
               />
             </div>
           </div>

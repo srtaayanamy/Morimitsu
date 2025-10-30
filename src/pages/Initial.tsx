@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Logout, Visibility, VisibilityOff } from "@mui/icons-material";
 import { verificarLogin } from "../utils/VerficarLogin";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { useAuth } from "../hooks/Autenticao";

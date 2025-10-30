@@ -4,6 +4,7 @@ import type { Aluno } from "../types/Aluno";
 export async function pegaDadosAluno(id:string){
 
     try{
+        
         const response= await api.get(`/student/${id}`)
     
         //Verifica o status da requisição

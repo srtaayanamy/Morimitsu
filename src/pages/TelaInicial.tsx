@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import { listarTurmas } from "../hooks/ListaTurmas";
 import type { Turma } from "../types/Turma";
 import TurmaCard from "../components/TurmaCard";
+import { useAuth } from "../hooks/Autenticao";
 
 export default function TelaInicial() {
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const verificaLogin = useAuth();
+  
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
