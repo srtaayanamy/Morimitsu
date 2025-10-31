@@ -5,7 +5,6 @@ import type { Turma } from "../types/Turma";
 
 export async function pegaDadosTurma(id: string) {
   try {
-    console.log(id);
     const response = await api.get(`/class/${id}`);
 
     //Verifica o status da requisição
@@ -37,23 +36,26 @@ export async function pegaDadosTurma(id: string) {
         nome: response.data.class.name,
         idadeMax: response.data.class.maxAge,
         idadeMin: response.data.class.minAge,
-        horarioInicio: response.data.class.startTime,
-        horarioFim: response.data.class.endTime,
+        horarioInicio: response.data.class.startTime ?? '',
+        horarioFim: response.data.class.endTime ?? '',
         alunos: alunos,
         professores: professores,
         numAlunos: NumeroDeAlunos,
-        URLImage: response.data.class.icon_url ?? "",
+        URLImage: response.data.class.icon_url,
 
       };
       return turma;
-    } else if (response.status === 404) {
-      console.log("Turma não encontrada");
-      return "Turma não encontrada";
-    } else {
-      console.log("Erro interno no servidor");
-      return "Erro ao carregar turma. Tente novamente!";
     }
-  } catch (error) {
+    
+  } catch (error: any) {
+    switch(error.response.status){
+      case 404:
+        console.log("Turma não encontrada. Erro: ", error);
+        return "Turma não encontrada";
+      case 500:
+        console.log("Erro interno no servidor. Erro:", error);
+        return "Erro ao carregar turma. Tente novamente!";
+    }
     console.log("Erro: ", error);
     return "Erro ao carregar turma. Tente novamente!";
   }

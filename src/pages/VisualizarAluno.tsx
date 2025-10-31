@@ -93,11 +93,7 @@ export default function VisualizarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <InfoField
               label="Data de Nascimento:"
-              value={
-                aluno.dataNascimento
-                  ? new Date(aluno.dataNascimento).toLocaleDateString("pt-BR")
-                  : ""
-              }
+              value={aluno.dataNascimento}
             />
 
             <InfoField label="Telefone:" value={aluno.telefone} />

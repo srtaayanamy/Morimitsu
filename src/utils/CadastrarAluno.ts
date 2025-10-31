@@ -24,17 +24,21 @@ export async function cadastrarAluno(aluno: Aluno) {
         //Analisa o resultado da requisição e checa se o aluno foi criado ou não
         if (response.status=== 201){
             console.log('Aluno registrado com sucesso')
-            return true
-        } else if(response.status===409){
-            console.log('Aluno já existe')
-            return 'Aluno já existe.'
-        }else{
-            console.log('Erro interno no servidor.')
-            return false
+        }
+        
+        return true
+    } catch (error: any) {
+    
+        switch(error.response.status){
+            case 409:
+                console.log("Aluno já existe. Erro: ", error);
+                return "Aluno já existe.";
+            case 500:
+                console.log("Erro interno no servidor. Erro:", error);
+                return "Erro ao registrar aluno. Tente novamente!";
         }
 
-    } catch(error){
-        console.log('Erro: ', error)
-        return false
+        console.log("Erro: ", error);
+        return "Erro ao registrar aluno. Tente novamente!";
     }
 }

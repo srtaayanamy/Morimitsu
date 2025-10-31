@@ -6,9 +6,10 @@ import { type Turma } from "../types/Turma";
 import { type Aluno } from "../types/Aluno";
 import { cadastrarAluno } from "../utils/CadastrarAluno";
 import { listarTurmas } from "../hooks/ListaTurmas";
-import { faixasEGraus } from "../types/Rank";
+import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../types/Rank";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
+import { calcularIdade } from "../utils/CalcularIdade";
 
 export default function RegistrarAluno() {
   const navigate = useNavigate();
@@ -25,13 +26,14 @@ export default function RegistrarAluno() {
   const [frequencia, setFrequencia] = useState<number>(0);
   const [responsavel, setResponsavel] = useState<string>("");
   const [contato, setContato] = useState<string>("");
-  const [matricula, setMatricula] = useState<number>();
+  const [matricula, setMatricula] = useState<string>();
   const [email, setEmail] = useState<string>("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
-  const [turmasVinculadas, setTurmasVinculadas] = useState<Turma[]>([]);
+  const [turmasVinculadas, setTurmasVinculadas] = useState<string[]>([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [age, setAge]= useState<number>(0);
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
@@ -48,6 +50,14 @@ export default function RegistrarAluno() {
     fetchTurmas();
   }, []);
 
+  useEffect(() => {
+
+    if (!dataNascimento) return;
+    const idade = calcularIdade(dataNascimento);
+    setAge(idade);
+
+  }, [dataNascimento]);
+
   //Função para adicionar turma selecionada na lista de turmas
   function adicionarTurmaSelecionada() {
     if (turmaSelecionada === "") return;
@@ -57,10 +67,10 @@ export default function RegistrarAluno() {
     if (!turma) return;
 
     // Evita duplicatas
-    if (turmasVinculadas.some((t) => t.id === turma.id)) return;
+    if (turmasVinculadas.some((t) => t === turma.id)) return;
 
     // Adiciona à lista
-    setTurmasVinculadas((prev) => [...prev, turma]);
+    setTurmasVinculadas((prev) => [...prev, turma.id]);
     setTurmaSelecionada("");
   }
 
@@ -84,14 +94,11 @@ export default function RegistrarAluno() {
     };
     const result = await cadastrarAluno(novoAluno);
 
-    if (result) {
+    if (result===true) {
       console.log("Aluno criado com sucesso");
       navigate("/alunos");
-    } else if (result !== false) {
-      setError("Aluno já existe.");
-      return;
     } else {
-      setError("Erro ao registrar aluno. Tente novamente.");
+      setError(result);
       return;
     }
   }
@@ -212,18 +219,34 @@ export default function RegistrarAluno() {
                   setFaixa(f);
                   setGrau(Number(g));
                 }}
-              >
-                {faixasEGraus.map((item, index) =>
-                  item.grau ? (
-                    <option key={index} value={`${item.faixa}-${item.grau}`}>
-                      {item.faixa} {item.grau}°
-                    </option>
-                  ) : (
-                    <option key={index} value={`${item.faixa}`}>
-                      {item.faixa}
-                    </option>
+              > 
+                {age >=16 ? (
+                    faixasEGrausMaior16.map((item, index) =>
+                    item.grau ? (
+                      <option key={index} value={`${item.faixa}-${item.grau}`}>
+                        {item.faixa} {item.grau}°
+                      </option>
+                      ) : (
+                        <option key={index} value={`${item.faixa}`}>
+                          {item.faixa}
+                        </option>
+                      )
+                    )
+                  ):(
+                    faixasEGrausMenor16.map((item, index) =>
+                      item.grau ? (
+                        <option key={index} value={`${item.faixa}-${item.grau}`}>
+                          {item.faixa} {item.grau}°
+                        </option>
+                      ) : (
+                        <option key={index} value={`${item.faixa}`}>
+                          {item.faixa}
+                        </option>
+                      )
+                    )
                   )
-                )}
+                }
+                
               </select>
             </div>
 
@@ -264,7 +287,7 @@ export default function RegistrarAluno() {
               <input
                 type="text"
                 className={inputBase}
-                onChange={(e) => setMatricula(Number(e.target.value))}
+                onChange={(e) => setMatricula(e.target.value)}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-export const faixasEGraus: { faixa: string; grau: number| null }[] = [
+export const faixasEGrausMenor16: { faixa: string; grau: number| null }[] = [
   { faixa: "BRANCA", grau: null },
   { faixa: "BRANCA", grau: 1 },
   { faixa: "BRANCA", grau: 2 },
@@ -76,7 +76,15 @@ export const faixasEGraus: { faixa: string; grau: number| null }[] = [
   { faixa: "VERDE/PRETA", grau: 2 },
   { faixa: "VERDE/PRETA", grau: 3 },
   { faixa: "VERDE/PRETA", grau: 4 },
+];
 
+export const faixasEGrausMaior16: { faixa: string; grau: number| null }[] = [
+  { faixa: "BRANCA", grau: null },
+  { faixa: "BRANCA", grau: 1 },
+  { faixa: "BRANCA", grau: 2 },
+  { faixa: "BRANCA", grau: 3 },
+  { faixa: "BRANCA", grau: 4 },
+ 
   { faixa: "AZUL", grau: null },
   { faixa: "AZUL", grau: 1 },
   { faixa: "AZUL", grau: 1 },
@@ -118,4 +126,5 @@ export const faixasEGraus: { faixa: string; grau: number| null }[] = [
   { faixa: "VERMELHA", grau: 7 },
   { faixa: "VERMELHA", grau: 8 },
   { faixa: "VERMELHA", grau: 9 },
+
 ];

@@ -1,10 +1,55 @@
 import { SquarePen } from "lucide-react";
 import martialIcon from "../../assets/presets/martial-arts.png";
+import { useAuth } from "../../hooks/Autenticao";
+import { useEffect, useState } from "react";
+import { pegaDadosUser } from "../../utils/getDadosUser";
+import { editaUser } from "../../utils/editarUser";
 
 export default function Perfil() {
+
+  const auth = useAuth();
+
+  //Variáveis de estado
+  const [nome, setNome] =  useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] =  useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+      const fetchUser = async () => {
+        const result = await pegaDadosUser();
+  
+        if (typeof result === 'string') {
+          setError("Erro ao carregar turmas.");
+        } else {
+          setNome(result.name)
+          setEmail(result.email)
+          setPassword(result.password)
+        }
+      };
+  
+      fetchUser();
+    }, []);
+
   const handleLogout = () => {
     console.log("Sessão encerrada");
+    auth.logout();
   };
+
+  const handleEdit = async () =>{
+    const result =  await editaUser({name:nome, password:password})
+
+    if(result===true){
+      console.log('Edição feita com sucesso.')
+      return;
+    } else if(typeof result=== 'string'){
+      console.log(result)
+      setError(result)
+    } else{
+      console.log('Nenhuma mudança.')
+      return;
+    }
+  }
 
   return (
     <div className="bg-[#F1F1F1] p-5 md:p-6 rounded-2xl shadow-sm border border-gray-300 text-[#1C1C1C] relative">

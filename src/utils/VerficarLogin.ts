@@ -24,22 +24,22 @@ export async function verificarLogin(email: string, senha:string){
 
         //Casos de status recebidos
         if(response.data.statusCode=== 200){
-            console.log("Login feito com sucesso")
+            console.log("Login feito com sucesso");
             localStorage.setItem("token", response.data.userId);
             localStorage.setItem("isLoggedIn", "true");
-            return true
+            return true;
         }
         else if(response.data.statusCode=== 409){
-            console.log('Senha incorreta')
-            return "Senha incorreta!"
+            console.log('Senha incorreta');
+            return "Senha incorreta!";
         }
         else if(response.data.statusCode=== 404){
-            console.log('Usuário não existe')
-            return "Usuário não existe!"
+            console.log('Usuário não existe');
+            return "Usuário não existe!";
         }
         else{
-            console.log('Erro interno no servidor')
-            return "Erro interno no servidor"
+            console.log('Erro interno no servidor');
+            return "Erro interno no servidor";
         }
 
     }   

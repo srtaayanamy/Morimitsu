@@ -23,24 +23,26 @@ export async function cadastrarTurma(nome: string, idadeMin: number, idadeMax: n
                 endTime: horarioFim
             })
         
-        
-        
         if(response.status=== 200){
             console.log('Aluno registrado com sucesso.')
             return true
-        } else if(response.status=== 404){
-            console.log('Usuário administrador ou professor nao foi encontrado. Se não for fornecido o ID a classe será atribuída a um usuário ADMIN aleatório')
-            return 'Usuário administrador ou professor nao foi encontrado.'
-        } else if(response.status=== 409){
-            console.log('Valor único violado. Provavelmente o nome da classe já existe.')
-            return 'Turma já existe.'
-        } else{
-            console.log('Erro interno no servidor.')
-            return 'Erro ao registrar turma. Tente novamente.'
         }
 
-    } catch(error){
-        console.log('Erro: ', error)
-        return false
+    } catch (error: any) {
+    
+        switch(error.response.status){
+            case 404:
+                console.log("Usuário administrador ou professor nao foi encontrado. Se não for fornecido o ID a classe será atribuída a um usuário ADMIN aleatório. Erro: ", error);
+                return "Usuário administrador ou professor nao foi encontrado.";
+            case 409:
+                console.log("Valor único violado. Provavelmente o nome da classe já existe. Erro: ", error);
+                return "Turma já existe.";
+            case 500:
+                console.log("Erro interno no servidor. Erro:", error);
+                return "Erro ao registrar turma. Tente novamente.";
+        }
+
+        console.log("Erro: ", error);
+        return "Erro ao carregar turma. Tente novamente!";
     }
 }
