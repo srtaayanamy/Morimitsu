@@ -4,52 +4,58 @@ import { useAuth } from "../../hooks/Autenticao";
 import { useEffect, useState } from "react";
 import { pegaDadosUser } from "../../utils/getDadosUser";
 import { editaUser } from "../../utils/editarUser";
+import { ErrorMessage } from "../../components/ErrorMessage"; // ← importe o componente de erro
 
 export default function Perfil() {
-
   const auth = useAuth();
 
-  //Variáveis de estado
-  const [nome, setNome] =  useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [email, setEmail] =  useState<string>('');
-  const [error, setError] = useState<string | null>(null);
+  // Estados
+  const [nome, setNome] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [error, setError] = useState<string | boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
 
+  // Carrega dados do usuário
   useEffect(() => {
-      const fetchUser = async () => {
-        const result = await pegaDadosUser();
-  
-        if (typeof result === 'string') {
-          setError("Erro ao carregar turmas.");
-        } else {
-          setNome(result.name)
-          setEmail(result.email)
-          setPassword(result.password)
-        }
-      };
-  
-      fetchUser();
-    }, []);
+    const fetchUser = async () => {
+      const result = await pegaDadosUser();
+
+      if (typeof result === "string") {
+        setError("Erro ao carregar dados do usuário.");
+      } else {
+        setNome(result.name);
+        setEmail(result.email);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleLogout = () => {
     console.log("Sessão encerrada");
     auth.logout();
   };
 
-  const handleEdit = async () =>{
-    const result =  await editaUser({name:nome, password:password})
+  const handleEdit = async () => {
+    setLoading(true);
+    setError(false);
+    setSuccess(false);
 
-    if(result===true){
-      console.log('Edição feita com sucesso.')
-      return;
-    } else if(typeof result=== 'string'){
-      console.log(result)
-      setError(result)
-    } else{
-      console.log('Nenhuma mudança.')
-      return;
+    const result = await editaUser({ name: nome });
+
+    if (result === true) {
+      console.log("Edição feita com sucesso.");
+      setSuccess(true);
+    } else if (typeof result === "string") {
+      console.log(result);
+      setError(result);
+    } else {
+      console.log("Nenhuma mudança detectada.");
     }
-  }
+
+    setLoading(false);
+  };
 
   return (
     <div className="bg-[#F1F1F1] p-5 md:p-6 rounded-2xl shadow-sm border border-gray-300 text-[#1C1C1C] relative">
@@ -57,15 +63,17 @@ export default function Perfil() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-[20px] font-semibold">Perfil do Usuário</h2>
         <button
-          className="text-[#1C1C1C] hover:text-[#8C0003] transition 7F1A17 cursor-pointer"
-          title="Editar perfil"
+          onClick={handleEdit}
+          className={`text-[#1C1C1C] hover:text-[#8C0003] transition cursor-pointer disabled:opacity-50`}
+          title="Salvar alterações"
+          disabled={loading}
         >
           <SquarePen size={28} />
         </button>
       </div>
 
       {/* Container principal */}
-      <div className="bg-[white] rounded-xl p-4 flex flex-col sm:flex-row gap-6 items-start">
+      <div className="bg-white rounded-xl p-4 flex flex-col sm:flex-row gap-6 items-start">
         {/* Avatar */}
         <div className="w-32 h-32 rounded-md bg-gray-200 flex items-center justify-center">
           <img
@@ -77,29 +85,34 @@ export default function Perfil() {
 
         {/* Dados do usuário */}
         <div className="flex-1 flex flex-col gap-4">
+          {/* Mensagem de erro */}
+          <ErrorMessage message={error} />
+
           {/* E-mail */}
           <div>
             <p className="text-[15px] font-medium mb-1">Acesso de Usuário:</p>
             <div className="bg-[#EFEFEF] rounded-md px-3 py-2 text-[14px] text-gray-800">
-              {/* usuario@exemplo.com */}
+              {email}
             </div>
           </div>
 
           {/* Nome */}
           <div>
             <p className="text-[15px] font-medium mb-1">Dono do acesso:</p>
-            <div className="bg-[#EFEFEF] rounded-md px-3 py-2 text-[14px] text-gray-800">
-              {/* Nome do Usuário */}
-            </div>
+            <input
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="bg-[#EFEFEF] rounded-md px-3 py-2 text-[14px] text-gray-800 w-full outline-none"
+            />
           </div>
 
-          {/* Senha */}
-          <div>
-            <p className="text-[15px] font-medium mb-1">Senha:</p>
-            <div className="bg-[#EFEFEF] rounded-md px-3 py-2 text-[14px] text-gray-800 tracking-wide">
-              {/* senha do usuário */}
+          {/* Mensagem de sucesso */}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded text-sm">
+              ✅ Perfil atualizado com sucesso!
             </div>
-          </div>
+          )}
         </div>
       </div>
 

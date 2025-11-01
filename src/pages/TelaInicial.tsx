@@ -77,7 +77,7 @@ export default function TelaInicial() {
 
         {/* SEÇÃO ANIVERSARIANTES DO MÊS */}
         <SectionCard title="Aniversariantes do mês">
-          {/* Conteúdos da seção na próxima entrega */}
+          
         </SectionCard>
 
         {/* SEÇÃO CALENDÁRIO */}

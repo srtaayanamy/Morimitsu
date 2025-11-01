@@ -5,12 +5,12 @@ import girlKid from "../assets/presets/girl_kid.png";
 import man from "../assets/presets/man.png";
 import woman from "../assets/presets/woman.png";
 import martialArts from "../assets/presets/martial-arts.png";
+import { calcularIdade } from "./CalcularIdade";
 
 export function getAvatarImage(sexo?: string, dataNascimento?: string) {
-  if (!sexo || sexo.trim() === "" || !dataNascimento) return martialArts;
+  if (!sexo || !dataNascimento) return martialArts;
 
-  const anoNascimento = new Date(dataNascimento).getFullYear();
-  const idade = new Date().getFullYear() - anoNascimento;
+  const idade = calcularIdade(dataNascimento);
   const s = sexo.toLowerCase();
 
   const isMale = s === "male" || s === "masculino" || s === "m";
@@ -30,4 +30,3 @@ export function getAvatarImage(sexo?: string, dataNascimento?: string) {
 
   return martialArts;
 }
-

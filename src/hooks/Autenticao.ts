@@ -15,7 +15,7 @@ export function useAuth() {
   function logout() {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
-    navigate('/Initial')
+    navigate('/')
   }
 
   return { isLoggedIn, token: token, logout };

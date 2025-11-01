@@ -46,13 +46,12 @@ export default function RegistrarTurma() {
       imagem
     );
 
-    if (result) {
+    if (result === true) {
       console.log("Cadastro feito");
       navigate("/inicio");
-    } else if (result !== false) {
+    } else if (typeof result === "string") {
       console.log("Deu errado");
       setErro(result);
-      return;
     } else {
       setErro("Preencha todos os campos obrigatórios.");
     }

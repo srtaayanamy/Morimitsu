@@ -112,11 +112,53 @@ export default function VisualizarAluno() {
                 </p>
               </div>
             </div>
-            {/* Combobox futura para turmas */}
-            <InfoField
-              label="Turmas que participa:"
-              value={aluno.turmas?.join(", ")}
-            />
+            {/* Turmas que participa */}
+            <div className="md:col-span-3">
+              <p className="font-semibold text-sm md:text-base mb-1">
+                Turmas que participa:
+              </p>
+
+              <div className="relative bg-[#F5F5F5] rounded-xl">
+                <details className="group rounded-xl">
+                  <summary className="flex justify-between items-center cursor-pointer px-6 py-4 select-none font-medium text-[#1E1E1E] list-none">
+                    <span>
+                      {aluno.turmas && aluno.turmas.length > 0
+                        ? `${aluno.turmas.length} turma${
+                            aluno.turmas.length > 1 ? "s" : ""
+                          }`
+                        : "Nenhuma turma cadastrada"}
+                    </span>
+                    <svg
+                      className="w-5 h-5 transition-transform duration-300 group-open:rotate-180"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </summary>
+
+                  {/* {aluno.turmas && aluno.turmas.length > 0 && (
+                    <ul className="px-8 pb-4 space-y-2 text-[#1E1E1E]">
+                      {aluno.turmas.map((turma, index) => (
+                        <li
+                          key={index}
+                          className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200"
+                        >
+                          {turma}
+                        </li>
+                      ))}
+                    </ul>
+                  )} */}
+                </details>
+              </div>
+            </div>
+
             {/* Sexo será adicionado depois */}
             <InfoField label="E-mail:" value={aluno.email} />
           </div>
