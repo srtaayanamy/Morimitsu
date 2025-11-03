@@ -23,7 +23,8 @@ export async function listarAlunos() {
                     apelido: s.nickname || "",
                     email: s.email || "",
                     faixa: s.rank || "",
-                    grau: s.rating
+                    grau: s.rating,
+                    dataNascimento: s.birth_date
                 };
             });
             console.log(alunos);

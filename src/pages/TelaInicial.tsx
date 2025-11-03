@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { listarTurmas } from "../hooks/ListaTurmas";
 import type { Turma } from "../types/Turma";
 import TurmaCard from "../components/TurmaCard";
+import BirthdayCard from "../components/BirthdayCard";
 
 export default function TelaInicial() {
   //Variáveis de estado
@@ -77,7 +78,10 @@ export default function TelaInicial() {
 
         {/* SEÇÃO ANIVERSARIANTES DO MÊS */}
         <SectionCard title="Aniversariantes do mês">
-          
+          <div className="flex gap-2 flex-wrap">
+            <BirthdayCard nome="Anna Júlia" data="10/09/2025" sexo="F" />
+            <BirthdayCard nome="Isaque" data="10/09/2025" sexo="M" />
+          </div>
         </SectionCard>
 
         {/* SEÇÃO CALENDÁRIO */}

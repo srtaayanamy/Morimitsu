@@ -1,5 +1,3 @@
-
-
 //Interface de aluno
 export interface Aluno{
     id?: string;
