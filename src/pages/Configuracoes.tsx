@@ -45,7 +45,7 @@ export default function Configuracoes() {
               return (
                 <Link key={item.path} to={item.path}>
                   <button
-                    className={`w-full transition text-sm font-medium px-4 py-2 rounded-lg text-left shadow-sm
+                    className={`w-full transition cursor-pointer text-sm font-medium px-4 py-2 rounded-lg text-left shadow-sm
 ${active ? "bg-[#8C0003] text-white" : "bg-[#EDEDED] hover:bg-[#dcdcdc]"}`}
                   >
                     {item.label}

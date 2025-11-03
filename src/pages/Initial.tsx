@@ -116,7 +116,7 @@ export default function Login() {
             <button
               type="button"
               onClick={handleLogin}
-              className="mt-1 mx-auto w-44 h-11 md:w-60 md:h-14 bg-[#911418] text-white rounded-lg font-medium flex items-center justify-center hover:bg-[#7a1014] transition text-base shadow-sm"
+              className="mt-1 mx-auto w-44 h-11 md:w-60 md:h-14 bg-[#911418] text-white rounded-lg font-medium flex items-center justify-center hover:bg-[#7a1014] transition text-base shadow-sm cursor-pointer"
             >
               Entrar
             </button>
