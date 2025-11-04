@@ -55,7 +55,7 @@ export async function filtrarAniversariantes() {
       const DataNascimento = new Date(aluno.dataNascimento);
       const DataAtual = new Date();
 
-      if (DataNascimento.getMonth() === DataAtual.getMonth()){
+      if ((DataNascimento.getMonth() === DataAtual.getMonth()) && (DataNascimento.getDate() >= DataAtual.getDate())){
         aniversariantes.push(aluno);
       }
 
