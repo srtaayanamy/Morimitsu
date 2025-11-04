@@ -19,11 +19,11 @@ export default function RegistrarTurma() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [inicio, setInicio] = useState("00:00h");
   const [fim, setFim] = useState("00:00h");
-  const [imagem, setImagem] = useState("");
+  const [imagem, setImagem] = useState("Morimitsu/src/assets/presets/capaturma8.png");
   const [nome, setNome] = useState("");
   const [idadeMin, setIdadeMin] = useState(0);
-  const [idadeMax, setIdadeMax] = useState(0);
-  const [error, setErro] = useState<string | boolean>(""); //pq em boolean?
+  const [idadeMax, setIdadeMax] = useState(120);
+  const [error, setErro] = useState<string | boolean>("");
 
   //Define a função de navegação
   const navigate = useNavigate();

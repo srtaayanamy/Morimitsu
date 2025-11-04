@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { type Turma } from "../types/Turma";
 import { type Aluno } from "../types/Aluno";
 import { cadastrarAluno } from "../utils/CadastrarAluno";
-import { listarTurmas } from "../hooks/ListaTurmas";
+import { FiltrarTurmaPorIdade } from "../hooks/ListaTurmas";
 import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../types/Rank";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
@@ -21,7 +21,7 @@ export default function RegistrarAluno() {
   const [telefone, setTelefone] = useState<string>("");
   const [sexo, setSexo] = useState<string>("");
   const [CPF, setCPF] = useState<string>("");
-  const [faixa, setFaixa] = useState<string>("");
+  const [faixa, setFaixa] = useState<string>("BRANCA");
   const [grau, setGrau] = useState<number>();
   const [frequencia, setFrequencia] = useState<number>(0);
   const [responsavel, setResponsavel] = useState<string>("");
@@ -29,7 +29,7 @@ export default function RegistrarAluno() {
   const [matricula, setMatricula] = useState<string>();
   const [email, setEmail] = useState<string>("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
-  const [turmasVinculadas, setTurmasVinculadas] = useState<string[]>([]);
+  const [turmasVinculadas, setTurmasVinculadas] = useState<Turma[]>([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -38,17 +38,18 @@ export default function RegistrarAluno() {
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
     const fetchTurmas = async () => {
-      const result = await listarTurmas();
+      if (!age) return;
+      const result = await FiltrarTurmaPorIdade(age);
 
-      if (result === false) {
-        setError("Erro ao carregar turmas.");
+      if (typeof result === 'string') {
+        setError(result);
       } else {
         setTurmas(result);
       }
     };
 
     fetchTurmas();
-  }, []);
+  }, [age]);
 
   useEffect(() => {
 
@@ -67,10 +68,10 @@ export default function RegistrarAluno() {
     if (!turma) return;
 
     // Evita duplicatas
-    if (turmasVinculadas.some((t) => t === turma.id)) return;
+    if (turmasVinculadas.some((t) => t.id === turma.id)) return;
 
     // Adiciona à lista
-    setTurmasVinculadas((prev) => [...prev, turma.id]);
+    setTurmasVinculadas((prev) => [...prev, turma]);
     setTurmaSelecionada("");
   }
 

@@ -20,28 +20,37 @@ export async function editaUser(user?: any) {
     // Envia os dados diretamente (sem aninhar)
     const response = await api.put("/user", dadosUserFiltrados);
 
-    if (response.status === 200 || response.status === 201) {
+    if (response.status === 201) {
       console.log("Usuário editado com sucesso.");
-      return true;
     }
-
-    console.log("Falha ao editar usuário. Status:", response.status);
-    return false;
+    
+    return true;
+    
   } catch (error: any) {
+    //Tratamento de erros
     if (error.response) {
+
       switch (error.response.status) {
         case 404:
           console.log("Usuário não encontrado.", error);
           return "Usuário não encontrado.";
         case 500:
-          console.log("Erro interno no servidor.", error);
-          return "Erro interno no servidor. Tente novamente.";
+          console.log("Erro interno no servidor. Erro:", error);
+          return "Erro ao tentar editar do aluno. Tente novamente!";
         default:
-          console.log("Erro inesperado:", error);
-          return "Erro ao editar usuário.";
+          console.log("Erro desconhecido da API:", error.response.status);
+          return "Erro ao tentar editar do aluno. Tente novamente!";
       }
+
+    } 
+    //Verifica se a requisição foi feita, mas não houve resposta
+    if (error.request) {
+      console.warn("Servidor não respondeu:", error.request);
+      return "Verifique sua conexão.";
     }
-    console.log("Erro de rede ou requisição:", error);
-    return "Erro ao conectar com o servidor.";
+
+    // Qualquer outro erro
+    console.log("Erro interno no servidor: ", error);
+    return "Erro ao tentar editar do aluno. Tente novamente.";
   }
 }

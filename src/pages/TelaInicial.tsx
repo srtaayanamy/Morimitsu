@@ -7,12 +7,16 @@ import { listarTurmas } from "../hooks/ListaTurmas";
 import type { Turma } from "../types/Turma";
 import TurmaCard from "../components/TurmaCard";
 import BirthdayCard from "../components/BirthdayCard";
+import { filtrarAniversariantes } from "../hooks/ListaAlunos";
+import type { Aluno } from "../types/Aluno";
 
 export default function TelaInicial() {
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); 
+  const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([])
+
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
@@ -30,6 +34,24 @@ export default function TelaInicial() {
     };
 
     fetchTurmas();
+  }, []);
+
+  //Pega os aniversariantes do mês assim que a tela se inicia
+  useEffect(() => {
+    const fetchAniversariantes = async () => {
+      setLoading(true);
+      const result = await filtrarAniversariantes();
+
+      if (result === undefined) {
+        setError("Erro ao carregar aniversariantes.");
+      } else {
+        SetAniversariantes(result);
+      }
+      
+      setLoading(false);
+    };
+
+    fetchAniversariantes();
   }, []);
 
   return (

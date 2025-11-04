@@ -25,24 +25,36 @@ export async function cadastrarTurma(nome: string, idadeMin: number, idadeMax: n
         
         if(response.status=== 200){
             console.log('Aluno registrado com sucesso.')
-            return true
         }
 
+        return true
     } catch (error: any) {
-    
-        switch(error.response.status){
-            case 404:
-                console.log("Usuário administrador ou professor nao foi encontrado. Se não for fornecido o ID a classe será atribuída a um usuário ADMIN aleatório. Erro: ", error);
-                return "Usuário administrador ou professor nao foi encontrado.";
-            case 409:
-                console.log("Valor único violado. Provavelmente o nome da classe já existe. Erro: ", error);
-                return "Turma já existe.";
-            case 500:
-                console.log("Erro interno no servidor. Erro:", error);
-                return "Erro ao registrar turma. Tente novamente.";
-        }
+        if (error.response) {
+            switch(error.response.status){
+                case 404:
+                    console.log("Usuário administrador ou professor nao foi encontrado. Se não for fornecido o ID a classe será atribuída a um usuário ADMIN aleatório. Erro: ", error);
+                    return "Usuário administrador ou professor nao foi encontrado.";
+                case 409:
+                    console.log("Valor único violado. Provavelmente o nome da classe já existe. Erro: ", error);
+                    return "Turma já existe.";
+                case 500:
+                    console.log("Erro interno no servidor. Erro:", error);
+                    return "Erro ao carregar os dados do aluno. Tente novamente!";
+                default:
+                    console.log("Erro desconhecido da API:", error.response.status);
+                    return "Erro ao carregar os dados do aluno. Tente novamente!";
+            }
+        }  
 
+        //Verifica se a requisição foi feita, mas não houve resposta
+        if (error.request) {
+            console.warn("Servidor não respondeu:", error.request);
+            return "Verifique sua conexão.";
+        }
+        
+        //Qualquer outro erro
         console.log("Erro: ", error);
-        return "Erro ao carregar turma. Tente novamente!";
+        return "Erro ao registrar turma. Tente novamente!";
+        
     }
 }

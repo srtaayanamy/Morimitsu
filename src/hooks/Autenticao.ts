@@ -14,6 +14,7 @@ export function useAuth() {
 
   function logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('role')
     setIsLoggedIn(false);
     navigate('/')
   }

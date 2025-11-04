@@ -20,11 +20,10 @@ export async function listarAlunos() {
                 return {
                     id: s.id,
                     nome: s.personal?.name || "",
-                    apelido: s.nickname || "",
+                    apelido: s.personal.nickname || "",
                     email: s.email || "",
-                    faixa: s.rank || "",
-                    grau: s.rating,
-                    dataNascimento: s.birth_date
+                    sexo: s.personal.gender,
+                    dataNascimento: s.personal.birthDate
                 };
             });
             console.log(alunos);
@@ -36,4 +35,32 @@ export async function listarAlunos() {
         console.log("Erro: ", error);
         return false;
     }
+}
+
+export async function filtrarAniversariantes() {
+
+    const alunos = await listarAlunos();
+    //Verifica se o retorno de alunos é diferente do tipo aluno
+    if( alunos === false ){
+        return;
+    } else if (alunos === undefined){
+        return;
+    };
+    //Declara vairável do tipo aluno que guarda os aniversariantes do mês
+    const aniversariantes : Aluno[] = [];
+
+    //Estrutura de repetição que indentifica se o aluno faz aniversário no mês atual
+    for (const aluno of alunos) {
+    
+      const DataNascimento = new Date(aluno.dataNascimento);
+      const DataAtual = new Date();
+
+      if (DataNascimento.getMonth() === DataAtual.getMonth()){
+        aniversariantes.push(aluno);
+      }
+
+    };
+    
+    console.log('Aniversariantes: ',aniversariantes);
+    return aniversariantes;
 }

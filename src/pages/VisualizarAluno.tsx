@@ -143,18 +143,18 @@ export default function VisualizarAluno() {
                     </svg>
                   </summary>
 
-                  {/* {aluno.turmas && aluno.turmas.length > 0 && (
+                  {aluno.turmas && aluno.turmas.length > 0 && (
                     <ul className="px-8 pb-4 space-y-2 text-[#1E1E1E]">
                       {aluno.turmas.map((turma, index) => (
                         <li
                           key={index}
                           className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200"
                         >
-                          {turma}
+                          {turma.nome}
                         </li>
                       ))}
                     </ul>
-                  )} */}
+                  )}
                 </details>
               </div>
             </div>

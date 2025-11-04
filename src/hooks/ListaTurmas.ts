@@ -30,3 +30,23 @@ export async function listarTurmas(): Promise<Turma[] | false> {
     return false;
   }
 }
+
+export async function FiltrarTurmaPorIdade(age: number ) {
+  //Variáveis
+  const turmas = await listarTurmas();
+  const turmaFiltradas: Turma[]= [];
+
+  if(turmas===false){
+    return 'Erro ao carregar turmas. Tente novamente.';
+  } 
+  
+  for(const turma of turmas){
+    //Verifica se o aluno stende aos requisitos de faixa etária
+    if((turma.idadeMax>=age)&&(age>=turma.idadeMin)){
+      turmaFiltradas.push(turma)
+    }
+  }
+  
+
+  return turmaFiltradas;
+}
