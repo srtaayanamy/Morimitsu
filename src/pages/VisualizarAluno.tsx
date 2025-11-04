@@ -6,26 +6,44 @@ import { ProgressBar } from "../components/ProgressBar";
 import type { Aluno } from "../types/Aluno";
 import { pegaDadosAluno } from "../utils/getDadosAluno";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // para pegar o id da URL
+import { useParams } from "react-router-dom";
 
 export default function VisualizarAluno() {
-  const { id } = useParams<{ id: string }>(); // pega o ID da URL
+  const { id } = useParams<{ id: string }>();
   const [erro, setErro] = useState("");
   const [aluno, setAluno] = useState<Aluno>();
+  const [alunoOriginal, setAlunoOriginal] = useState<Aluno>();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     async function fetchAluno() {
-      if (!id) return; // evita buscar se não tiver ID
+      if (!id) return;
       const result = await pegaDadosAluno(id);
-      console.log("Resposta da API:", result);
       if (typeof result === "string") {
         setErro(result);
       } else {
         setAluno(result);
+        setAlunoOriginal(result); // guarda original
       }
     }
-    fetchAluno(); // executa a função
+    fetchAluno();
   }, [id]);
+
+  const handleChange = (field: keyof Aluno, value: string) => {
+    if (!aluno) return;
+    setAluno({ ...aluno, [field]: value });
+  };
+
+  const handleSave = async () => {
+    console.log("Salvar alterações:", aluno);
+    // Aqui você pode implementar o PUT / PATCH para salvar as mudanças.
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setAluno(alunoOriginal); // restaura original
+    setIsEditing(false);
+  };
 
   if (erro) {
     return (
@@ -53,27 +71,47 @@ export default function VisualizarAluno() {
           <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
             {aluno.nome} {aluno.apelido ? `(${aluno.apelido})` : ""}
           </h1>
-          <button className="bg-transparent hover:opacity-80 transition">
-            <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
-          </button>
+
+          {!isEditing ? (
+            // Modo de visualização: botão de editar
+            <button
+              onClick={() => setIsEditing(true)}
+              className="bg-transparent hover:opacity-80 transition cursor-pointer"
+            >
+              <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
+            </button>
+          ) : (
+            // Modo de edição: botões Cancelar e Salvar
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-[#333434] text-white font-medium rounded-md hover:opacity-90 transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-[#7F1A17] text-white font-medium rounded-md hover:opacity-90 transition cursor-pointer"
+              >
+                Salvar alterações
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Card principal */}
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            {/* Avatar */}
             <Avatar sexo={aluno.sexo} dataNascimento={aluno.dataNascimento} />
 
-            {/* Faixa e progresso */}
             <div className="flex-1 space-y-4 w-full">
-              <div>
-                <p className="font-semibold text-sm md:text-base">
-                  Faixa / grau:
-                </p>
-                <p className="bg-[#F5F5F5] rounded-xl p-6 mt-1">
-                  {aluno.faixa} / {aluno.grau}
-                </p>
-              </div>
+              <InfoField
+                label="Faixa / grau:"
+                value={`${aluno.faixa || ""} / ${aluno.grau || ""}`}
+                editable={isEditing}
+                onChange={(val) => handleChange("faixa", val)}
+              />
 
               <div>
                 <p className="font-semibold text-sm md:text-base">
@@ -93,32 +131,59 @@ export default function VisualizarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <InfoField
               label="Data de Nascimento:"
-              value={aluno.dataNascimento}
+              value={aluno.dataNascimento || ""}
+              editable={isEditing}
+              onChange={(val) => handleChange("dataNascimento", val)}
             />
 
-            <InfoField label="Telefone:" value={aluno.telefone} />
-            <InfoField label="CPF:" value={aluno.CPF} />
-            <InfoField label="Matrícula (opcional):" value={aluno.matricula} />
+            <InfoField
+              label="Telefone:"
+              value={aluno.telefone || ""}
+              editable={isEditing}
+              onChange={(val) => handleChange("telefone", val)}
+            />
+
+            <InfoField
+              label="CPF:"
+              value={aluno.CPF || ""}
+              editable={isEditing}
+              onChange={(val) => handleChange("CPF", val)}
+            />
+
+            <InfoField
+              label="Matrícula (opcional):"
+              value={aluno.matricula || ""}
+              editable={isEditing}
+              onChange={(val) => handleChange("matricula", val)}
+            />
+
             <div className="md:col-span-2">
               <p className="font-semibold text-sm md:text-base">
                 Responsável / Contato emergencial:
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
-                <p className="bg-[#EFEFEF] rounded-xl p-6">
-                  {aluno.Responsavel}
-                </p>
-                <p className="bg-[#EFEFEF] rounded-xl p-6">
-                  {aluno.telefoneResponsavel}
-                </p>
+                <InfoField
+                  label=""
+                  value={aluno.Responsavel || ""}
+                  editable={isEditing}
+                  onChange={(val) => handleChange("Responsavel", val)}
+                />
+                <InfoField
+                  label=""
+                  value={aluno.telefoneResponsavel || ""}
+                  editable={isEditing}
+                  onChange={(val) => handleChange("telefoneResponsavel", val)}
+                />
               </div>
             </div>
+
             {/* Turmas que participa */}
             <div className="md:col-span-3">
               <p className="font-semibold text-sm md:text-base mb-1">
                 Turmas que participa:
               </p>
 
-              <div className="relative bg-[#F5F5F5] rounded-xl">
+              <div className="relative bg-[#EFEFEF] rounded-xl">
                 <details className="group rounded-xl">
                   <summary className="flex justify-between items-center cursor-pointer px-6 py-4 select-none font-medium text-[#1E1E1E] list-none">
                     <span>
@@ -148,7 +213,7 @@ export default function VisualizarAluno() {
                       {aluno.turmas.map((turma, index) => (
                         <li
                           key={index}
-                          className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200"
+                          className="bg-[#EFEFEF] font-medium rounded-lg px-2 py-2 shadow-[#F1F1F1]"
                         >
                           {turma.nome}
                         </li>
@@ -159,14 +224,21 @@ export default function VisualizarAluno() {
               </div>
             </div>
 
-            {/* Sexo será adicionado depois */}
-            <InfoField label="E-mail:" value={aluno.email} />
+            {/* Campo final */}
+            <InfoField
+              label="E-mail:"
+              value={aluno.email || ""}
+              editable={isEditing}
+              onChange={(val) => handleChange("email", val)}
+            />
           </div>
 
           <InfoField
             label="Observações do aluno:"
-            value={aluno.observacao}
+            value={aluno.observacao || ""}
+            editable={isEditing}
             multiline
+            onChange={(val) => handleChange("observacao", val)}
           />
         </div>
       </main>
