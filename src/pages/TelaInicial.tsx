@@ -14,9 +14,8 @@ export default function TelaInicial() {
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); 
-  const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([])
-
+  const [error, setError] = useState<string | null>(null);
+  const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([]);
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
@@ -47,7 +46,7 @@ export default function TelaInicial() {
       } else {
         SetAniversariantes(result);
       }
-      
+
       setLoading(false);
     };
 
@@ -101,8 +100,37 @@ export default function TelaInicial() {
         {/* SEÇÃO ANIVERSARIANTES DO MÊS */}
         <SectionCard title="Aniversariantes do mês">
           <div className="flex gap-2 flex-wrap">
-            <BirthdayCard nome="Anna Júlia" data="10/09/2025" sexo="F" />
-            <BirthdayCard nome="Isaque" data="10/09/2025" sexo="M" />
+            {loading && (
+              <div className="flex items-center justify-center w-full h-40">
+                <Loader2 className="w-8 h-8 text-gray-600 animate-spin" />
+              </div>
+            )}
+
+            {error && <p className="text-red-500">{error}</p>}
+
+            {!loading && aniversariantes.length === 0 && (
+              <p className="text-gray-600 text-sm">
+                Nenhum aniversariante no restante do mês 🎂
+              </p>
+            )}
+
+            {!loading &&
+              aniversariantes.map((aluno) => (
+                <BirthdayCard
+                  key={aluno.id}
+                  nome={aluno.nome}
+                  data={new Date(aluno.dataNascimento).toLocaleDateString(
+                    "pt-BR",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                    }
+                  )}
+                  sexo={
+                    aluno.sexo === "M" || aluno.sexo === "F" ? aluno.sexo : "M"
+                  } // <-- força tipo válido
+                />
+              ))}
           </div>
         </SectionCard>
 
