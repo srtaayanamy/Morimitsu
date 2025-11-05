@@ -7,6 +7,7 @@ import type { Aluno } from "../types/Aluno";
 import { pegaDadosAluno } from "../utils/getDadosAluno";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { editarAluno } from "../utils/editarAluno";
 
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
@@ -35,9 +36,37 @@ export default function VisualizarAluno() {
   };
 
   const handleSave = async () => {
-    console.log("Salvar alterações:", aluno);
-    // Aqui você pode implementar o PUT / PATCH para salvar as mudanças.
-    setIsEditing(false);
+    if (!id || !aluno) return;
+
+    // separa os blocos que sua API espera
+    const dadosPersonal = {
+      nome: aluno.nome,
+      apelido: aluno.apelido,
+      sexo: aluno.sexo,
+      dataNascimento: aluno.dataNascimento,
+      telefone: aluno.telefone,
+      CPF: aluno.CPF,
+      email: aluno.email,
+      observacao: aluno.observacao,
+    };
+
+    const dadosForm = {
+      faixa: aluno.faixa,
+      grau: aluno.grau,
+      matricula: aluno.matricula,
+      Responsavel: aluno.Responsavel,
+      telefoneResponsavel: aluno.telefoneResponsavel,
+    };
+
+    const result = await editarAluno(id, dadosPersonal, dadosForm);
+
+    if (result === true) {
+      alert("Alterações salvas com sucesso!");
+      setAlunoOriginal(aluno); // atualiza o original
+      setIsEditing(false);
+    } else {
+      alert(result || "Erro ao atualizar aluno.");
+    }
   };
 
   const handleCancel = () => {
