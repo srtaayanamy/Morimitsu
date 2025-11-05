@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
+import BeltTag from "../components/BeltTag";
 
 export default function Alunos() {
   //Variáveis de estado
@@ -89,7 +90,7 @@ export default function Alunos() {
                         </td>
                         <td className="py-3 px-6">{aluno.apelido}</td>
                         <td className="py-3 px-6 rounded-r-xl">
-                          {aluno.faixa} {aluno.grau}
+                          <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
                         </td>
                       </tr>
                     ))}
