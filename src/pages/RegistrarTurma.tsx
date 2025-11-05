@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Clock, Image as ImageIcon } from "lucide-react";
+import { Plus, Clock} from "lucide-react";
 import Header from "../components/Header";
 import ImageOverlay from "../components/ImageOverlay";
 import ClockOverlay from "../components/ClockOverlay";
@@ -19,7 +19,7 @@ export default function RegistrarTurma() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [inicio, setInicio] = useState("00:00h");
   const [fim, setFim] = useState("00:00h");
-  const [imagem, setImagem] = useState("Morimitsu/src/assets/presets/capaturma8.png");
+  const [imagem, setImagem] = useState("/src/assets/presets/capaturma8.png");
   const [nome, setNome] = useState("");
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(120);
@@ -128,7 +128,11 @@ export default function RegistrarTurma() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <ImageIcon className="w-7 h-7 md:w-9 md:h-9 text-gray-600" />
+                <img
+                  src={`/src/assets/presets/capaturma8.png`}
+                  alt="Capa da turma"
+                  className="w-full h-full object-cover"
+                />
               )}
             </button>
           </div>

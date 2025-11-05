@@ -27,13 +27,30 @@ export async function editaTurma(id:string, dados: any) {
         }
 
     } catch(error:any){
-        //Trata o erro retornado da API
-        if(error.response.status===404){
-            console.log('Aluno não encontrado.')
-            return 'Aluno não encontrado.';
-        } else{
-            console.log('Erro interno no servidor.')
-            return 'Aluno não encontrado.';
+        //Tratamento de erros
+        if (error.response) {
+            switch(error.response.status){
+                case 404:
+                    console.log("Turma não encontrada. Erro: ", error);
+                    return "Turma não encontrada.";
+                case 500:
+                    console.log("Erro interno no servidor. Erro:", error);
+                    return "Erro ao editar a turma. Tente novamente!";
+                default:
+                    console.log("Erro desconhecido da API:", error.response.status);
+                    return "Erro ao editar a turma. Tente novamente!";
+            }
+        }  
+
+        //Verifica se a requisição foi feita, mas não houve resposta
+        if (error.request) {
+            console.log("Servidor não respondeu:", error.request);
+            return "Verifique sua conexão.";
         }
+        
+        //Qualquer outro erro
+        console.log("Erro: ", error);
+        return "Erro ao editar a turma. Tente novamente!";
+        
     }
 }

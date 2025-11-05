@@ -23,17 +23,34 @@ export async function editarAluno(id:string, personal:any, form: any) {
         }
         
         const reponsePersonal = await api.put(`/student/${id}/personal`, dadosPersonalFiltrados)
-        const reponseForm= await api.put(`/student/${id}/form`,{dadosPersonalFiltrados})
+        const reponseForm= await api.put(`/student/${id}/form`,dadosPersonalFiltrados)
 
-        if(reponseForm.status===200 && reponsePersonal.status===200){
-            return true
-        }
-
+        return true;
     } catch(error:any){
-        if(error.response?.status===404){
-            return 'Aluno não encontrado.';
-        } else{
-            return 'Erro interno no servidor.';
+        //Tratamento de erros
+        if (error.response) {
+            switch(error.response.status){
+                case 404:
+                    console.log("Aluno não encontrado. Erro: ", error);
+                    return "Aluno não encontrado.";
+                case 500:
+                    console.log("Erro interno no servidor. Erro:", error);
+                    return "Erro ao editar o aluno. Tente novamente!";
+                default:
+                    console.log("Erro desconhecido da API:", error.response.status);
+                    return "Erro ao editar o aluno. Tente novamente!";
+            }
+        }  
+
+        //Verifica se a requisição foi feita, mas não houve resposta
+        if (error.request) {
+            console.log("Servidor não respondeu:", error.request);
+            return "Verifique sua conexão.";
         }
+        
+        //Qualquer outro erro
+        console.log("Erro: ", error);
+        return "Erro ao editar o aluno. Tente novamente!";
+        
     }
 }

@@ -35,7 +35,7 @@ export async function pegaDadosUser() {
 
         //Verifica se a requisição foi feita, mas não houve resposta
         if (error.request) {
-            console.warn("Servidor não respondeu:", error.request);
+            console.log("Servidor não respondeu:", error.request);
             return "Servidor não respondeu. Verifique sua conexão.";
         }
 

@@ -17,18 +17,34 @@ export async function enturmaAluno(idAluno:string, idTurma: string) {
         }
 
     } catch(error: any){
-        //Trata o erro retornado da API
-        switch(error.response.status){
-            case 404:
-                console.log(error)
-                return 'Aluno ou classe não encontrados.'
-            case 405:
-                console.log(error)
-                return 'A idade do aluno não se enquadra na faixa etária da turma.'
-            case 500:
-                console.log('Erro interno no servidor: ', error)
-                return 'Erro ao tentar enturma o aluno na turma. Tente novamente.'
+        //Tratamento de erros
+        if (error.response) {
+            switch(error.response.status){
+                case 404:
+                    console.log("Turma ou aluno não encontrado. Erro: ", error);
+                    return "Turma ou aluno não encontrado.";
+                case 405:
+                    console.log("O aluno é muito jovem para entrar na turma. Erro: ", error);
+                    return "O aluno é muito jovem para entrar na turma.";    
+                case 500:
+                    console.log("Erro interno no servidor. Erro:", error);
+                    return "Erro ao enturmar aluno. Tente novamente!";
+                default:
+                    console.log("Erro desconhecido da API:", error.response.status);
+                    return "Erro ao enturmar aluno. Tente novamente!";
+            }
+        }  
+
+        //Verifica se a requisição foi feita, mas não houve resposta
+        if (error.request) {
+            console.log("Servidor não respondeu:", error.request);
+            return "Verifique sua conexão.";
         }
+        
+        //Qualquer outro erro
+        console.log("Erro: ", error);
+        return "Erro ao enturmar aluno. Tente novamente!";
+        
     }
 
 }

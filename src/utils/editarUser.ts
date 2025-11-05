@@ -45,7 +45,7 @@ export async function editaUser(user?: any) {
     } 
     //Verifica se a requisição foi feita, mas não houve resposta
     if (error.request) {
-      console.warn("Servidor não respondeu:", error.request);
+      console.log("Servidor não respondeu:", error.request);
       return "Verifique sua conexão.";
     }
 
