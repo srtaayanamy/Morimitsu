@@ -127,7 +127,7 @@ export default function TelaInicial() {
                     }
                   )}
                   sexo={
-                    aluno.sexo === "M" || aluno.sexo === "F" ? aluno.sexo : "M"
+                    aluno.sexo === "male" || aluno.sexo === "female" ? aluno.sexo : "male"
                   } // <-- força tipo válido
                 />
               ))}
