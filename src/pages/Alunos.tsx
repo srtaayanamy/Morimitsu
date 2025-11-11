@@ -5,37 +5,37 @@ import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 import BeltTag from "../components/BeltTag";
 
+// Função de aparecer quem pode promover
+const podePromover = (faixa: string): boolean => {
+  return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
+};
+
 export default function Alunos() {
-  //Variáveis de estado
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
-    const fetchTurmas = async () => {
+    const fetchAlunos = async () => {
       setLoading(true);
       const result = await listarAlunos();
 
       if (result === false) {
-        setError("Erro ao carregar turmas.");
+        setError("Erro ao carregar alunos.");
       } else {
         setAlunos(result || []);
       }
-
       setLoading(false);
     };
 
-    fetchTurmas();
+    fetchAlunos();
   }, []);
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
-      {/* HEADER - Menu */}
       <Header />
 
       <main className="flex-1 p-4 md:p-8 space-y-5">
-        {/* Cabeçalho da página */}
         <div className="bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm">
           <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#1E1E1E]">
             Alunos matriculados:
@@ -51,7 +51,6 @@ export default function Alunos() {
           </Link>
         </div>
 
-        {/* Conteúdo */}
         {loading && <p>Carregando alunos...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && (
@@ -69,31 +68,60 @@ export default function Alunos() {
                       <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
                         Apelido
                       </th>
-                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                      <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
                         Faixa atual
+                      </th>
+                      <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
+                        Promover a professor
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {alunos.map((aluno) => (
-                      <tr
-                        key={aluno.id}
-                        className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
-                      >
-                        <td className="py-3 px-6 rounded-l-xl">
-                          <Link
-                            to={`/visualizar-aluno/${aluno.id}`}
-                            className="text-[#000000] hover:underline font-medium"
-                          >
-                            {aluno.nome}
-                          </Link>
-                        </td>
-                        <td className="py-3 px-6">{aluno.apelido}</td>
-                        <td className="py-3 px-6 rounded-r-xl">
-                          <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
-                        </td>
-                      </tr>
-                    ))}
+                    {alunos.map((aluno) => {
+                      const promover = podePromover(aluno.faixa);
+
+                      return (
+                        <tr
+                          key={aluno.id}
+                          className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
+                        >
+                          <td className="py-3 px-6">
+                            <Link
+                              to={`/visualizar-aluno/${aluno.id}`}
+                              className="text-[#000000] hover:underline font-medium"
+                            >
+                              {aluno.nome}
+                            </Link>
+                          </td>
+                          <td className="py-3 px-6">{aluno.apelido || "—"}</td>
+                          <td className="py-3 px-6 text-center">
+                            <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                          </td>
+                          <td className="py-3 px-6 rounded-r-xl">
+                            {promover ? (
+                              <div className="flex items-center gap-3">
+                                <button
+                                  type="button"
+                                  className="bg-[#1D1E1E] w-full text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800 transition cursor-pointer"
+                                  onClick={() => {
+                                    alert(
+                                      `Promover ${aluno.nome} a professor?`
+                                    );
+                                    
+                                  }}
+                                >
+                                  Promover
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="h-10 flex items-center">
+                                <span className="text-gray-400 text-sm"></span>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
