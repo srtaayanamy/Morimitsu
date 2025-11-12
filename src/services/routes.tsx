@@ -12,6 +12,7 @@ import VisualizarAluno from "../pages/VisualizarAluno";
 import VisualizarTurma from "../pages/VisualizarTurma";
 import Professores from "../pages/Professores";
 import Configuration from "../pages/Configuracoes";
+import AlunosAptos from "../pages/AlunosAptos";
 
 // telas de configuração
 import Perfil from "../pages/configuracoes/Perfil";
@@ -36,6 +37,7 @@ export default function AppRoutes () {
       <Route path="/visualizar-aluno/:id" element={<VisualizarAluno />} />
       <Route path="/visualizar-turma/:id" element={<VisualizarTurma />} />
       <Route path="/professores" element={<Professores />} />
+      <Route path="/alunos-aptos" element={<AlunosAptos />} />
       
       {/* rotas pai/filho de configuração */}
       <Route path="/configuracoes" element={<Configuration />}>

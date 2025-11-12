@@ -37,10 +37,10 @@ export default function Professores() {
       <main className="flex-1 p-4 md:p-8 space-y-5">
         {/* Cabeçalho da página */}
         <PageTitle title="Professores:">
-          <Link to="/promover-aluno">
+          <Link to="/alunos-aptos">
             <button
               type="button"
-              className="bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition"
+              className="bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
             >
               Promover aluno a professor
             </button>

@@ -1,11 +1,12 @@
+// src/pages/Alunos.tsx (ou onde estiver)
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 import BeltTag from "../components/BeltTag";
+import ConfirmPromotionModal from "../components/ConfirmPromotionModal"; 
 
-// Função de aparecer quem pode promover
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
 };
@@ -14,6 +15,8 @@ export default function Alunos() {
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
 
   useEffect(() => {
     const fetchAlunos = async () => {
@@ -31,6 +34,22 @@ export default function Alunos() {
     fetchAlunos();
   }, []);
 
+  const openModal = (aluno: Aluno) => {
+    setSelectedAluno(aluno);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedAluno(null);
+  };
+
+  const handleConfirm = () => {
+    // lógica de promoção no futuro
+    console.log("Promovendo aluno:", selectedAluno?.nome);
+    // Ex: await promoverParaProfessor(selectedAluno.id);
+  };
+
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
       <Header />
@@ -44,7 +63,7 @@ export default function Alunos() {
           <Link to="/registrar-aluno">
             <button
               type="button"
-              className="bg-[#1E1E1E] md:bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition"
+              className="bg-[#1E1E1E] md:bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
             >
               Cadastrar aluno
             </button>
@@ -103,12 +122,7 @@ export default function Alunos() {
                                 <button
                                   type="button"
                                   className="bg-[#1D1E1E] w-full text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800 transition cursor-pointer"
-                                  onClick={() => {
-                                    alert(
-                                      `Promover ${aluno.nome} a professor?`
-                                    );
-                                    
-                                  }}
+                                  onClick={() => openModal(aluno)}
                                 >
                                   Promover
                                 </button>
@@ -129,6 +143,14 @@ export default function Alunos() {
           </div>
         )}
       </main>
+
+      {/* Modal Componentizado */}
+      <ConfirmPromotionModal
+        isOpen={modalOpen}
+        alunoNome={selectedAluno?.nome || ""}
+        onClose={closeModal}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }

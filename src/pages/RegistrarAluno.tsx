@@ -119,13 +119,14 @@ export default function RegistrarAluno() {
           <div className="flex justify-end gap-3">
             <button
               type="button"
-              className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
+              className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer"
+              onClick={() => navigate("/alunos")}
             >
               Cancelar
             </button>
             <button
               type="button"
-              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition"
+              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer"
               onClick={handleRegisterAluno}
             >
               Concluir cadastro

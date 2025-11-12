@@ -33,7 +33,7 @@ export async function pegaDadosAluno(id: string) {
       frequencia: response.data.data.student.form.Presence || 0,
       Responsavel: response.data.data.student.parents.parentName || "",
       telefoneResponsavel: response.data.data.student.parents.parentContact || "",
-      matricula: response.data.data.student.form.studentId || "",
+      matricula: response.data.data.student.form.IFCE_student_registration || "",
       email: response.data.data.student.email || "",
       observacao: response.data.data.student.form.Comments || "",
       turmas,
