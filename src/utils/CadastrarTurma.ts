@@ -1,14 +1,24 @@
 import api from "../services/api"
 
-export async function cadastrarTurma(nome: string, idadeMin: number, idadeMax: number, horarioInicio: string, horarioFim: string, URLimagem: string) {
+export async function cadastrarTurma(nome: string, idadeMin: number, idadeMax: number, horarioInicio: string, horarioFim: string, URLimagem: string, coachIds: string[]) {
     try{
         //Pega ID do usuário
-        const id = localStorage.getItem('token')
+        const id = localStorage.getItem('token');
+
+        if(id !== undefined && id !== null ){
+            coachIds.push(id);
+        } else{
+            return 'Usuário não encontrado.';
+        }
 
         //Verifica de nome ou idade miníma não são inválidos
         if(nome== ''|| idadeMin==0){
             return false
         }
+
+        //Formata os horários para um formato aceito pela API
+        horarioInicio = horarioInicio.replace('h', '')
+        horarioFim = horarioFim.replace('h', '')
 
         console.log(URLimagem)
         //Faz a requisição de registro do aluno
@@ -17,7 +27,7 @@ export async function cadastrarTurma(nome: string, idadeMin: number, idadeMax: n
                 name:nome, 
                 minAge: idadeMin, 
                 maxAge:idadeMax, 
-                coachID: id, 
+                coachID: coachIds, 
                 iconURL: URLimagem, 
                 startTime: horarioInicio, 
                 endTime: horarioFim

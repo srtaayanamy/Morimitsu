@@ -21,6 +21,7 @@ export default function RegistrarTurma() {
   const [fim, setFim] = useState("00:00h");
   const [imagem, setImagem] = useState("/src/assets/presets/capaturma8.png");
   const [nome, setNome] = useState("");
+  const [coachsIds, setCoachsIds] = useState<string[]>([]);
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(120);
   const [error, setErro] = useState<string | boolean>("");
@@ -43,7 +44,8 @@ export default function RegistrarTurma() {
       idadeMax,
       inicio,
       fim,
-      imagem
+      imagem,
+      coachsIds
     );
 
     if (result === true) {

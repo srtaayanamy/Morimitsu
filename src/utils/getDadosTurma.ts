@@ -2,6 +2,7 @@ import api from "../services/api";
 import type { Aluno } from "../types/Aluno";
 import type { Professor } from "../types/Professor";
 import type { Turma } from "../types/Turma";
+import { formataHorario } from "./formatarHorario";
 
 export async function pegaDadosTurma(id: string) {
   try {
@@ -36,8 +37,8 @@ export async function pegaDadosTurma(id: string) {
       nome: response.data.class.name,
       idadeMax: response.data.class.maxAge,
       idadeMin: response.data.class.minAge,
-      horarioInicio: response.data.class.startTime ?? '',
-      horarioFim: response.data.class.endTime ?? '',
+      horarioInicio: formataHorario(response.data.class.startTime) ?? '',
+      horarioFim: formataHorario(response.data.class.endTime) ?? '',
       alunos: alunos,
       professores: professores,
       numAlunos: NumeroDeAlunos,
