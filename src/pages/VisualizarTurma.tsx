@@ -1,5 +1,6 @@
 import Header from "../components/Header";
 import { SquarePen } from "lucide-react";
+import { Link } from "react-router-dom";
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -89,9 +90,12 @@ export default function VisualizarTurma() {
             </h2>
 
             <div className="flex gap-3 mt-3 md:mt-0">
-              <button className="bg-[#1D1E1E] text-white px-4 py-2 rounded-xl hover:opacity-90 transition">
-                Fazer frequência
-              </button>
+              <Link to="/frequencia-turma">
+                <button className="bg-[#1D1E1E] text-white px-4 py-2 rounded-xl hover:opacity-90 transition cursor-pointer">
+                  Fazer frequência
+                </button>
+              </Link>
+
               <button className="bg-[#1D1E1E] text-white px-4 py-2 rounded-xl hover:opacity-90 transition">
                 Inserir alunos
               </button>

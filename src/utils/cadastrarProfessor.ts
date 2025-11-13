@@ -3,7 +3,7 @@ import { pegaDadosAluno } from "./getDadosAluno";
 
 export async function promoverAluno(senha:string, alunoId: string) {
     
-    if(senha.length <= 8){
+    if(senha.length < 8){
         return 'Senha deve ter 8 ou mais caracteres.'
     } else if(alunoId === undefined){
         return 'Id do aluno não informado.'

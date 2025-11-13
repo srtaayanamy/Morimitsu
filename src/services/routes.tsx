@@ -21,6 +21,7 @@ import ConfigurarGraduacao from "../pages/configuracoes/ConfigurarGraduacao";
 import RegistrosFrequencia from "../pages/configuracoes/RegistrosFrequencia";
 import CorrigirFrequencia from "../pages/configuracoes/CorrigirFrequencia";
 import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
+import FrequenciaTurma from "../pages/FrequenciaTurma";
 
 export default function AppRoutes () {
   return (
@@ -38,6 +39,7 @@ export default function AppRoutes () {
       <Route path="/visualizar-turma/:id" element={<VisualizarTurma />} />
       <Route path="/professores" element={<Professores />} />
       <Route path="/alunos-aptos" element={<AlunosAptos />} />
+      <Route path="/frequencia-turma" element={<FrequenciaTurma />} />
       
       {/* rotas pai/filho de configuração */}
       <Route path="/configuracoes" element={<Configuration />}>

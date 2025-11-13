@@ -1,4 +1,4 @@
-// src/pages/AlunosAptos.tsx
+// pages/AlunosAptos.tsx
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
@@ -7,6 +7,8 @@ import type { Aluno } from "../types/Aluno";
 import BeltTag from "../components/BeltTag";
 import PageTitle from "../components/PageTitle";
 import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
+import CreateAcessModal from "../components/CreateAcessModal";
+import { pegaDadosAluno } from "../utils/getDadosAluno";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -16,8 +18,14 @@ export default function AlunosAptos() {
   const [alunosAptos, setAlunosAptos] = useState<Aluno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
+  const [alunoEmPromocao, setAlunoEmPromocao] = useState<{
+    id: string;
+    nome: string;
+    email: string;
+  } | null>(null);
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [acessoModalOpen, setAcessoModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAlunos = async () => {
@@ -27,7 +35,9 @@ export default function AlunosAptos() {
       if (result === false) {
         setError("Erro ao carregar alunos.");
       } else {
-        const aptos = (result || []).filter((aluno) => podePromover(aluno.faixa));
+        const aptos = (result || []).filter((aluno) =>
+          podePromover(aluno.faixa)
+        );
         setAlunosAptos(aptos);
       }
       setLoading(false);
@@ -36,19 +46,39 @@ export default function AlunosAptos() {
     fetchAlunos();
   }, []);
 
-  const openModal = (aluno: Aluno) => {
-    setSelectedAluno(aluno);
-    setModalOpen(true);
+  // 1. Clique no botão "Promover"
+  const iniciarPromocao = async (aluno: Aluno) => {
+    if (!aluno.id) return;
+
+    // Busca o e-mail real do aluno
+    const dados = await pegaDadosAluno(aluno.id);
+
+    if (!dados || typeof dados === "string" || !dados.email?.includes("@")) {
+      alert(`O aluno ${aluno.nome} não tem um e-mail válido cadastrado.`);
+      return;
+    }
+
+    // Guarda tudo num objeto único
+    setAlunoEmPromocao({
+      id: aluno.id,
+      nome: aluno.nome,
+      email: dados.email.trim(),
+    });
+
+    setConfirmModalOpen(true); // abre confirmação
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setSelectedAluno(null);
+  // Fecha tudo e limpa
+  const fecharFluxo = () => {
+    setConfirmModalOpen(false);
+    setAcessoModalOpen(false);
+    setAlunoEmPromocao(null);
   };
 
-  const handleConfirm = () => {
-    console.log("Promovendo aluno:", selectedAluno?.nome);
-    closeModal();
+  // Confirmar abre o modal de criar acesso
+  const confirmarPromocao = () => {
+    setConfirmModalOpen(false);
+    setAcessoModalOpen(true);
   };
 
   return (
@@ -56,16 +86,17 @@ export default function AlunosAptos() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 space-y-5">
-        {/* Título com PageTitle (sem botão) */}
         <PageTitle title="Alunos aptos a se tornarem professores:" />
 
-        {loading && <p>Carregando alunos...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {loading && <p className="text-center">Carregando alunos...</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
         {!loading && !error && (
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             {alunosAptos.length === 0 ? (
-              <p>Nenhum aluno apto no momento.</p>
+              <p className="text-center text-gray-500">
+                Nenhum aluno apto no momento.
+              </p>
             ) : (
               <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto">
                 <table className="w-full text-left border-separate border-spacing-y-2">
@@ -81,7 +112,7 @@ export default function AlunosAptos() {
                         Faixa atual
                       </th>
                       <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
-                        Promover a professor
+                        Ações
                       </th>
                     </tr>
                   </thead>
@@ -103,12 +134,12 @@ export default function AlunosAptos() {
                         <td className="py-3 px-6 text-center">
                           <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
                         </td>
-                        <td className="py-3 px-6 rounded-r-xl">
-                          <div className="flex items-center gap-3">
+                        <td className="py-3 px-6">
+                          <div className="flex justify-center gap-2">
                             <button
                               type="button"
-                              onClick={() => openModal(aluno)}
-                              className="bg-[#1D1E1E] w-full text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800 transition cursor-pointer"
+                              onClick={() => iniciarPromocao(aluno)}
+                              className="bg-[#911418] text-white px-4 py-1.5 w-full rounded-full text-sm font-medium hover:bg-red-700 transition cursor-pointer"
                             >
                               Promover
                             </button>
@@ -124,11 +155,25 @@ export default function AlunosAptos() {
         )}
       </main>
 
+      {/* Modal de Confirmação */}
       <ConfirmPromotionModal
-        isOpen={modalOpen}
-        alunoNome={selectedAluno?.nome || ""}
-        onClose={closeModal}
-        onConfirm={handleConfirm}
+        isOpen={confirmModalOpen}
+        alunoNome={alunoEmPromocao?.nome || ""}
+        onClose={fecharFluxo}
+        onConfirm={confirmarPromocao}
+      />
+
+      {/* Modal de Criar Acesso*/}
+      <CreateAcessModal
+        isOpen={acessoModalOpen}
+        alunoId={alunoEmPromocao?.id || ""}
+        alunoNome={alunoEmPromocao?.nome || ""}
+        alunoEmail={alunoEmPromocao?.email}
+        onClose={fecharFluxo}
+        onSuccess={() => {
+          alert("Professor criado com sucesso!");
+          fecharFluxo();
+        }}
       />
     </div>
   );
