@@ -7,6 +7,8 @@ import ClockOverlay from "../components/ClockOverlay";
 import { cadastrarTurma } from "../utils/CadastrarTurma";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
+import type { Professor } from "../types/Professor";
+import { listarProfessores } from "../hooks/ListaProfessores";
 
 export default function RegistrarTurma() {
   // Estados de exibição de overlays
@@ -21,7 +23,9 @@ export default function RegistrarTurma() {
   const [fim, setFim] = useState("00:00h");
   const [imagem, setImagem] = useState("/src/assets/presets/capaturma8.png");
   const [nome, setNome] = useState("");
-  const [coachsIds, setCoachsIds] = useState<string[]>([]);
+  const [coachsVinculados, setCoachsVinculados] = useState<string[]>([]);
+  const [coachSelecionado, setCoachSelecionado] = useState<string>("");
+  const [coachs, setCoachs] = useState<Professor[]>([]);
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(120);
   const [error, setErro] = useState<string | boolean>("");
@@ -36,8 +40,42 @@ export default function RegistrarTurma() {
     }
   }, [selectedImage]);
 
+  //UseEffet para executar função de listarTurmas seja executada retornando a lista de professores
+  useEffect(() => {
+    const fetchProfessores = async () => {
+        
+      const result = await listarProfessores();
+  
+      if (typeof result === 'string') {
+        return;
+      } else if(result === false) {
+        setErro(result);
+      } else{
+        setCoachs(result);
+      };
+
+    };
+  
+    fetchProfessores();
+  }, []);
+
+  //Função para adicionar professor selecionado na lista de professores
+  function adicionarProfessorSelecionado() {
+    if (coachSelecionado === "") return;
+
+    setCoachs(coachs.filter(t => t.id !== coachSelecionado));
+
+    // Evita duplicatas
+    if (coachsVinculados.some((t) => t === coachSelecionado)) return;
+
+    // Adiciona à lista
+    setCoachsVinculados((prev) => [...prev, coachSelecionado]);
+    setCoachSelecionado("");
+  };
+
+
+  //Função para registrar turma
   async function RegisterTurma() {
-    console.log(imagem);
     const result = await cadastrarTurma(
       nome,
       idadeMin,
@@ -45,7 +83,7 @@ export default function RegistrarTurma() {
       inicio,
       fim,
       imagem,
-      coachsIds
+      coachsVinculados
     );
 
     if (result === true) {
@@ -162,12 +200,23 @@ export default function RegistrarTurma() {
                 <select
                   className="w-full bg-[#EFEFEF] border border-[#D9D9D9] rounded-xl p-3 pr-10 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#8B0000] appearance-none"
                   defaultValue=""
+                  onChange={(e) =>
+                    setCoachSelecionado(e.target.value ? e.target.value : "")
+                  }
                 >
                   <option value="" disabled>
                     Selecione um professor
                   </option>
+                  
+                  {/*Lista os professores*/}
+                  {coachs.map((coach) => (
+                    <option key={coach.id} value={coach.id}>
+                      {coach.nome}
+                    </option>
+                  ))}
+
                 </select>
-                <Plus className="absolute right-3 pointer-events-none w-5 h-5 text-black" />
+                <Plus className="absolute right-3 pointer-events-none w-5 h-5 text-black" onClick={adicionarProfessorSelecionado}/>
               </div>
             </div>
 

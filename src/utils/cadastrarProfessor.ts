@@ -1,5 +1,4 @@
 import api from "../services/api";
-import { pegaDadosAluno } from "./getDadosAluno";
 
 export async function promoverAluno(senha:string, alunoId: string) {
     
@@ -10,14 +9,7 @@ export async function promoverAluno(senha:string, alunoId: string) {
     }
 
     try{
-        //Faz requisição dos dados do aluno
-        const aluno = await pegaDadosAluno(alunoId);
-
-        //Verifica se a requisição dos dados do aluno retornaram erro
-        if(typeof aluno === 'string'){
-            return aluno;
-        };
-
+        
         const token = localStorage.getItem('token');
         
         //Cria usuário do tipo professor

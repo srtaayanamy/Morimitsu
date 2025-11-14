@@ -36,7 +36,7 @@ export default function Login() {
       navigate('/inicio')
       return;
 
-    } else if(result!== false){
+    } else{
       setErro(result)
       return;
     }

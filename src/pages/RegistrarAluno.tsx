@@ -29,13 +29,13 @@ export default function RegistrarAluno() {
   const [matricula, setMatricula] = useState<string>();
   const [email, setEmail] = useState<string>("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
-  const [turmasVinculadas, setTurmasVinculadas] = useState<Turma[]>([]);
+  const [turmasVinculadas, setTurmasVinculadas] = useState<string[]>([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [age, setAge]= useState<number>(0);
 
-  //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
+  //UseEffet para executar função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
     const fetchTurmas = async () => {
       if (!age) return;
@@ -63,15 +63,13 @@ export default function RegistrarAluno() {
   function adicionarTurmaSelecionada() {
     if (turmaSelecionada === "") return;
 
-    // Encontra a turma correspondente
-    const turma = turmas.find((t) => t.id === turmaSelecionada);
-    if (!turma) return;
+    setTurmas(turmas.filter(t => t.id !== turmaSelecionada))
 
     // Evita duplicatas
-    if (turmasVinculadas.some((t) => t.id === turma.id)) return;
+    if (turmasVinculadas.some((t) => t === turmaSelecionada)) return;
 
     // Adiciona à lista
-    setTurmasVinculadas((prev) => [...prev, turma]);
+    setTurmasVinculadas((prev) => [...prev, turmaSelecionada]);
     setTurmaSelecionada("");
   }
 

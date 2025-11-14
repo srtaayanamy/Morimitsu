@@ -1,6 +1,6 @@
 //Interface de aluno
 export interface Professor{
-    id?: string;
+    id: string;
     nome: string;
     apelido?: string;
     email:string;
