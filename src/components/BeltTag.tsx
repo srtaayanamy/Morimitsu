@@ -21,11 +21,11 @@ import yellowBlack from "../assets/presets/belts/yellow-black.png";
 import yellowWhite from "../assets/presets/belts/yellow-white.png";
 
 interface BeltTagProps {
-  faixa: string;
+  faixa?: string | null;
   grau?: number;
 }
 
-const beltImageMap: Record<string, string | any> = {
+const beltImageMap: Record<string, string> = {
   BRANCA: white,
   CINZA: gray,
   "CINZA/BRANCA": grayWhite,
@@ -48,7 +48,8 @@ const beltImageMap: Record<string, string | any> = {
   "VERMELHA/PRETA": redBlack,
 };
 
-const normalizeBelt = (faixa: string): string => {
+const normalizeBelt = (faixa?: string | null): string => {
+  if (!faixa) return "BRANCA"; 
   return faixa
     .toUpperCase()
     .trim()
@@ -58,7 +59,7 @@ const normalizeBelt = (faixa: string): string => {
     .replace("Ç", "C");
 };
 
-const formatBeltName = (faixa: string): string => {
+const formatBeltName = (faixa?: string | null): string => {
   const map: Record<string, string> = {
     BRANCA: "Branca",
     CINZA: "Cinza",
@@ -71,6 +72,7 @@ const formatBeltName = (faixa: string): string => {
     PRETA: "Preta",
     VERMELHA: "Vermelha",
   };
+
   const base = normalizeBelt(faixa);
   return map[base] || base;
 };
@@ -78,21 +80,15 @@ const formatBeltName = (faixa: string): string => {
 export default function BeltTag({ faixa, grau = 0 }: BeltTagProps) {
   const base = normalizeBelt(faixa);
   const imageSrc = beltImageMap[base] || white;
+
   const displayName = formatBeltName(faixa);
   const grauText = grau > 0 ? ` ${grau}º grau` : "";
   const tooltipText = `${displayName}${grauText}`;
 
   return (
-    <div
-      className="relative group inline-block cursor-help"
-      title={tooltipText}
-    >
+    <div className="relative group inline-block cursor-help" title={tooltipText}>
       <div className="w-6 h-6 rounded-full border border-gray-400 overflow-hidden flex items-center justify-center bg-white shadow-sm">
-        <img
-          src={imageSrc}
-          alt={displayName}
-          className="w-full h-full object-contain"
-        />
+        <img src={imageSrc} alt={displayName} className="w-full h-full object-contain" />
       </div>
 
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1 bg-gray-900 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">

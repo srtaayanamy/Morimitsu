@@ -5,23 +5,26 @@ import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Turma } from "../types/Turma";
+import BeltTag from "../components/BeltTag";
 
 export default function VisualizarTurma() {
-  const { id } = useParams(); // pega id da URL
+  const { id } = useParams();
   const [erro, setErro] = useState("");
   const [turma, setTurma] = useState<Turma>();
 
   useEffect(() => {
     async function fetchTurma() {
-      if (!id) return; // evita chamada sem id
+      if (!id) return;
       const result = await pegaDadosTurma(id);
+
       if (typeof result === "string") {
         setErro(result);
       } else {
         setTurma(result);
       }
     }
-    fetchTurma(); // chamar a função
+
+    fetchTurma();
   }, [id]);
 
   return (
@@ -90,15 +93,17 @@ export default function VisualizarTurma() {
             </h2>
 
             <div className="flex gap-3 mt-3 md:mt-0">
-              <Link to="/frequencia-turma">
+              <Link to={`/frequencia-turma/${id}`}>
                 <button className="bg-[#1D1E1E] text-white px-4 py-2 rounded-xl hover:opacity-90 transition cursor-pointer">
                   Fazer frequência
                 </button>
               </Link>
 
-              <button className="bg-[#1D1E1E] text-white px-4 py-2 rounded-xl hover:opacity-90 transition">
-                Inserir alunos
-              </button>
+              <Link to={`/turma/${id}/inserir-alunos`}>
+                <button className="bg-[#1D1E1E] text-white px-4 py-2 rounded-xl hover:opacity-90 transition cursor-pointer">
+                  Inserir alunos
+                </button>
+              </Link>
             </div>
           </div>
 
@@ -108,16 +113,19 @@ export default function VisualizarTurma() {
                 <tr className="text-left text-sm md:text-base text-[#1E1E1E]/80">
                   <th className="p-3 font-semibold">Nome</th>
                   <th className="p-3 font-semibold">Apelido</th>
-                  <th className="p-3 font-semibold">Faixa atual</th>
+                  <th className="p-3 font-semibold text-center">Faixa atual</th>
                 </tr>
               </thead>
+
               <tbody>
                 {turma?.alunos?.length ? (
                   turma.alunos.map((aluno) => (
                     <tr key={aluno.id} className="bg-[#F5F5F5] rounded-xl">
                       <td className="p-3 rounded-l-xl">{aluno.nome}</td>
                       <td className="p-3">{aluno.apelido}</td>
-                      <td className="p-3 rounded-r-xl">{aluno.faixa}</td>
+                      <td className="p-3 rounded-r-xl text-center">
+                        <BeltTag faixa={aluno.faixa || "BRANCA"} grau={aluno.grau} />
+                      </td>
                     </tr>
                   ))
                 ) : (
@@ -128,6 +136,7 @@ export default function VisualizarTurma() {
                   </tr>
                 )}
               </tbody>
+
             </table>
           </div>
         </div>
