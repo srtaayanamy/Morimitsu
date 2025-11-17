@@ -1,6 +1,6 @@
 import api from "../services/api";
 
-export async function editaUser(user?: any) {
+export async function editaUser(user: any) {
   try {
     // Filtra apenas campos válidos
     const dadosUserFiltrados: any = {};

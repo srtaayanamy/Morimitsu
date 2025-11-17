@@ -32,7 +32,7 @@ export default function AlunosAptos() {
       setLoading(true);
       const result = await listarAlunos();
 
-      if (result === false) {
+      if (typeof result === 'string') {
         setError("Erro ao carregar alunos.");
       } else {
         const aptos = (result || []).filter((aluno) =>

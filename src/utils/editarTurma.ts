@@ -15,7 +15,7 @@ export async function editaTurma(id:string, dados: any) {
             }
         }
         
-        const response= await api.put(`/class/${id}`,{dadosFiltrados})
+        const response= await api.put(`/class/${id}`, dadosFiltrados)
 
         console.log('Retorno da requisição: ', response.data)
         console.log('Retorno do status da requisição: ', response.status)

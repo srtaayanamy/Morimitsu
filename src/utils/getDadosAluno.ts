@@ -1,6 +1,5 @@
 import api from "../services/api";
 import type { Aluno } from "../types/Aluno";
-import type { Turma } from "../types/Turma";
 
 export function formatarData(dataISO: string) {
   if (!dataISO) return "Não informada";
@@ -11,12 +10,12 @@ export function formatarData(dataISO: string) {
 export async function pegaDadosAluno(id: string) {
   try {
 
-    const response = await api.get(`/student/${id}`);7
+    const response = await api.get(`/student/${id}`);
 
     console.log("Aluno encontrado", response.data);
 
     //Guarda a lista de turmas retornados pela API
-    const turmas: Turma[] = response.data.data.student.classes.map((classe: any) => ({
+    const turmas: string[] = response.data.data.student.classes.map((classe: any) => ({
       id: classe.id,
       nome: classe.name
     }));

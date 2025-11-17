@@ -11,8 +11,6 @@ export async function listarAlunos() {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    if (response.status === 200) {
       console.log("Lista de alunos adquirida com sucesso");
       //Armezena os alunos
       const alunos: Aluno[] = response.data.data.map((item: any) => {
@@ -28,19 +26,38 @@ export async function listarAlunos() {
           grau: s.personal?.rating ?? 0,
         };
       });
+
       console.log(alunos);
       return alunos;
+  } catch (error: any) {
+    //Tratamento de erros
+    if (error.response) {
+      switch (error.response.status) {
+        case 500:
+          console.log("Erro interno no servidor. Erro:", error);
+          return "Erro ao listar alunos. Tente novamente!";
+        default:
+          console.log("Erro desconhecido da API:", error.response.status);
+          return "Erro ao listar alunos. Tente novamente!";
+      }
+
+    } 
+    //Verifica se a requisição foi feita, mas não houve resposta
+    if (error.request) {
+      console.log("Servidor não respondeu:", error.request);
+      return "Verifique sua conexão.";
     }
-  } catch (error) {
-    console.log("Erro: ", error);
-    return false;
+
+    // Qualquer outro erro
+    console.log("Erro listar alunos. Tente novamente.");
+    return "Erro ao listar alunos. Tente novamente!";
   }
 }
 
 export async function filtrarAniversariantes() {
   const alunos = await listarAlunos();
   //Verifica se o retorno de alunos é diferente do tipo aluno
-  if (alunos === false) {
+  if (typeof alunos === 'string') {
     return;
   } else if (alunos === undefined) {
     return;
@@ -63,4 +80,63 @@ export async function filtrarAniversariantes() {
 
   console.log("Aniversariantes: ", aniversariantes);
   return aniversariantes;
+}
+
+export async function filtrarAlunos(filters: any) {
+  
+  try{
+    const params: any = {};
+
+    for (const key in filters) {
+      const value = filters[key];
+      if (value !== "" && value !== null && value !== undefined) {
+        params[key] = value;
+      }
+    };
+
+    const response = await api.get('/student', 
+      {
+        params
+      }
+    );
+
+    const alunos: Aluno[] = response.data.data.map((item: any) => {
+      const s = item.student;
+      return {
+        id: s.id,
+        nome: s.personal?.name || "",
+        apelido: s.nickname || "",
+        email: s.email || "",
+        sexo: s.personal.gender,
+        dataNascimento: s.personal.birthDate,
+        faixa: s.personal?.rank || "",
+        grau: s.personal?.rating ?? 0,
+      };
+    });
+
+    console.log(alunos);
+    return alunos;
+  } catch(error: any){
+    //Tratamento de erros
+    if (error.response) {
+      switch (error.response.status) {
+        case 500:
+          console.log("Erro interno no servidor. Erro:", error);
+          return "Erro ao listar alunos. Tente novamente!";
+        default:
+          console.log("Erro desconhecido da API:", error.response.status);
+          return "Erro ao listar alunos. Tente novamente!";
+      }
+
+    } 
+    //Verifica se a requisição foi feita, mas não houve resposta
+    if (error.request) {
+      console.log("Servidor não respondeu:", error.request);
+      return "Verifique sua conexão.";
+    }
+
+    // Qualquer outro erro
+    console.log("Erro listar alunos. Tente novamente.");
+    return "Erro ao listar alunos. Tente novamente!";
+  }
 }

@@ -23,7 +23,9 @@ export async function listarProfessores(): Promise<Professor[] | false | string>
       id: p.id,
       nome: p.name,
       email: p.email,
+      studentID:p.studentData.id
     }));
+
     console.log(professores)
 
     return professores;

@@ -23,7 +23,7 @@ export default function Alunos() {
       setLoading(true);
       const result = await listarAlunos();
 
-      if (result === false) {
+      if (typeof result === 'string') {
         setError("Erro ao carregar alunos.");
       } else {
         setAlunos(result || []);
