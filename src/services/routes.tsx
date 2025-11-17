@@ -22,8 +22,9 @@ import RegistrosFrequencia from "../pages/configuracoes/RegistrosFrequencia";
 import CorrigirFrequencia from "../pages/configuracoes/CorrigirFrequencia";
 import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
 import FrequenciaTurma from "../pages/FrequenciaTurma";
+import InserirAlunosTurma from "../pages/InserirAlunosTurma";
 
-export default function AppRoutes () {
+export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Initial />} />
@@ -39,7 +40,8 @@ export default function AppRoutes () {
       <Route path="/visualizar-turma/:id" element={<VisualizarTurma />} />
       <Route path="/professores" element={<Professores />} />
       <Route path="/alunos-aptos" element={<AlunosAptos />} />
-      <Route path="/frequencia-turma" element={<FrequenciaTurma />} />
+      <Route path="/frequencia-turma/:id" element={<FrequenciaTurma />} />
+      <Route path="/turma/:id/inserir-alunos" element={<InserirAlunosTurma />} />
       
       {/* rotas pai/filho de configuração */}
       <Route path="/configuracoes" element={<Configuration />}>
@@ -50,7 +52,6 @@ export default function AppRoutes () {
         <Route path="corrigir-frequencia" element={<CorrigirFrequencia />} />
         <Route path="relatorios-exports" element={<RelatoriosExports />} />
       </Route>
-
     </Routes>
   );
-};
+}
