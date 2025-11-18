@@ -6,6 +6,7 @@ import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { editaTurma } from "../utils/editarTurma";
 import type { Turma } from "../types/Turma";
 import { Link } from "react-router-dom";
+import BeltTag from "../components/BeltTag";
 
 import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
 import { deleteTurma } from "../utils/deletarTurma";
@@ -285,18 +286,25 @@ export default function VisualizarTurma() {
                 <tr className="text-left text-sm text-gray-600">
                   <th className="p-3 font-semibold">Nome</th>
                   <th className="p-3 font-semibold">Apelido</th>
-                  <th className="p-3 font-semibold">Faixa</th>
+                  <th className="p-3 font-semibold text-center">Faixa</th>
                 </tr>
               </thead>
 
               <tbody>
-                {turma.alunos?.map((a) => (
-                  <tr key={a.id} className="bg-[#F5F5F5] rounded-xl">
-                    <td className="p-3 rounded-l-xl">{a.nome}</td>
-                    <td className="p-3">{a.apelido}</td>
-                    <td className="p-3 rounded-r-xl">{a.faixa}</td>
-                  </tr>
-                ))}
+                {turma.alunos?.map((a) => {
+                  console.log("ALUNO RECEBIDO:", a);
+                  console.log("FAIXA RECEBIDA:", JSON.stringify(a.faixa));
+
+                  return (
+                    <tr key={a.id} className="bg-[#F5F5F5] rounded-xl">
+                      <td className="p-3 rounded-l-xl">{a.nome}</td>
+                      <td className="p-3">{a.apelido}</td>
+                      <td className="py-3 px-6 text-center">
+                        <BeltTag faixa={a.faixa} grau={a.grau} />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
