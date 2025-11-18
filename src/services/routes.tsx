@@ -23,6 +23,7 @@ import CorrigirFrequencia from "../pages/configuracoes/CorrigirFrequencia";
 import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
 import FrequenciaTurma from "../pages/FrequenciaTurma";
 import InserirAlunosTurma from "../pages/InserirAlunosTurma";
+import RemoverAlunosTurma from "../pages/RemoverAlunosTurma";
 
 export default function AppRoutes() {
   return (
@@ -42,6 +43,8 @@ export default function AppRoutes() {
       <Route path="/alunos-aptos" element={<AlunosAptos />} />
       <Route path="/frequencia-turma/:id" element={<FrequenciaTurma />} />
       <Route path="/turma/:id/inserir-alunos" element={<InserirAlunosTurma />} />
+      <Route path="/turma/:id/remover-alunos" element={<RemoverAlunosTurma />} />
+
       
       {/* rotas pai/filho de configuração */}
       <Route path="/configuracoes" element={<Configuration />}>
