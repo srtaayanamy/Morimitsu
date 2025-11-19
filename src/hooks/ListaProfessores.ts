@@ -6,15 +6,17 @@ export async function listarProfessores(): Promise<Professor[] | false | string>
     
     const token= localStorage.getItem('token');
     
-    const response = await api.get("/user/all",{
+    const response = await api.get("/user/all?role=USER",{
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    const ProfessoresBack = response.data.classes;
+    
+    const ProfessoresBack = response.data.body.users;
+    console.log(ProfessoresBack)
 
-    if(ProfessoresBack === undefined){
+    if(ProfessoresBack.length === 0){
       return 'Nenhum professor encontrado.';
     };
 
@@ -23,9 +25,8 @@ export async function listarProfessores(): Promise<Professor[] | false | string>
       id: p.id,
       nome: p.name,
       email: p.email,
-      studentID:p.studentData.id
+      studentID: p.studentData.id
     }));
-
     console.log(professores)
 
     return professores;

@@ -17,7 +17,7 @@ export default function Professores() {
         const result = await listarProfessores();
   
         if (result === false) {
-          setError("Erro ao carregar turmas.");
+          setError("Erro ao carregar professores.");
         } else if(typeof result ===  'string'){
           setError(result)
         } else {
@@ -47,12 +47,12 @@ export default function Professores() {
           </Link>
         </PageTitle>
         {/* Conteúdo */}
-        {loading && <p>Carregando alunos...</p>}
+        {loading && <p>Carregando professores...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && (
           <div className="bg-white rounded-2xl p-6 shadow-sm">
             {Professores.length === 0 ? (
-              <p>Nenhum aluno encontrado.</p>
+              <p>Nenhum professor encontrado.</p>
             ) : (
               <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto">
                 <table className="w-full text-left border-separate border-spacing-y-2">
