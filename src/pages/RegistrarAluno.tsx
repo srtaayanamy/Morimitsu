@@ -26,7 +26,7 @@ export default function RegistrarAluno() {
   const [frequencia, setFrequencia] = useState<number>(0);
   const [responsavel, setResponsavel] = useState<string>("");
   const [contato, setContato] = useState<string>("");
-  const [matricula, setMatricula] = useState<string>();
+  const [matricula, setMatricula] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [turmasVinculadas, setTurmasVinculadas] = useState<string[]>([]);
@@ -89,7 +89,7 @@ export default function RegistrarAluno() {
       matricula,
       email,
       observacao,
-      turmas: turmasVinculadas,
+      turmas: turmasVinculadas
     };
     const result = await cadastrarAluno(novoAluno);
 

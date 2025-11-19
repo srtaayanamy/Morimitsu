@@ -38,7 +38,8 @@ export async function cadastrarAluno(aluno: Aluno) {
                 parentName: aluno.Responsavel, 
                 rating: aluno.grau, 
                 classId: classIds,
-                gender: aluno.sexo
+                gender: aluno.sexo,
+                ifce_registration: aluno.matricula
             });
             
         if(response.status===200){
