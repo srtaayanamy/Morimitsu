@@ -11,24 +11,25 @@ export async function listarAlunos() {
         Authorization: `Bearer ${token}`,
       },
     });
-      console.log("Lista de alunos adquirida com sucesso");
-      //Armezena os alunos
-      const alunos: Aluno[] = response.data.data.map((item: any) => {
-        const s = item.student;
-        return {
-          id: s.id,
-          nome: s.personal?.name || "",
-          apelido: s.nickname || "",
-          email: s.email || "",
-          sexo: s.personal.gender,
-          dataNascimento: s.personal.birthDate,
-          faixa: s.personal?.rank || "",
-          grau: s.personal?.rating ?? 0,
-        };
-      });
 
-      console.log(alunos);
-      return alunos;
+    //Armezena os alunos
+    const alunos: Aluno[] = response.data.data.map((item: any) => {
+      const s = item.student;
+      return {
+        id: s.id,
+        nome: s.personal?.name || "",
+        apelido: s.nickname || "",
+        email: s.email || "",
+        sexo: s.personal.gender,
+        dataNascimento: s.personal.birthDate,
+        faixa: s.personal?.rank || "",
+        grau: s.personal?.rating ?? 0,
+        userID: s.form.userId
+      };
+    });
+
+    console.log(alunos);
+    return alunos;
   } catch (error: any) {
     //Tratamento de erros
     if (error.response) {

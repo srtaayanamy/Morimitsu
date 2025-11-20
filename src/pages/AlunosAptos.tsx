@@ -18,6 +18,7 @@ export default function AlunosAptos() {
   const [alunosAptos, setAlunosAptos] = useState<Aluno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [promover, setPromover] = useState<boolean>(false);
   const [alunoEmPromocao, setAlunoEmPromocao] = useState<{
     id: string;
     nome: string;
@@ -26,6 +27,14 @@ export default function AlunosAptos() {
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [acessoModalOpen, setAcessoModalOpen] = useState(false);
+
+  function VerificarAptidao(aluno: Aluno){
+    if(podePromover(aluno.faixa) === true || aluno.userID === null){
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   useEffect(() => {
     const fetchAlunos = async () => {
@@ -36,7 +45,7 @@ export default function AlunosAptos() {
         setError("Erro ao carregar alunos.");
       } else {
         const aptos = (result || []).filter((aluno) =>
-          podePromover(aluno.faixa)
+          VerificarAptidao(aluno)
         );
         setAlunosAptos(aptos);
       }

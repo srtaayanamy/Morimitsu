@@ -22,7 +22,7 @@ export default function RegistrarAluno() {
   const [sexo, setSexo] = useState<string>("");
   const [CPF, setCPF] = useState<string>("");
   const [faixa, setFaixa] = useState<string>("BRANCA");
-  const [grau, setGrau] = useState<number>();
+  const [grau, setGrau] = useState<number>(0);
   const [frequencia, setFrequencia] = useState<number>(0);
   const [responsavel, setResponsavel] = useState<string>("");
   const [contato, setContato] = useState<string>("");
@@ -213,7 +213,7 @@ export default function RegistrarAluno() {
               <label className={labelBase}>Faixa / grau:</label>
               <select
                 className={inputBase}
-                value={faixa && grau ? `${faixa}-${grau}` : ""}
+                value={faixa && grau ? `${faixa}-${grau}` : faixa}
                 onChange={(e) => {
                   const [f, g] = e.target.value.split("-");
                   setFaixa(f);

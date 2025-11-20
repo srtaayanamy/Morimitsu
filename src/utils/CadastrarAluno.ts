@@ -11,14 +11,17 @@ export async function cadastrarAluno(aluno: Aluno) {
             aluno.sexo= 'female'
         };
 
+        //Converte a data de nacimento do tipo string para o tipo ISO
+        const birthDate = new Date(aluno.dataNascimento).toISOString();
+
         //Verfica se o email tem um formato válido
         if(verificarEmail(aluno.email)===false){
             return 'Formato de email inválido.';
         }
 
-        let classIds: string[] | undefined = undefined;
-        if(aluno.turmas !== undefined){
-            classIds = aluno.turmas.map((t:any) => t.id)
+        let classIds: string[] = [];
+        if(aluno.turmas !== undefined && aluno.turmas.every(t => typeof t === "string")){
+            classIds = aluno.turmas;
         }
         
 
@@ -29,7 +32,7 @@ export async function cadastrarAluno(aluno: Aluno) {
                 email: aluno.email, 
                 CPF: aluno.CPF, 
                 contact: aluno.telefone, 
-                birthDate: aluno.dataNascimento, 
+                birthDate: birthDate, 
                 nickname: aluno.apelido, 
                 rank: aluno.faixa, 
                 comments: aluno.observacao, 

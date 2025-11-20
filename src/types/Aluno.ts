@@ -19,4 +19,5 @@ export interface Aluno{
     matricula?: string; 
     observacao?: string;
     turmas?: string[] | Turma[];
+    userID?: string
 }
