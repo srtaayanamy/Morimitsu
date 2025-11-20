@@ -18,7 +18,6 @@ export default function AlunosAptos() {
   const [alunosAptos, setAlunosAptos] = useState<Aluno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [promover, setPromover] = useState<boolean>(false);
   const [alunoEmPromocao, setAlunoEmPromocao] = useState<{
     id: string;
     nome: string;
