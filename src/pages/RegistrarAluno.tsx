@@ -33,7 +33,7 @@ export default function RegistrarAluno() {
   const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [age, setAge]= useState<number>(0);
+  const [age, setAge] = useState<number>(0);
 
   //UseEffet para executar função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function RegistrarAluno() {
       if (!age) return;
       const result = await FiltrarTurmaPorIdade(age);
 
-      if (typeof result === 'string') {
+      if (typeof result === "string") {
         setError(result);
       } else {
         setTurmas(result);
@@ -52,18 +52,16 @@ export default function RegistrarAluno() {
   }, [age]);
 
   useEffect(() => {
-
     if (!dataNascimento) return;
     const idade = calcularIdade(dataNascimento);
     setAge(idade);
-
   }, [dataNascimento]);
 
   //Função para adicionar turma selecionada na lista de turmas
   function adicionarTurmaSelecionada() {
     if (turmaSelecionada === "") return;
 
-    setTurmas(turmas.filter(t => t.id !== turmaSelecionada))
+    setTurmas(turmas.filter((t) => t.id !== turmaSelecionada));
 
     // Evita duplicatas
     if (turmasVinculadas.some((t) => t === turmaSelecionada)) return;
@@ -89,11 +87,11 @@ export default function RegistrarAluno() {
       matricula,
       email,
       observacao,
-      turmas: turmasVinculadas
+      turmas: turmasVinculadas,
     };
     const result = await cadastrarAluno(novoAluno);
 
-    if (result===true) {
+    if (result === true) {
       console.log("Aluno criado com sucesso");
       navigate("/alunos");
     } else {
@@ -209,45 +207,32 @@ export default function RegistrarAluno() {
               />
             </div>
 
-            <div>
-              <label className={labelBase}>Faixa / grau:</label>
-              <select
-                className={inputBase}
-                value={faixa && grau ? `${faixa}-${grau}` : faixa}
-                onChange={(e) => {
-                  const [f, g] = e.target.value.split("-");
-                  setFaixa(f);
-                  setGrau(Number(g));
-                }}
-              > 
-                {age >=16 ? (
-                    faixasEGrausMaior16.map((item, index) =>
-                    item.grau ? (
-                      <option key={index} value={`${item.faixa}-${item.grau}`}>
-                        {item.faixa} {item.grau}°
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              <div>
+                <label className={labelBase}>Faixa / grau:</label>
+                <select
+                  className={inputBase}
+                  value={`${faixa}-${grau}`}
+                  onChange={(e) => {
+                    const [f, g] = e.target.value.split("-");
+                    setFaixa(f);
+
+                    if (g === "") return;
+                    if (!isNaN(Number(g))) setGrau(Number(g));
+                  }}
+                >
+                  {(age >= 16 ? faixasEGrausMaior16 : faixasEGrausMenor16).map(
+                    (item, index) => (
+                      <option
+                        key={index}
+                        value={`${item.faixa}-${item.grau ?? ""}`}
+                      >
+                        {item.faixa} {item.grau ? `${item.grau}°` : ""}
                       </option>
-                      ) : (
-                        <option key={index} value={`${item.faixa}`}>
-                          {item.faixa}
-                        </option>
-                      )
                     )
-                  ):(
-                    faixasEGrausMenor16.map((item, index) =>
-                      item.grau ? (
-                        <option key={index} value={`${item.faixa}-${item.grau}`}>
-                          {item.faixa} {item.grau}°
-                        </option>
-                      ) : (
-                        <option key={index} value={`${item.faixa}`}>
-                          {item.faixa}
-                        </option>
-                      )
-                    )
-                  )
-                }
-                
-              </select>
+                  )}
+                </select>
+              </div>
             </div>
 
             <div>
