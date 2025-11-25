@@ -4,6 +4,7 @@ import PageTitle from "../components/PageTitle";
 import { useEffect, useState } from "react";
 import type { Professor } from "../types/Professor";
 import { listarProfessores } from "../hooks/ListaProfessores";
+import BeltTag from "../components/BeltTag";
 
 export default function Professores() {
 
@@ -77,15 +78,15 @@ export default function Professores() {
                       >
                         <td className="py-3 px-6 rounded-l-xl">
                           <Link
-                            to={`/visualizar-aluno/${professor.id}`}
+                            to={`/visualizar-aluno/${professor.studentId}`}
                             className="text-[#000000] hover:underline font-medium"
                           >
                             {professor.nome}
                           </Link>
                         </td>
-                        <td className="py-3 px-6"></td>
+                        <td className="py-3 px-6">{professor.apelido || "—"}</td>
                         <td className="py-3 px-6 rounded-r-xl">
-                          
+                          <BeltTag faixa={professor.faixa} grau={professor.grau} />
                         </td>
                       </tr>
                     ))}

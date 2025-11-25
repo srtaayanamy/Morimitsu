@@ -92,9 +92,6 @@ export default function InserirAlunosTurma() {
         `Alguns alunos não puderam ser adicionados. (${erros} erro(s))`
       );
     }
-
-    // Opcional: limpar seleção após tentativa
-    // setSelecionados({});
   };
 
   return (

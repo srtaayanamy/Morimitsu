@@ -50,7 +50,7 @@ export async function listarAlunos() {
     }
 
     // Qualquer outro erro
-    console.log("Erro listar alunos. Tente novamente.");
+    console.log("Erro listar alunos. Erro: ", error);
     return "Erro ao listar alunos. Tente novamente!";
   }
 }

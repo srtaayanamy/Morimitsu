@@ -97,7 +97,10 @@ export default function Alunos() {
                   </thead>
                   <tbody>
                     {alunos.map((aluno) => {
-                      const promover = podePromover(aluno.faixa);
+                      let promover = false;
+                      if(podePromover(aluno.faixa) && aluno.userID === null){
+                        promover = true;
+                      }
 
                       return (
                         <tr

@@ -28,7 +28,7 @@ export default function AlunosAptos() {
   const [acessoModalOpen, setAcessoModalOpen] = useState(false);
 
   function VerificarAptidao(aluno: Aluno){
-    if(podePromover(aluno.faixa) === true || aluno.userID === null){
+    if(podePromover(aluno.faixa) === true && aluno.userID === null){
       return true;
     } else {
       return false;

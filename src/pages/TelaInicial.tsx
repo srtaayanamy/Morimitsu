@@ -14,7 +14,8 @@ export default function TelaInicial() {
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorTurmas, setErrorTurmas] = useState<string | null>(null);
+  const [errorAniversariantes, setErrorAniversariantes] = useState<string | null>(null);
   const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([]);
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
@@ -24,7 +25,7 @@ export default function TelaInicial() {
       const result = await listarTurmas();
 
       if (result === false) {
-        setError("Erro ao carregar turmas.");
+        setErrorTurmas("Erro ao carregar turmas.");
       } else {
         setTurmas(result);
       }
@@ -42,7 +43,7 @@ export default function TelaInicial() {
       const result = await filtrarAniversariantes();
 
       if (result === undefined) {
-        setError("Erro ao carregar aniversariantes.");
+        setErrorAniversariantes("Erro ao carregar aniversariantes.");
       } else {
         SetAniversariantes(result);
       }
@@ -77,9 +78,9 @@ export default function TelaInicial() {
                 <Loader2 className="w-8 h-8 text-gray-600 animate-spin" />
               </div>
             )}
-            {error && <p className="text-red-500">{error}</p>}
+            {errorTurmas && <p className="text-red-500">{errorTurmas}</p>}
             {!loading &&
-              !error &&
+              !errorTurmas &&
               turmas.map((turma) => (
                 <div key={turma.id} className="flex-shrink-0">
                   <TurmaCard
@@ -106,7 +107,7 @@ export default function TelaInicial() {
               </div>
             )}
 
-            {error && <p className="text-red-500">{error}</p>}
+            {errorAniversariantes && <p className="text-red-500">{errorAniversariantes}</p>}
 
             {!loading && aniversariantes.length === 0 && (
               <p className="text-gray-600 text-sm">

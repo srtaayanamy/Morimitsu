@@ -1,16 +1,18 @@
 import Header from "../components/Header";
-import { SquarePen } from "lucide-react";
+import { Pen, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { editaTurma } from "../utils/editarTurma";
-import type { Turma } from "../types/Turma";
-import { Link } from "react-router-dom";
-import BeltTag from "../components/BeltTag";
-
-import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
 import { deleteTurma } from "../utils/deletarTurma";
-import { useNavigate } from "react-router-dom";
+
+import type { Turma } from "../types/Turma";
+
+import BeltTag from "../components/BeltTag";
+import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
+
+import ImageOverlay from "../components/ImageOverlay";
 
 export default function VisualizarTurma() {
   const { id } = useParams();
@@ -18,6 +20,9 @@ export default function VisualizarTurma() {
   const [turma, setTurma] = useState<Turma>();
   const [turmaOriginal, setTurmaOriginal] = useState<Turma>();
   const [isEditing, setIsEditing] = useState(false);
+
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<number | null>(null);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const navigate = useNavigate();
@@ -32,6 +37,12 @@ export default function VisualizarTurma() {
       } else {
         setTurma(result);
         setTurmaOriginal(result);
+
+        // Ajusta imagem selecionada caso já exista
+        if (result.URLImage) {
+          const match = result.URLImage.match(/capaturma(\d+)\.png/);
+          if (match) setSelectedImage(Number(match[1]) - 1);
+        }
       }
     }
 
@@ -76,12 +87,8 @@ export default function VisualizarTurma() {
     if (!id) return;
 
     const result = await deleteTurma(id);
-
-    if (result === true) {
-      navigate("/turmas");
-    } else {
-      alert(result);
-    }
+    if (result === true) navigate("/turmas");
+    else alert(result);
 
     setIsDeleteOpen(false);
   }
@@ -114,14 +121,14 @@ export default function VisualizarTurma() {
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
-                className="bg-[#333434] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
+                className="bg-[#333434] text-white px-4 py-2 rounded-xl font-medium hover:opacity-90 cursor-pointer"
               >
                 Cancelar
               </button>
 
               <button
                 onClick={handleSave}
-                className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
+                className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl font-medium hover:opacity-90 cursor-pointer"
               >
                 Salvar alterações
               </button>
@@ -131,41 +138,41 @@ export default function VisualizarTurma() {
 
         {/* Card da turma */}
         <div className="bg-white p-8 rounded-2xl shadow-sm flex flex-col items-center gap-6">
-          {turma.URLImage ? (
-            <img
-              src={turma.URLImage}
-              className="w-36 h-36 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-36 h-36 bg-gray-200 rounded-full flex items-center justify-center">
-              Sem imagem
-            </div>
-          )}
+          {/* IMAGEM DA TURMA + BOTÃO DE TROCAR */}
+          <div className="relative">
+            {turma.URLImage ? (
+              <img
+                src={turma.URLImage}
+                className="w-36 h-36 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-36 h-36 bg-gray-200 rounded-full flex items-center justify-center">
+                Sem imagem
+              </div>
+            )}
+
+            {isEditing && (
+              <button
+                onClick={() => setIsOverlayOpen(true)}
+                className="absolute bottom-1 right-1 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full flex items-center justify-center shadow-md cursor-pointer"
+              >
+                <Pen size={16} />
+              </button>
+            )}
+          </div>
 
           {/* Professor */}
           <div className="text-center w-full">
             <p className="text-sm font-medium">Professor responsável:</p>
 
-            {!isEditing ? (
-              <p className="bg-[#F5F5F5] w-56 mx-auto mt-2 p-3 rounded-xl">
-                {turma.professores?.[0]?.nome || "-"}
-              </p>
-            ) : (
-              <input
-                className="bg-[#EFEFEF] p-3 rounded-xl w-56 text-center mt-2"
-                value={turma.professores?.[0]?.nome || ""}
-                onChange={(e) =>
-                  handleChange("professores", [
-                    { ...turma.professores?.[0], nome: e.target.value },
-                  ])
-                }
-              />
-            )}
+            <p className="bg-[#F5F5F5] w-56 mx-auto mt-2 p-3 rounded-xl">
+              {turma.professores?.[0]?.nome || "-"}
+            </p>
           </div>
 
           {/* Info grid */}
           <div className="w-full flex flex-col md:flex-row text-center gap-6">
-            {/* Total de alunos */}
+            {/* Total */}
             <div className="flex-1">
               <p className="text-sm font-medium">Total de alunos:</p>
               <p className="bg-[#F5F5F5] mt-1 p-3 rounded-xl mx-auto w-40">
@@ -236,7 +243,6 @@ export default function VisualizarTurma() {
             <h2 className="text-2xl font-semibold">Alunos matriculados</h2>
 
             {!isEditing ? (
-              // BOTÕES
               <div className="flex gap-3">
                 <Link to={`/turma/${id}/inserir-alunos`}>
                   <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer">
@@ -244,34 +250,33 @@ export default function VisualizarTurma() {
                   </button>
                 </Link>
 
-                <Link to={`/frequencia-turma/${id}`}>
-                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl">
+                <Link to={`/frequencia-turma/${turma.id}`}>
+                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer">
                     Fazer frequência
                   </button>
                 </Link>
               </div>
             ) : (
-              // Botões modo edição
               <div className="flex gap-3">
-                <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl hover:opacity-90">
+                <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl">
                   Vincular professor
                 </button>
 
                 <Link to={`/turma/${id}/inserir-alunos`}>
-                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer hover:opacity-90">
+                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer">
                     Inserir alunos
                   </button>
                 </Link>
 
                 <Link to={`/turma/${id}/remover-alunos`}>
-                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer hover:opacity-90">
+                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer">
                     Remover aluno
                   </button>
                 </Link>
 
                 <button
                   onClick={() => setIsDeleteOpen(true)}
-                  className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl hover:opacity-90"
+                  className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer"
                 >
                   Excluir turma
                 </button>
@@ -291,20 +296,15 @@ export default function VisualizarTurma() {
               </thead>
 
               <tbody>
-                {turma.alunos?.map((a) => {
-                  console.log("ALUNO RECEBIDO:", a);
-                  console.log("FAIXA RECEBIDA:", JSON.stringify(a.faixa));
-
-                  return (
-                    <tr key={a.id} className="bg-[#F5F5F5] rounded-xl">
-                      <td className="p-3 rounded-l-xl">{a.nome}</td>
-                      <td className="p-3">{a.apelido}</td>
-                      <td className="py-3 px-6 text-center">
-                        <BeltTag faixa={a.faixa} grau={a.grau} />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {turma.alunos?.map((a) => (
+                  <tr key={a.id} className="bg-[#F5F5F5] rounded-xl">
+                    <td className="p-3 rounded-l-xl">{a.nome}</td>
+                    <td className="p-3">{a.apelido}</td>
+                    <td className="py-3 px-6 text-center">
+                      <BeltTag faixa={a.faixa} grau={a.grau} />
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -316,6 +316,21 @@ export default function VisualizarTurma() {
           onClose={() => setIsDeleteOpen(false)}
           onConfirm={handleConfirmDelete}
         />
+
+        {/* OVERLAY DE SELEÇÃO DE IMAGEM */}
+        {isOverlayOpen && (
+          <ImageOverlay
+            selectedImage={selectedImage}
+            setSelectedImage={(index) => {
+              setSelectedImage(index);
+              handleChange(
+                "URLImage",
+                `/src/assets/presets/capaturma${index + 1}.png`
+              );
+            }}
+            onClose={() => setIsOverlayOpen(false)}
+          />
+        )}
       </main>
     </div>
   );

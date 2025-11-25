@@ -24,8 +24,11 @@ export async function listarProfessores(): Promise<Professor[] | false | string>
     const professores: Professor[] = ProfessoresBack.map((p: any) => ({
       id: p.id,
       nome: p.name,
+      apelido: p.studentData.nickname,
       email: p.email,
-      studentID: p.studentData.id
+      studentId: p.studentData.student.id,
+      faixa: p.studentData.Rank,
+      grau: p.studentData.Rating
     }));
     console.log(professores)
 
