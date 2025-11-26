@@ -244,7 +244,7 @@ export default function VisualizarAluno() {
                           key={index}
                           className="bg-[#EFEFEF] font-medium rounded-lg px-2 py-2 shadow-[#F1F1F1]"
                         >
-                          {turma.nome}
+                          {typeof turma === 'string' ? turma : turma.nome}
                         </li>
                       ))}
                     </ul>

@@ -26,7 +26,7 @@ export async function pegaDadosAluno(id: string) {
       apelido: response.data.data.student.nickname || "",
       dataNascimento: formatarData(response.data.data.student.personal.birthDate) || "",
       telefone: response.data.data.student.personal.contact || "",
-      sexo: response.data.data.student.personal.sexo || "",
+      sexo: response.data.data.student.personal.gender || "",
       CPF: response.data.data.student.personal.CPF || "",
       faixa: response.data.data.student.form.Rank || "",
       grau: response.data.data.student.form.Rating || "",
