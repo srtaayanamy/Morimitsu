@@ -132,7 +132,7 @@ export default function VisualizarAluno() {
         {/* Card principal */}
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <Avatar sexo={aluno.sexo} />
+            <Avatar sexo={aluno.sexo} idade={aluno.idade} />
             <div className="flex-1 space-y-4 w-full">
               <InfoField
                 label="Faixa / grau:"

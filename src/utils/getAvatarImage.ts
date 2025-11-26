@@ -5,22 +5,38 @@ import girlKid from "../assets/presets/girl_kid.png";
 import man from "../assets/presets/man.png";
 import woman from "../assets/presets/woman.png";
 import martialArts from "../assets/presets/martial-arts.png";
-import { calcularIdade } from "./CalcularIdade";
 
-export function getAvatarImage(sexo?: string, dataNascimento?: string) {
-  if (!sexo || !dataNascimento) return martialArts;
+export function getAvatarImage(sexo?: string, idade?: number | null): string {
+  if (!sexo) return martialArts;
 
-  const idade = calcularIdade(dataNascimento);
-  const s = sexo.toLowerCase();
+  const s = sexo.toLowerCase().trim();
 
-  const isMale = s === "male" || s === "masculino" || s === "m";
-  const isFemale = s === "female" || s === "feminino" || s === "f";
+  const isMale =
+    s === "male" || s === "masculino" || s === "m" || s === "homem";
+  const isFemale =
+    s === "female" || s === "feminino" || s === "f" || s === "mulher";
+
+  // Define se é criança/adolescente (até 17 anos
+  const isKid = idade !== null && idade !== undefined && idade <= 12;
+  const isTeen = idade !== null && idade !== undefined && idade <= 18;
 
   if (isMale) {
+    if (isKid) {
+      return boyKid;
+    }
+    if (isTeen) {
+      return boy;
+    }
     return man;
   }
 
   if (isFemale) {
+    if (isKid) {
+      return girlKid;
+    }
+    if (isTeen) {
+      return girl;
+    }
     return woman;
   }
 

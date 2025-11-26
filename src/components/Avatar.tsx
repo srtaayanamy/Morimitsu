@@ -1,13 +1,14 @@
+// components/Avatar.tsx
 import fallbackAvatar from "../assets/presets/martial-arts.png";
 import { getAvatarImage } from "../utils/getAvatarImage";
 
 interface AvatarProps {
   sexo?: string;
-  dataNascimento?: string;
+  idade?: number | null;           // agora aceita idade
 }
 
-export function Avatar({ sexo, dataNascimento }: AvatarProps) {
-  const avatarSrc = getAvatarImage(sexo, dataNascimento);
+export function Avatar({ sexo, idade }: AvatarProps) {
+  const avatarSrc = getAvatarImage(sexo, idade);
 
   return (
     <div className="bg-white rounded-2xl p-4 flex items-center justify-center w-48 h-48 shadow-sm">
