@@ -11,7 +11,7 @@ export function Avatar({ sexo, dataNascimento }: AvatarProps) {
 
   return (
     <div className="bg-white rounded-2xl p-4 flex items-center justify-center w-48 h-48 shadow-sm">
-      <div className="w-32 h-32 rounded-full overflow-hidden bg-[#F5F5F5] flex items-center justify-center border border-[#DDD]">
+      <div className="w-42 h-42 rounded-full overflow-hidden bg-[#F5F5F5] flex items-center justify-center border border-[#DDD]">
         <img
           src={avatarSrc}
           alt="Avatar do aluno"

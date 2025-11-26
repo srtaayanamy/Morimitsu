@@ -65,7 +65,7 @@ export default function Professores() {
                       <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
                         Apelido
                       </th>
-                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                      <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
                         Faixa atual
                       </th>
                     </tr>
@@ -85,7 +85,7 @@ export default function Professores() {
                           </Link>
                         </td>
                         <td className="py-3 px-6">{professor.apelido || "—"}</td>
-                        <td className="py-3 px-6 rounded-r-xl">
+                        <td className="py-3 px-6 rounded-r-xl text-center">
                           <BeltTag faixa={professor.faixa} grau={professor.grau} />
                         </td>
                       </tr>

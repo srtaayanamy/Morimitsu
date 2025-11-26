@@ -17,14 +17,10 @@ export function getAvatarImage(sexo?: string, dataNascimento?: string) {
   const isFemale = s === "female" || s === "feminino" || s === "f";
 
   if (isMale) {
-    if (idade <= 12) return boyKid;
-    if (idade <= 17) return boy;
     return man;
   }
 
   if (isFemale) {
-    if (idade <= 12) return girlKid;
-    if (idade <= 17) return girl;
     return woman;
   }
 
