@@ -6,7 +6,7 @@ import { type Turma } from "../types/Turma";
 import { type Aluno } from "../types/Aluno";
 import { cadastrarAluno } from "../utils/CadastrarAluno";
 import { FiltrarTurmaPorIdade } from "../hooks/ListaTurmas";
-import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../types/Rank";
+import { faixasEGrausMaior16, faixasEGrausMenor16, Ranking } from "../types/Rank";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
 import { calcularIdade } from "../utils/CalcularIdade";
@@ -208,31 +208,51 @@ export default function RegistrarAluno() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+              {/*Faixa*/}
               <div>
                 <label className={labelBase}>Faixa / grau:</label>
                 <select
                   className={inputBase}
-                  value={`${faixa}-${grau}`}
+                  value={`${faixa}`}
                   onChange={(e) => {
-                    const [f, g] = e.target.value.split("-");
+                    const f = e.target.value
                     setFaixa(f);
-
-                    if (g === "") return;
-                    if (!isNaN(Number(g))) setGrau(Number(g));
                   }}
                 >
                   {(age >= 16 ? faixasEGrausMaior16 : faixasEGrausMenor16).map(
                     (item, index) => (
                       <option
                         key={index}
-                        value={`${item.faixa}-${item.grau ?? ""}`}
+                        value={`${item.faixa}`}
                       >
-                        {item.faixa} {item.grau ? `${item.grau}°` : ""}
+                        {item.faixa}
                       </option>
                     )
                   )}
                 </select>
               </div>
+
+              <div>
+                <select
+                  className={inputBase}
+                  value={grau > 0 ? grau : 'Nenhum'}
+                  onChange={(e) => {
+                    const g = e.target.value
+                    setGrau(Number(g));
+                  }}
+                >
+                  {(Ranking[faixa]).map((g) => (
+                      <option
+                        key={g}
+                        value={g > 0 ? g : 'Nenhum'}
+                      >
+                        {g > 0 ? g: 'Nenhum'}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
+
             </div>
 
             <div>

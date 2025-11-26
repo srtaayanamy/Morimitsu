@@ -24,7 +24,7 @@ export async function listarAlunos() {
         dataNascimento: s.personal.birthDate,
         faixa: s.personal?.rank || "",
         grau: s.personal?.rating ?? 0,
-        userID: s.form.userId
+        userID: s.form?.userId
       };
     });
 
