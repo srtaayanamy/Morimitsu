@@ -24,7 +24,7 @@ export default function VisualizarAluno() {
         setErro(result);
       } else {
         setAluno(result);
-        setAlunoOriginal(result); // guarda original
+        setAlunoOriginal(result);
       }
     }
     fetchAluno();
@@ -38,7 +38,6 @@ export default function VisualizarAluno() {
   const handleSave = async () => {
     if (!id || !aluno) return;
 
-    // separa os blocos que sua API espera
     const dadosPersonal = {
       nome: aluno.nome,
       apelido: aluno.apelido,
@@ -62,7 +61,7 @@ export default function VisualizarAluno() {
 
     if (result === true) {
       alert("Alterações salvas com sucesso!");
-      setAlunoOriginal(aluno); // atualiza o original
+      setAlunoOriginal(aluno);
       setIsEditing(false);
     } else {
       alert(result || "Erro ao atualizar aluno.");
@@ -70,7 +69,7 @@ export default function VisualizarAluno() {
   };
 
   const handleCancel = () => {
-    setAluno(alunoOriginal); // restaura original
+    setAluno(alunoOriginal);
     setIsEditing(false);
   };
 
@@ -95,14 +94,30 @@ export default function VisualizarAluno() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 flex flex-col space-y-4">
-        {/* Cabeçalho */}
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
-          <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
-            {aluno.nome} {aluno.apelido ? `(${aluno.apelido})` : ""}
-          </h1>
+          {!isEditing ? (
+            <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
+              {aluno.nome} {aluno.apelido ? `(${aluno.apelido})` : ""}
+            </h1>
+          ) : (
+            <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+              <input
+                type="text"
+                className="border border-gray-300 p-2 rounded-lg w-full md:w-1/2"
+                value={aluno.nome}
+                onChange={(e) => handleChange("nome", e.target.value)}
+              />
+              <input
+                type="text"
+                className="border border-gray-300 p-2 rounded-lg w-full md:w-1/3"
+                placeholder="Apelido"
+                value={aluno.apelido || ""}
+                onChange={(e) => handleChange("apelido", e.target.value)}
+              />
+            </div>
+          )}
 
           {!isEditing ? (
-            // Modo de visualização: botão de editar
             <button
               onClick={() => setIsEditing(true)}
               className="bg-transparent hover:opacity-80 transition cursor-pointer"
@@ -110,18 +125,17 @@ export default function VisualizarAluno() {
               <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
             </button>
           ) : (
-            // Modo de edição: botões Cancelar e Salvar
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 bg-[#333434] text-white font-medium rounded-md hover:opacity-90 transition cursor-pointer"
+                className="px-2 py-2 bg-[#333434] w-[100px] text-white font-medium rounded-md hover:opacity-90 transition cursor-pointer"
               >
                 Cancelar
               </button>
 
               <button
                 onClick={handleSave}
-                className="px-4 py-2 bg-[#7F1A17] text-white font-medium rounded-md hover:opacity-90 transition cursor-pointer"
+                className="px-2 py-2 bg-[#7F1A17] text-white w-[160px] font-medium rounded-md hover:opacity-90 transition cursor-pointer"
               >
                 Salvar alterações
               </button>
@@ -129,7 +143,6 @@ export default function VisualizarAluno() {
           )}
         </div>
 
-        {/* Card principal */}
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <Avatar sexo={aluno.sexo} idade={aluno.idade} />
@@ -142,20 +155,15 @@ export default function VisualizarAluno() {
               />
 
               <div>
-                <p className="font-semibold text-sm md:text-base">
-                  Progresso / Frequência:
-                </p>
+                <p className="font-semibold text-sm md:text-base">Progresso / Frequência:</p>
                 <div className="mt-2">
                   <ProgressBar percent={aluno.frequencia} />
                 </div>
-                <p className="text-sm text-right mt-1 text-[#1E1E1E]">
-                  {aluno.frequencia}%
-                </p>
+                <p className="text-sm text-right mt-1 text-[#1E1E1E]">{aluno.frequencia}%</p>
               </div>
             </div>
           </div>
 
-          {/* Informações detalhadas */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <InfoField
               label="Data de Nascimento:"
@@ -186,9 +194,7 @@ export default function VisualizarAluno() {
             />
 
             <div className="md:col-span-2">
-              <p className="font-semibold text-sm md:text-base">
-                Responsável / Contato emergencial:
-              </p>
+              <p className="font-semibold text-sm md:text-base">Responsável / Contato emergencial:</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
                 <InfoField
                   label=""
@@ -205,20 +211,15 @@ export default function VisualizarAluno() {
               </div>
             </div>
 
-            {/* Turmas que participa */}
             <div className="md:col-span-3">
-              <p className="font-semibold text-sm md:text-base mb-1">
-                Turmas que participa:
-              </p>
+              <p className="font-semibold text-sm md:text-base mb-1">Turmas que participa:</p>
 
               <div className="relative bg-[#EFEFEF] rounded-xl">
                 <details className="group rounded-xl">
                   <summary className="flex justify-between items-center cursor-pointer px-6 py-4 select-none font-medium text-[#1E1E1E] list-none">
                     <span>
                       {aluno.turmas && aluno.turmas.length > 0
-                        ? `${aluno.turmas.length} turma${
-                            aluno.turmas.length > 1 ? "s" : ""
-                          }`
+                        ? `${aluno.turmas.length} turma${aluno.turmas.length > 1 ? "s" : ""}`
                         : "Nenhuma turma cadastrada"}
                     </span>
                     <svg
@@ -228,11 +229,7 @@ export default function VisualizarAluno() {
                       strokeWidth="2"
                       viewBox="0 0 24 24"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 9l-7 7-7-7"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                   </summary>
 
@@ -243,7 +240,7 @@ export default function VisualizarAluno() {
                           key={index}
                           className="bg-[#EFEFEF] font-medium rounded-lg px-2 py-2 shadow-[#F1F1F1]"
                         >
-                          {typeof turma === 'string' ? turma : turma.nome}
+                          {typeof turma === "string" ? turma : turma.nome}
                         </li>
                       ))}
                     </ul>
@@ -252,7 +249,6 @@ export default function VisualizarAluno() {
               </div>
             </div>
 
-            {/* Campo final */}
             <InfoField
               label="E-mail:"
               value={aluno.email || ""}
