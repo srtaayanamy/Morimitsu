@@ -9,13 +9,17 @@ import TurmaCard from "../components/TurmaCard";
 import BirthdayCard from "../components/BirthdayCard";
 import { filtrarAniversariantes } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
+import Calendario from "../components/Calendario";
+import { SquarePen } from "lucide-react";
 
 export default function TelaInicial() {
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorTurmas, setErrorTurmas] = useState<string | null>(null);
-  const [errorAniversariantes, setErrorAniversariantes] = useState<string | null>(null);
+  const [errorAniversariantes, setErrorAniversariantes] = useState<
+    string | null
+  >(null);
   const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([]);
 
   //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
@@ -107,7 +111,9 @@ export default function TelaInicial() {
               </div>
             )}
 
-            {errorAniversariantes && <p className="text-red-500">{errorAniversariantes}</p>}
+            {errorAniversariantes && (
+              <p className="text-red-500">{errorAniversariantes}</p>
+            )}
 
             {!loading && aniversariantes.length === 0 && (
               <p className="text-gray-600 text-sm">
@@ -128,8 +134,10 @@ export default function TelaInicial() {
                     }
                   )}
                   sexo={
-                    aluno.sexo === "male" || aluno.sexo === "female" ? aluno.sexo : "male"
-                  } // <-- força tipo válido
+                    aluno.sexo === "male" || aluno.sexo === "female"
+                      ? aluno.sexo
+                      : "male"
+                  }
                 />
               ))}
           </div>
@@ -141,12 +149,16 @@ export default function TelaInicial() {
             <h2 className="text-lg sm:text-xl font-semibold text-[#1E1E1E]">
               Calendário
             </h2>
-            <button className="bg-black text-white rounded-md px-4 py-2 text-sm hover:bg-gray-800 transition flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Criar novo evento
-            </button>
+            <div className="flex flex-row gap-3">
+              <SquarePen className="w-9 h-9 text-[#1E1E1E]" />
+              <button className="bg-black text-white rounded-md px-4 py-2 text-sm hover:bg-gray-800 transition flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Criar novo evento
+              </button>
+            </div>
           </div>
           {/* conteúdo do calendário */}
+          <Calendario />
         </SectionCard>
       </main>
     </div>
