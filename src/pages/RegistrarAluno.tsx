@@ -6,7 +6,11 @@ import { type Turma } from "../types/Turma";
 import { type Aluno } from "../types/Aluno";
 import { cadastrarAluno } from "../utils/CadastrarAluno";
 import { FiltrarTurmaPorIdade } from "../hooks/ListaTurmas";
-import { faixasEGrausMaior16, faixasEGrausMenor16, Ranking } from "../types/Rank";
+import {
+  faixasEGrausMaior16,
+  faixasEGrausMenor16,
+  Ranking,
+} from "../types/Rank";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
 import { calcularIdade } from "../utils/CalcularIdade";
@@ -14,7 +18,6 @@ import { calcularIdade } from "../utils/CalcularIdade";
 export default function RegistrarAluno() {
   const navigate = useNavigate();
 
-  //Variáveis de estado
   const [nome, setNome] = useState<string>("");
   const [apelido, setApelido] = useState<string>("");
   const [dataNascimento, setDataNascimento] = useState<string>("");
@@ -35,7 +38,6 @@ export default function RegistrarAluno() {
   const [error, setError] = useState<string | null>(null);
   const [age, setAge] = useState<number>(0);
 
-  //UseEffet para executar função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
     const fetchTurmas = async () => {
       if (!age) return;
@@ -57,16 +59,13 @@ export default function RegistrarAluno() {
     setAge(idade);
   }, [dataNascimento]);
 
-  //Função para adicionar turma selecionada na lista de turmas
   function adicionarTurmaSelecionada() {
     if (turmaSelecionada === "") return;
 
     setTurmas(turmas.filter((t) => t.id !== turmaSelecionada));
 
-    // Evita duplicatas
     if (turmasVinculadas.some((t) => t === turmaSelecionada)) return;
 
-    // Adiciona à lista
     setTurmasVinculadas((prev) => [...prev, turmaSelecionada]);
     setTurmaSelecionada("");
   }
@@ -100,7 +99,6 @@ export default function RegistrarAluno() {
     }
   }
 
-  // Classes reutilizáveis
   const inputBase =
     "w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3 focus:ring-2 focus:ring-[#8B0000] outline-none";
   const labelBase = "block text-sm font-semibold mb-2";
@@ -110,7 +108,6 @@ export default function RegistrarAluno() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 flex flex-col space-y-3">
-        {/* Cabeçalho */}
         <PageTitle title="Cadastro de aluno">
           <div className="flex justify-end gap-3">
             <button
@@ -130,12 +127,10 @@ export default function RegistrarAluno() {
           </div>
         </PageTitle>
 
-        {/* Mensagem de erro */}
         {error && <ErrorMessage message={error} />}
 
-        {/* Formulário principal */}
         <div className="bg-white rounded-2xl p-5 md:p-8 space-y-6 shadow-sm flex-1">
-          {/* Linha 1 - Nome e apelido */}
+          {/* Nome / Apelido */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>Nome completo:</label>
@@ -156,7 +151,7 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* Linha 2 - Data, telefone e sexo */}
+          {/* Data / Telefone / Sexo */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>Data de Nascimento:</label>
@@ -196,7 +191,7 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* Linha 3 - CPF, faixa e frequência */}
+          {/* CPF / FAIXA + GRAU / Frequência */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>CPF:</label>
@@ -207,52 +202,44 @@ export default function RegistrarAluno() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-              {/*Faixa*/}
-              <div>
-                <label className={labelBase}>Faixa / grau:</label>
+            <div>
+              <label className={labelBase}>Faixa / Grau:</label>
+
+              <div className="flex w-full gap-3 justify-center">
+                {/* Faixa */}
                 <select
                   className={inputBase}
-                  value={`${faixa}`}
+                  value={faixa}
                   onChange={(e) => {
-                    const f = e.target.value
+                    const f = e.target.value;
                     setFaixa(f);
                   }}
                 >
                   {(age >= 16 ? faixasEGrausMaior16 : faixasEGrausMenor16).map(
                     (item, index) => (
-                      <option
-                        key={index}
-                        value={`${item.faixa}`}
-                      >
+                      <option key={index} value={item.faixa}>
                         {item.faixa}
                       </option>
                     )
                   )}
                 </select>
-              </div>
 
-              <div>
+                {/* Grau */}
                 <select
                   className={inputBase}
-                  value={grau > 0 ? grau : 'Nenhum'}
+                  value={grau > 0 ? grau : "Nenhum"}
                   onChange={(e) => {
-                    const g = e.target.value
+                    const g = e.target.value;
                     setGrau(Number(g));
                   }}
                 >
-                  {(Ranking[faixa]).map((g) => (
-                      <option
-                        key={g}
-                        value={g > 0 ? g : 'Nenhum'}
-                      >
-                        {g > 0 ? g: 'Nenhum'}
-                      </option>
-                    )
-                  )}
+                  {Ranking[faixa].map((g) => (
+                    <option key={g} value={g > 0 ? g : "Nenhum"}>
+                      {g > 0 ? g : "Nenhum"}
+                    </option>
+                  ))}
                 </select>
               </div>
-
             </div>
 
             <div>
@@ -265,7 +252,7 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* Linha 4 - Responsável e matrícula */}
+          {/* RESPONSÁVEL / MATRÍCULA */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="md:col-span-2">
               <label className={labelBase}>
@@ -297,7 +284,7 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* Linha 5 - E-mail e turma */}
+          {/* EMAIL / TURMA */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>E-mail:</label>
@@ -327,7 +314,6 @@ export default function RegistrarAluno() {
                   ))}
                 </select>
 
-                {/* Ícone de expandir */}
                 <svg
                   className="absolute right-12 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none"
                   fill="none"
@@ -342,7 +328,6 @@ export default function RegistrarAluno() {
                   />
                 </svg>
 
-                {/* Ícone de adicionar */}
                 <Plus
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-black cursor-pointer"
                   onClick={adicionarTurmaSelecionada}
@@ -351,7 +336,7 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* Observações */}
+          {/* OBSERVAÇÃO */}
           <div>
             <label className={labelBase}>Observações do aluno:</label>
             <textarea
