@@ -4,7 +4,6 @@ import PageTitle from "../components/PageTitle";
 import { useEffect, useState } from "react";
 import type { Professor } from "../types/Professor";
 import { listarProfessores } from "../hooks/ListaProfessores";
-import BeltTag from "../components/BeltTag";
 import ProfessorCard from "../components/ProfessorCard";
 
 export default function Professores() {
