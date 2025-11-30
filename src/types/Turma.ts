@@ -10,6 +10,6 @@ export interface Turma{
     horarioFim?: string;
     URLImage?: string;
     alunos?: Aluno[]; 
-    professores: Professor[];
+    professores?: Professor[];
     numAlunos?: number
 }
