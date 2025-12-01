@@ -30,7 +30,7 @@ export default function Calendario() {
         </div>
 
         {/* Calendário*/}
-        <div className="flex-1 max-w-md">
+        <div className="flex-1 max-w-100">
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setCurrentDate(subMonths(currentDate, 1))}
@@ -79,7 +79,7 @@ export default function Calendario() {
 
                   {isCurrentDay && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-9 h-9 rounded-full bg-[#337AF7]"></div>
+                      <div className="w-9 h-9 rounded-full bg-[#337bf79e]"></div>
                     </div>
                   )}
                 </div>

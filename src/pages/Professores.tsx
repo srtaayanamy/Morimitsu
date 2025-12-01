@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { Professor } from "../types/Professor";
 import { listarProfessores } from "../hooks/ListaProfessores";
 import ProfessorCard from "../components/ProfessorCard";
+import { SquarePen } from "lucide-react";
 
 export default function Professores() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,14 +38,17 @@ export default function Professores() {
       <main className="flex-1 p-4 md:p-8 space-y-5">
         {/* Cabeçalho da página */}
         <PageTitle title="Professores:">
-          <Link to="/alunos-aptos">
-            <button
-              type="button"
-              className="bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
-            >
-              Promover aluno a professor
-            </button>
-          </Link>
+          <div className="flex flex-row items-center p-2 gap-3">
+            <SquarePen className="w-9 h-9 text-[#1E1E1E] cursor-pointer" />
+            <Link to="/alunos-aptos">
+              <button
+                type="button"
+                className="bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
+              >
+                Promover aluno a professor
+              </button>
+            </Link>
+          </div>
         </PageTitle>
         {/* Conteúdo */}
         {loading && <p>Carregando professores...</p>}

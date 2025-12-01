@@ -70,7 +70,53 @@ export default function RegistrarAluno() {
     setTurmaSelecionada("");
   }
 
+  const formatarTelefone = (value: string) => {
+    value = value.replace(/\D/g, "");
+    if (value.length > 11) value = value.slice(0, 11);
+
+    if (value.length <= 2) return `(${value}`;
+    if (value.length <= 7) return `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    return `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+  };
+
+  const handleTelefoneChange = (e: any) => {
+    const value = e.target.value;
+    setTelefone(formatarTelefone(value));
+  };
+
+  const handleContatoChange = (e: any) => {
+    const value = e.target.value;
+    setContato(formatarTelefone(value));
+  };
+
+  const handleCPFChange = (e: any) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 11) value = value.slice(0, 11);
+    setCPF(value);
+  };
+
   async function handleRegisterAluno() {
+    const telefoneRegex = /^\(\d{2}\)\s?\d{4,5}-\d{4}$/;
+    if (!telefoneRegex.test(telefone)) {
+      setError("Telefone inválido. Use o formato (DD) 99999-9999.");
+      return;
+    }
+
+    if (contato && !telefoneRegex.test(contato)) {
+      setError(
+        "Telefone de responsável inválido. Use o formato (DD) 99999-9999."
+      );
+      return;
+    }
+
+    const cpfRegex = /^\d{11}$/;
+    if (!cpfRegex.test(CPF)) {
+      setError(
+        "CPF inválido. Digite apenas os 11 números sem pontos ou traços."
+      );
+      return;
+    }
+
     const novoAluno: Aluno = {
       nome,
       apelido,
@@ -91,7 +137,6 @@ export default function RegistrarAluno() {
     const result = await cadastrarAluno(novoAluno);
 
     if (result === true) {
-      console.log("Aluno criado com sucesso");
       navigate("/alunos");
     } else {
       setError(result);
@@ -112,14 +157,14 @@ export default function RegistrarAluno() {
           <div className="flex justify-end gap-3">
             <button
               type="button"
-              className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer"
+              className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium"
               onClick={() => navigate("/alunos")}
             >
               Cancelar
             </button>
             <button
               type="button"
-              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition cursor-pointer"
+              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium"
               onClick={handleRegisterAluno}
             >
               Concluir cadastro
@@ -130,7 +175,6 @@ export default function RegistrarAluno() {
         {error && <ErrorMessage message={error} />}
 
         <div className="bg-white rounded-2xl p-5 md:p-8 space-y-6 shadow-sm flex-1">
-          {/* Nome / Apelido */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>Nome completo:</label>
@@ -151,7 +195,6 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* Data / Telefone / Sexo */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>Data de Nascimento:</label>
@@ -167,7 +210,8 @@ export default function RegistrarAluno() {
               <input
                 type="tel"
                 className={inputBase}
-                onChange={(e) => setTelefone(e.target.value)}
+                value={telefone}
+                onChange={handleTelefoneChange}
               />
             </div>
 
@@ -181,7 +225,6 @@ export default function RegistrarAluno() {
                     <input
                       type="radio"
                       name="sexo"
-                      className="accent-[#8B0000]"
                       onChange={() => setSexo(sexo)}
                     />
                     {sexo}
@@ -191,14 +234,14 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* CPF / FAIXA + GRAU / Frequência */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>CPF:</label>
               <input
                 type="text"
                 className={inputBase}
-                onChange={(e) => setCPF(e.target.value)}
+                value={CPF}
+                onChange={handleCPFChange}
               />
             </div>
 
@@ -206,7 +249,6 @@ export default function RegistrarAluno() {
               <label className={labelBase}>Faixa / Grau:</label>
 
               <div className="flex w-full gap-3 justify-center">
-                {/* Faixa */}
                 <select
                   className={inputBase}
                   value={faixa}
@@ -224,14 +266,10 @@ export default function RegistrarAluno() {
                   )}
                 </select>
 
-                {/* Grau */}
                 <select
                   className={inputBase}
                   value={grau > 0 ? grau : "Nenhum"}
-                  onChange={(e) => {
-                    const g = e.target.value;
-                    setGrau(Number(g));
-                  }}
+                  onChange={(e) => setGrau(Number(e.target.value))}
                 >
                   {Ranking[faixa].map((g) => (
                     <option key={g} value={g > 0 ? g : "Nenhum"}>
@@ -252,7 +290,6 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* RESPONSÁVEL / MATRÍCULA */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="md:col-span-2">
               <label className={labelBase}>
@@ -261,15 +298,16 @@ export default function RegistrarAluno() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input
                   type="text"
-                  placeholder="Responsável (ex: Carla - Mãe)"
+                  placeholder="Responsável"
                   className={inputBase}
                   onChange={(e) => setResponsavel(e.target.value)}
                 />
                 <input
                   type="text"
-                  placeholder="Telefone (ex: (88) 9 9999-9999)"
+                  placeholder="Telefone"
                   className={inputBase}
-                  onChange={(e) => setContato(e.target.value)}
+                  value={contato}
+                  onChange={handleContatoChange}
                 />
               </div>
             </div>
@@ -284,7 +322,6 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* EMAIL / TURMA */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelBase}>E-mail:</label>
@@ -314,20 +351,6 @@ export default function RegistrarAluno() {
                   ))}
                 </select>
 
-                <svg
-                  className="absolute right-12 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-
                 <Plus
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 text-black cursor-pointer"
                   onClick={adicionarTurmaSelecionada}
@@ -336,7 +359,6 @@ export default function RegistrarAluno() {
             </div>
           </div>
 
-          {/* OBSERVAÇÃO */}
           <div>
             <label className={labelBase}>Observações do aluno:</label>
             <textarea
