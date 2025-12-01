@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell, Search, Menu, X, Filter, Settings } from "lucide-react";
 import Logo from "../assets/Logo.png";
+import NotificationModal from "./NotificationModal";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   return (
     <header className="bg-[#8B0000] text-white flex items-center justify-between px-6 py-3 shadow-md relative">
@@ -20,7 +22,10 @@ export default function Header() {
 
       {/* ÍCONES FIXOS (MOBILE) */}
       <div className="flex items-center gap-5 md:hidden">
-        <button className="hover:text-gray-200 transition">
+        <button
+          className="hover:text-gray-200 transition"
+          onClick={() => setIsNotificationsOpen(true)}
+        >
           <Bell className="w-6 h-6" />
         </button>
         <button className="hover:text-gray-200 transition">
@@ -65,7 +70,10 @@ export default function Header() {
 
         {/* ÍCONES DESKTOP */}
         <div className="flex items-center gap-4">
-          <button className="hover:text-gray-200 transition flex items-center justify-center">
+          <button
+            className="hover:text-gray-200 transition flex items-center justify-center"
+            onClick={() => setIsNotificationsOpen(true)}
+          >
             <Bell className="w-5 h-5" />
           </button>
           <Link
@@ -139,6 +147,12 @@ export default function Header() {
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
+
+      {/* MODAL DE NOTIFICAÇÕES */}
+      <NotificationModal
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+      />
     </header>
   );
 }

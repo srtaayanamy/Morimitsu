@@ -178,8 +178,7 @@ export default function TelaInicial() {
             </h2>
             <div className="flex flex-row gap-3">
               <SquarePen className="w-9 h-9 text-[#1E1E1E]" />
-              <button className="bg-black text-white rounded-md px-4 py-2 text-sm hover:bg-gray-800 transition flex items-center gap-2">
-                <Plus className="w-4 h-4" />
+              <button className="bg-black text-white rounded-md px-4 py-2 text-md hover:bg-gray-800 transition flex items-center gap-2">
                 Criar novo evento
               </button>
             </div>
