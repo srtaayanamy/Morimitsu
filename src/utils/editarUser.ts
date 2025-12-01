@@ -1,29 +1,11 @@
 import api from "../services/api";
 
-export async function editaUser(user: any) {
+export async function editaUser(name: string) {
   try {
-    // Filtra apenas campos válidos
-    const dadosUserFiltrados: any = {};
-    for (const key in user) {
-      const value = user[key];
-      if (value !== "" && value !== null && value !== undefined) {
-        dadosUserFiltrados[key] = value;
-      }
-    }
-
-    // Verifica se há algum dado para modificar
-    if (Object.keys(dadosUserFiltrados).length === 0) {
-      console.log("Nenhuma mudança feita.");
-      return false;
-    }
-
     // Envia os dados diretamente (sem aninhar)
-    const response = await api.put("/user", dadosUserFiltrados);
+    const response = await api.put("/user", name);
 
-    if (response.status === 201) {
-      console.log("Usuário editado com sucesso.");
-    }
-    
+    console.log("Usuário editado com sucesso.");
     return true;
     
   } catch (error: any) {

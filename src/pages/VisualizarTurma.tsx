@@ -61,15 +61,27 @@ export default function VisualizarTurma() {
 
   const handleSave = async () => {
     if (!id || !turma) return;
+    const edit: Partial<Record<keyof Turma, Turma[keyof Turma]>> = {};
+
+    for(const key in turma){
+      const campoKey = key as keyof Turma;
+    
+      if(!turmaOriginal) return;
+    
+      if(turma[campoKey] !== turmaOriginal[campoKey]){
+        edit[campoKey] = turma[campoKey];
+      }
+    }
+
+    if (Object.keys(edit).length === 0) return;
 
     const dadosAtualizados = {
-      nome: turma.nome,
-      idadeMin: turma.idadeMin,
-      idadeMax: turma.idadeMax,
-      horarioInicio: turma.horarioInicio,
-      horarioFim: turma.horarioFim,
-      professorId: turma.professores?.[0]?.id,
-      URLImage: turma.URLImage,
+      name: edit.nome,
+      minAge: edit.idadeMin !== undefined? Number(edit.idadeMin): undefined,
+      maxAge: edit.idadeMax !== undefined? Number(edit.idadeMax): undefined,
+      startTime: edit.horarioInicio,
+      endTime: edit.horarioFim,
+      iconURL: edit.URLImage,
     };
 
     const result = await editaTurma(id, dadosAtualizados);
@@ -79,7 +91,7 @@ export default function VisualizarTurma() {
       setTurmaOriginal(turma);
       setIsEditing(false);
     } else {
-      alert(result || "Erro ao atualizar turma.");
+      setErro(result || "Erro ao atualizar turma.");
     }
   };
 

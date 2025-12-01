@@ -10,9 +10,16 @@ export async function editarAluno(id:string, personal:any, form: any) {
         for (const key in personal) {
             const value = personal[key];
             if (value !== "" && value !== null && value !== undefined) {
-                dadosPersonalFiltrados[key] = value;
+                if(key=== 'birthDate'){
+                    const formatedValue = new Date(value).toISOString();
+                    dadosPersonalFiltrados[key] = formatedValue;
+                }else{
+                    dadosPersonalFiltrados[key] = value;
+                }
+                
             }
         }
+
 
         const dadosFormFiltrados: any = {};
         for (const key in form) {
@@ -21,9 +28,33 @@ export async function editarAluno(id:string, personal:any, form: any) {
                 dadosFormFiltrados[key] = value;
             }
         }
-        
-        const reponsePersonal = await api.put(`/student/${id}/personal`, dadosPersonalFiltrados)
-        const reponseForm= await api.put(`/student/${id}/form`,dadosPersonalFiltrados)
+
+        console.log('Personal: ', dadosPersonalFiltrados);
+        console.log('Form: ', dadosFormFiltrados);
+
+        const token = localStorage.getItem('token');
+
+        if(dadosPersonalFiltrados.length !== 0){
+            const reponsePersonal = await api.put(`/student/${id}/personal`, 
+                dadosPersonalFiltrados,
+                {
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    },
+                }
+            )
+        }
+
+        if(dadosFormFiltrados.length !== 0){
+            const reponseForm = await api.put(`/student/${id}/form`, 
+                dadosFormFiltrados,
+                {
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    },
+                }
+            )
+        }
 
         return true;
     } catch(error:any){

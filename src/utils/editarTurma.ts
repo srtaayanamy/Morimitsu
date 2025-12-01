@@ -12,14 +12,14 @@ export async function editaTurma(id: string, dados: any) {
                 value !== "" && value !== null && value !== undefined
             )
         );
-
+        console.log(dadosFiltrados)
         const response = await api.put(`/class/${id}`, dadosFiltrados);
 
         console.log('Retorno da requisição:', response.data);
         console.log('Status:', response.status);
 
         // 200 ou 201 são sucessos para PUT!
-        if (response.status === 200 || response.status === 201) {
+        if ( response.status === 201) {
             console.log('Turma atualizada com sucesso!');
             return true;
         } else {

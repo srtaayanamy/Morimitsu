@@ -8,6 +8,7 @@ import { pegaDadosAluno } from "../utils/getDadosAluno";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { editarAluno } from "../utils/editarAluno";
+import { editaUser } from "../utils/editarUser";
 
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
@@ -38,23 +39,45 @@ export default function VisualizarAluno() {
   const handleSave = async () => {
     if (!id || !aluno) return;
 
+    const edit: Partial<Record<keyof Aluno, Aluno[keyof Aluno]>> = {};
+
+    for(const key in aluno){
+      const campoKey = key as keyof Aluno;
+    
+      if(!alunoOriginal) return;
+    
+      if(aluno[campoKey] !== alunoOriginal[campoKey]){
+        edit[campoKey] = aluno[campoKey];
+      }
+    }
+
+    if (Object.keys(edit).length === 0) return;
+    
+
+    if(aluno.userID !== undefined && typeof edit.nome === "string"){
+      editaUser(edit.nome);
+    }
+
+    console.log(edit);
+    console.log(aluno['nome']);
+
     const dadosPersonal = {
-      nome: aluno.nome,
-      apelido: aluno.apelido,
-      sexo: aluno.sexo,
-      dataNascimento: aluno.dataNascimento,
-      telefone: aluno.telefone,
-      CPF: aluno.CPF,
-      email: aluno.email,
-      observacao: aluno.observacao,
+      name: edit.nome,
+      nickname: edit.apelido,
+      gender: edit.sexo,
+      birthDate: edit.dataNascimento,
+      contact: edit.telefone,
+      CPF: edit.CPF,
+      email: edit.email,
+      parentName: edit.Responsavel,
+      parentsContact: edit.telefoneResponsavel,
     };
 
     const dadosForm = {
-      faixa: aluno.faixa,
-      grau: aluno.grau,
-      matricula: aluno.matricula,
-      Responsavel: aluno.Responsavel,
-      telefoneResponsavel: aluno.telefoneResponsavel,
+      rank: edit.faixa,
+      rating: edit.grau,
+      comments: edit.observacao,
+      presence: edit.frequencia
     };
 
     const result = await editarAluno(id, dadosPersonal, dadosForm);

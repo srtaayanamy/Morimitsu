@@ -42,7 +42,7 @@ export default function Perfil() {
     setError(false);
     setSuccess(false);
 
-    const result = await editaUser({ name: nome });
+    const result = await editaUser(nome);
 
     if (result === true) {
       console.log("Edição feita com sucesso.");
