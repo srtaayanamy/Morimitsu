@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Clock} from "lucide-react";
+import { Plus, Clock, Pen } from "lucide-react";
 import Header from "../components/Header";
 import ImageOverlay from "../components/ImageOverlay";
 import ClockOverlay from "../components/ClockOverlay";
@@ -43,19 +43,17 @@ export default function RegistrarTurma() {
   //UseEffet para executar função de listarTurmas seja executada retornando a lista de professores
   useEffect(() => {
     const fetchProfessores = async () => {
-        
       const result = await listarProfessores();
-  
-      if (typeof result === 'string') {
-        return;
-      } else if(result === false) {
-        setErro(result);
-      } else{
-        setCoachs(result);
-      };
 
+      if (typeof result === "string") {
+        return;
+      } else if (result === false) {
+        setErro(result);
+      } else {
+        setCoachs(result);
+      }
     };
-  
+
     fetchProfessores();
   }, []);
 
@@ -63,7 +61,7 @@ export default function RegistrarTurma() {
   function adicionarProfessorSelecionado() {
     if (coachSelecionado === "") return;
 
-    setCoachs(coachs.filter(t => t.id !== coachSelecionado));
+    setCoachs(coachs.filter((t) => t.id !== coachSelecionado));
 
     // Evita duplicatas
     if (coachsVinculados.some((t) => t === coachSelecionado)) return;
@@ -71,8 +69,7 @@ export default function RegistrarTurma() {
     // Adiciona à lista
     setCoachsVinculados((prev) => [...prev, coachSelecionado]);
     setCoachSelecionado("");
-  };
-
+  }
 
   //Função para registrar turma
   async function RegisterTurma() {
@@ -159,8 +156,9 @@ export default function RegistrarTurma() {
           <div className="flex justify-center">
             <button
               onClick={() => setShowImageOverlay(true)}
-              className="w-24 h-24 md:w-36 md:h-36 bg-[#E8E8E8] rounded-full flex items-center justify-center border border-[#D9D9D9] hover:bg-[#dcdcdc] transition overflow-hidden"
+              className="relative w-24 h-24 md:w-36 md:h-36 bg-[#E8E8E8] rounded-full flex items-center justify-center border border-[#D9D9D9] hover:bg-[#dcdcdc] transition overflow-hidden"
             >
+              {/* Imagem atual */}
               {selectedImage !== null ? (
                 <img
                   src={`/src/assets/presets/capaturma${selectedImage + 1}.png`}
@@ -174,6 +172,10 @@ export default function RegistrarTurma() {
                   className="w-full h-full object-cover"
                 />
               )}
+
+              <div className="absolute bottom-3.5 right-4.5 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full flex items-center justify-center shadow-md">
+                <Pen size={16} />
+              </div>
             </button>
           </div>
 
@@ -207,16 +209,18 @@ export default function RegistrarTurma() {
                   <option value="" disabled>
                     Selecione um professor
                   </option>
-                  
+
                   {/*Lista os professores*/}
                   {coachs.map((coach) => (
                     <option key={coach.id} value={coach.id}>
                       {coach.nome}
                     </option>
                   ))}
-
                 </select>
-                <Plus className="absolute right-3 pointer-events-none w-5 h-5 text-black" onClick={adicionarProfessorSelecionado}/>
+                <Plus
+                  className="absolute right-3 pointer-events-none w-5 h-5 text-black"
+                  onClick={adicionarProfessorSelecionado}
+                />
               </div>
             </div>
 

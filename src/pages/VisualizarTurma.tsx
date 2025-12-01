@@ -63,12 +63,12 @@ export default function VisualizarTurma() {
     if (!id || !turma) return;
     const edit: Partial<Record<keyof Turma, Turma[keyof Turma]>> = {};
 
-    for(const key in turma){
+    for (const key in turma) {
       const campoKey = key as keyof Turma;
-    
-      if(!turmaOriginal) return;
-    
-      if(turma[campoKey] !== turmaOriginal[campoKey]){
+
+      if (!turmaOriginal) return;
+
+      if (turma[campoKey] !== turmaOriginal[campoKey]) {
         edit[campoKey] = turma[campoKey];
       }
     }
@@ -77,8 +77,8 @@ export default function VisualizarTurma() {
 
     const dadosAtualizados = {
       name: edit.nome,
-      minAge: edit.idadeMin !== undefined? Number(edit.idadeMin): undefined,
-      maxAge: edit.idadeMax !== undefined? Number(edit.idadeMax): undefined,
+      minAge: edit.idadeMin !== undefined ? Number(edit.idadeMin) : undefined,
+      maxAge: edit.idadeMax !== undefined ? Number(edit.idadeMax) : undefined,
       startTime: edit.horarioInicio,
       endTime: edit.horarioFim,
       iconURL: edit.URLImage,
@@ -120,7 +120,16 @@ export default function VisualizarTurma() {
       <main className="p-6 md:p-8 space-y-6">
         {/* Cabeçalho */}
         <div className="bg-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
-          <h1 className="text-3xl font-semibold">{turma.nome}</h1>
+          {!isEditing ? (
+            <h1 className="text-3xl font-semibold">{turma.nome}</h1>
+          ) : (
+            <input
+              type="text"
+              className="border border-gray-200 p-2 rounded-md w-full md:w-1/2"
+              value={turma.nome}
+              onChange={(e) => handleChange("nome", e.target.value)}
+            />
+          )}
 
           {!isEditing ? (
             <button
