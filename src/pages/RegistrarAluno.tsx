@@ -164,7 +164,7 @@ export default function RegistrarAluno() {
             </button>
             <button
               type="button"
-              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium"
+              className="bg-[#7F1A17] text-white px-6 py-3 rounded-xl font-medium cursor-pointer"
               onClick={handleRegisterAluno}
             >
               Concluir cadastro
