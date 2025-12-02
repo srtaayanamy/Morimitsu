@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { Bell, Search, Menu, X, Filter, Settings } from "lucide-react";
 import Logo from "../assets/Logo.png";
 import NotificationModal from "./NotificationModal";
+import FilterOverlay from "./FilterOverlay";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const role =  localStorage.getItem('role');
+  const role = localStorage.getItem("role");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
     <header className="bg-[#8B0000] text-white flex items-center justify-between px-6 py-3 shadow-md relative">
@@ -52,7 +54,7 @@ export default function Header() {
         <Link to="/alunos" className="hover:underline">
           Alunos
         </Link>
-        {role === 'ADMIN' && (
+        {role === "ADMIN" && (
           <Link to="/professores" className="hover:underline">
             Professores
           </Link>
@@ -68,7 +70,9 @@ export default function Header() {
             placeholder="Pesquisa por nome / CPF"
             className="w-full text-gray-800 text-sm focus:outline-none placeholder-gray-400"
           />
-          <Filter className="w-4 h-4 text-black" />
+          <button onClick={() => setIsFilterOpen(true)}>
+            <Filter className="w-4 h-4 text-black cursor-pointer" />
+          </button>
         </div>
 
         {/* ÍCONES DESKTOP */}
@@ -155,6 +159,15 @@ export default function Header() {
       <NotificationModal
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
+      />
+
+      <FilterOverlay
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        onApply={() => {
+          // aqui você aplica os filtros se quiser
+          setIsFilterOpen(false);
+        }}
       />
     </header>
   );
