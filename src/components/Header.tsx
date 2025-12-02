@@ -11,13 +11,10 @@ export default function Header() {
   const role = localStorage.getItem("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // 🔥 NOVO: estado da busca
   const [search, setSearch] = useState("");
 
-  // 🔥 NOVO: navegação
   const navigate = useNavigate();
 
-  // 🔥 NOVO: função de busca
   function handleSearch(e?: any) {
     if (e) e.preventDefault();
     if (!search.trim()) return;
@@ -39,10 +36,10 @@ export default function Header() {
       {/* ÍCONES FIXOS (MOBILE) */}
       <div className="flex items-center gap-5 md:hidden">
         <button
-          className="hover:text-gray-200 transition"
+          className="hover:text-gray-200 transition "
           onClick={() => setIsNotificationsOpen(true)}
         >
-          <Bell className="w-6 h-6" />
+          <Bell className="w-6 h-6 " />
         </button>
         <button className="hover:text-gray-200 transition">
           <Search className="w-6 h-6" />
@@ -87,7 +84,6 @@ export default function Header() {
               className="w-full text-gray-800 text-sm focus:outline-none placeholder-gray-400"
             />
 
-            {/* 🔥 Enviar busca */}
             <button type="submit">
               <Search className="w-6 h-6 pr-1 text-black cursor-pointer" />
             </button>
@@ -104,7 +100,7 @@ export default function Header() {
             className="hover:text-gray-200 transition flex items-center justify-center"
             onClick={() => setIsNotificationsOpen(true)}
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-5 h-5 cursor-pointer" />
           </button>
           <Link
             to="/configuracoes"
