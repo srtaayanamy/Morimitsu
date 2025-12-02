@@ -13,6 +13,7 @@ import VisualizarTurma from "../pages/VisualizarTurma";
 import Professores from "../pages/Professores";
 import Configuration from "../pages/Configuracoes";
 import AlunosAptos from "../pages/AlunosAptos";
+import ResultadoPesquisa from "../pages/ResultadoPesquisa";
 
 // telas de configuração
 import Perfil from "../pages/configuracoes/Perfil";
@@ -44,6 +45,7 @@ export default function AppRoutes() {
       <Route path="/frequencia-turma/:id" element={<FrequenciaTurma />} />
       <Route path="/turma/:id/inserir-alunos" element={<InserirAlunosTurma />} />
       <Route path="/turma/:id/remover-alunos" element={<RemoverAlunosTurma />} />
+      <Route path="/pesquisa" element={<ResultadoPesquisa />} />
 
       
       {/* rotas pai/filho de configuração */}

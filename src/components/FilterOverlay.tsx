@@ -86,14 +86,14 @@ export default function FilterOverlay({ isOpen, onClose, onApply }: FilterOverla
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-[#3F3F3F] text-white font-medium"
+            className="px-4 py-2 rounded-lg bg-[#333434] text-white font-medium cursor-pointer"
           >
             Cancelar
           </button>
 
           <button
             onClick={onApply}
-            className="px-4 py-2 rounded-lg bg-[#8A1C1C] text-white font-medium"
+            className="px-4 py-2 rounded-lg bg-[#7F1A17] text-white font-medium cursor-pointer"
           >
             Aplicar
           </button>

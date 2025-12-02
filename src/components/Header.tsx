@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Bell, Search, Menu, X, Filter, Settings } from "lucide-react";
 import Logo from "../assets/Logo.png";
 import NotificationModal from "./NotificationModal";
@@ -10,6 +10,19 @@ export default function Header() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const role = localStorage.getItem("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // 🔥 NOVO: estado da busca
+  const [search, setSearch] = useState("");
+
+  // 🔥 NOVO: navegação
+  const navigate = useNavigate();
+
+  // 🔥 NOVO: função de busca
+  function handleSearch(e?: any) {
+    if (e) e.preventDefault();
+    if (!search.trim()) return;
+    navigate(`/pesquisa?nome=${encodeURIComponent(search)}`);
+  }
 
   return (
     <header className="bg-[#8B0000] text-white flex items-center justify-between px-6 py-3 shadow-md relative">
@@ -64,16 +77,26 @@ export default function Header() {
         </Link>
 
         {/* CAMPO DE PESQUISA */}
-        <div className="relative bg-white rounded-full flex items-center px-4 py-2 w-72">
-          <input
-            type="text"
-            placeholder="Pesquisa por nome / CPF"
-            className="w-full text-gray-800 text-sm focus:outline-none placeholder-gray-400"
-          />
-          <button onClick={() => setIsFilterOpen(true)}>
-            <Filter className="w-4 h-4 text-black cursor-pointer" />
-          </button>
-        </div>
+        <form onSubmit={handleSearch}>
+          <div className="relative bg-white rounded-full flex items-center px-4 py-2 w-72">
+            <input
+              type="text"
+              placeholder="Pesquisa por nome"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full text-gray-800 text-sm focus:outline-none placeholder-gray-400"
+            />
+
+            {/* 🔥 Enviar busca */}
+            <button type="submit">
+              <Search className="w-6 h-6 pr-1 text-black cursor-pointer" />
+            </button>
+
+            <button type="button" onClick={() => setIsFilterOpen(true)}>
+              <Filter className="w-4 h-4 text-black cursor-pointer ml-2" />
+            </button>
+          </div>
+        </form>
 
         {/* ÍCONES DESKTOP */}
         <div className="flex items-center gap-4">
@@ -165,7 +188,6 @@ export default function Header() {
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
         onApply={() => {
-          // aqui você aplica os filtros se quiser
           setIsFilterOpen(false);
         }}
       />
