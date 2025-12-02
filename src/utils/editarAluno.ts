@@ -9,7 +9,7 @@ export async function editarAluno(id:string, personal:any, form: any) {
         const dadosPersonalFiltrados: any = {};
         for (const key in personal) {
             const value = personal[key];
-            if (value !== "" && value !== null && value !== undefined) {
+            if (value !== null && value !== undefined) {
                 if(key=== 'birthDate'){
                     const formatedValue = new Date(value).toISOString();
                     dadosPersonalFiltrados[key] = formatedValue;

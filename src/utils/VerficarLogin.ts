@@ -10,6 +10,10 @@ export async function verificarLogin(email: string, senha:string){
 
     //Verifica se a senha e o e-mail tem formatos válidos
     const resultado= verificarEmail(email);
+
+    if(email==='' || senha ===''){
+        return "Preencha todos os campos obrigatórios!"
+    }
     
     if(resultado=== false){
         return 'Formato de email inválido'

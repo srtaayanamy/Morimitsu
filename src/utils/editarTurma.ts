@@ -9,7 +9,7 @@ export async function editaTurma(id: string, dados: any) {
         // Filtra campos vazios
         const dadosFiltrados = Object.fromEntries(
             Object.entries(dados).filter(([_, value]) => 
-                value !== "" && value !== null && value !== undefined
+                value !== null && value !== undefined
             )
         );
         console.log(dadosFiltrados)

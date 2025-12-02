@@ -24,6 +24,7 @@ export async function cadastrarAluno(aluno: Aluno) {
             classIds = aluno.turmas;
         }
         
+        aluno.faixa
 
         //Requisição
         const response= await api.post('/student', 
@@ -53,6 +54,9 @@ export async function cadastrarAluno(aluno: Aluno) {
     } catch (error: any) {
         if (error.response) {
             switch (error.response.status) {
+                case 405:
+                    console.log("Nome ou contato do responsável não informado. Erro:", error);
+                    return "Nome ou contato do responsável não informado.";
                 case 409:
                     console.log("Aluno já existe. Erro:", error);
                     return "Aluno já existe.";

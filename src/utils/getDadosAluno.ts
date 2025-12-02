@@ -21,6 +21,9 @@ export async function pegaDadosAluno(id: string) {
       nome: classe.name
     }));
 
+    let rank = response.data.data.student.form.Rank;
+    rank = rank.replace('_', '/')
+
     const aluno: Aluno = {
       nome: response.data.data.student.personal.name || "",
       apelido: response.data.data.student.nickname || "",
@@ -28,7 +31,7 @@ export async function pegaDadosAluno(id: string) {
       telefone: response.data.data.student.personal.contact || "",
       sexo: response.data.data.student.personal.gender || "",
       CPF: response.data.data.student.personal.CPF || "",
-      faixa: response.data.data.student.form.Rank || "",
+      faixa: rank || "",
       grau: response.data.data.student.form.Rating || "",
       frequencia: response.data.data.student.form.Presence || 0,
       Responsavel: response.data.data.student.parents.parentName || "",

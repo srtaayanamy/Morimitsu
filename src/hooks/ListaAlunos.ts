@@ -12,9 +12,17 @@ export async function listarAlunos() {
       },
     });
 
+
+
     //Armezena os alunos
     const alunos: Aluno[] = response.data.data.map((item: any) => {
       const s = item.student;
+      let rank = s.personal.rank;
+      
+      if(rank !== undefined){
+        rank = rank.replace('_', "/");
+      }
+      
       return {
         id: s.id,
         nome: s.personal?.name || "",
@@ -22,7 +30,7 @@ export async function listarAlunos() {
         email: s.email || "",
         sexo: s.personal.gender,
         dataNascimento: s.personal.birthDate,
-        faixa: s.personal?.rank || "",
+        faixa: rank || "",
         grau: s.personal?.rating ?? 0,
         userID: s.form?.userId
       };

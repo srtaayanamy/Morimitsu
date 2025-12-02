@@ -117,6 +117,8 @@ export default function RegistrarAluno() {
       return;
     }
 
+    const rankFormated = faixa.replace('/', "_");
+
     const novoAluno: Aluno = {
       nome,
       apelido,
@@ -124,7 +126,7 @@ export default function RegistrarAluno() {
       telefone,
       sexo,
       CPF,
-      faixa,
+      faixa: rankFormated,
       grau,
       frequencia,
       Responsavel: responsavel,
