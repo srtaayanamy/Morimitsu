@@ -17,6 +17,19 @@ const categoriasMenores: Record<CategoriaMenor, { faixa: string }[]> = {
 
 export default function ConfigurarGraduacao() {
   const [filtro, setFiltro] = useState<"maiores" | "menores">("menores");
+  const [isEditing, setIsEditing] = useState(false);
+
+  // ESTADOS DOS VALORES EDITÁVEIS
+  const [frequenciasMenores, setFrequenciasMenores] = useState({
+    kids: 0,
+    juvenil: 0,
+  });
+
+  const [frequenciasMaiores, setFrequenciasMaiores] = useState(
+    faixasEGrausMaior16.map(() => 0)
+  );
+
+  const toggleEditing = () => setIsEditing(!isEditing);
 
   const titulo =
     filtro === "maiores" ? "Maiores de 16 anos" : "Menores de 16 anos";
@@ -30,9 +43,14 @@ export default function ConfigurarGraduacao() {
 
         <button
           type="button"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl transition cursor-pointer"
+          onClick={toggleEditing}
+          className={`flex items-center gap-2 px-4 py-2 rounded-md transition cursor-pointer
+    ${isEditing ? "bg-[#7F1A17] text-white" : "bg-transparent"}
+  `}
         >
-          <SquarePen className="w-6 h-6 text-[#1E1E1E]" />
+          {!isEditing && <SquarePen className="w-8 h-8 text-[#1E1E1E]" />}
+
+          {isEditing && "Salvar alterações"}
         </button>
       </div>
 
@@ -66,6 +84,7 @@ export default function ConfigurarGraduacao() {
 
       <h3 className="text-lg font-semibold text-gray-800 mb-4">{titulo}</h3>
 
+      {/* MENOR DE 16 */}
       {filtro === "menores" && (
         <div className="space-y-6">
           {(Object.keys(categoriasMenores) as CategoriaMenor[]).map(
@@ -74,21 +93,18 @@ export default function ConfigurarGraduacao() {
                 key={categoria}
                 className="bg-white rounded-2xl shadow-sm overflow-hidden"
               >
-                {/* Cabeçalho */}
                 <div className="px-6 py-4 bg-gray-100 border-b">
                   <h3 className="text-lg font-semibold">
                     {categoriasLabels[categoria]}
                   </h3>
                 </div>
 
-                {/* Tabela */}
                 <table className="min-w-full text-sm border-collapse">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="py-4 px-6 font-bold text-base text-center">
                         Faixas da categoria
                       </th>
-
                       <th className="py-4 px-6 font-bold text-base text-center">
                         Frequência Necessária (única)
                       </th>
@@ -106,7 +122,21 @@ export default function ConfigurarGraduacao() {
                       </td>
 
                       <td className="py-4 px-6 text-center">
-                        <p>0</p>
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={frequenciasMenores[categoria]}
+                            onChange={(e) =>
+                              setFrequenciasMenores((prev) => ({
+                                ...prev,
+                                [categoria]: Number(e.target.value),
+                              }))
+                            }
+                            className="w-20 border rounded-lg px-2 py-1 text-center"
+                          />
+                        ) : (
+                          <p>{frequenciasMenores[categoria]}</p>
+                        )}
                       </td>
                     </tr>
                   </tbody>
@@ -117,6 +147,7 @@ export default function ConfigurarGraduacao() {
         </div>
       )}
 
+      {/* MAIOR DE 16 */}
       {filtro === "maiores" && (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -143,7 +174,22 @@ export default function ConfigurarGraduacao() {
                     </td>
 
                     <td className="py-4 px-6 text-center">
-                      <p>0</p>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          value={frequenciasMaiores[index]}
+                          onChange={(e) =>
+                            setFrequenciasMaiores((prev) => {
+                              const clone = [...prev];
+                              clone[index] = Number(e.target.value);
+                              return clone;
+                            })
+                          }
+                          className="w-20 border rounded-lg px-2 py-1 text-center"
+                        />
+                      ) : (
+                        <p>{frequenciasMaiores[index]}</p>
+                      )}
                     </td>
                   </tr>
                 ))}
