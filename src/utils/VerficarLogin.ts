@@ -1,4 +1,12 @@
 import api from "../services/api";
+import { jwtDecode } from 'jwt-decode';
+
+interface token {
+    sub: string, 
+    role: string, 
+    iat: number, 
+    exp: number
+} 
 
 export function verificarEmail(email: string): boolean {
   // Expressão regular para validar formato de email
@@ -25,13 +33,16 @@ export async function verificarLogin(email: string, senha:string){
     try{
         //Requisição
         const response = await api.post("/user/login", {Email: email, Password: senha })
+        
+        const decodedToken = jwtDecode<token>(response.data.userId);
+        console.log(decodedToken)
 
         //Verifica se a requisição foi um sucesso
         if(response.data.statusCode=== 200){
             console.log("Login feito com sucesso");
             localStorage.setItem("token", response.data.userId);
             localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("role", response.data.role); 
+            localStorage.setItem("role", decodedToken.role); 
         }
         return true;
     }   

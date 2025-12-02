@@ -5,17 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Configuracoes() {
   const location = useLocation();
+  const role =  localStorage.getItem('role');
 
   const menuItems = [
-    { label: "Perfil do usuário", path: "/configuracoes/perfil" },
-    {
-      label: "Registros de graduação",
-      path: "/configuracoes/registros-graduacao",
-    },
-    {
-      label: "Configurar graduação",
-      path: "/configuracoes/configurar-graduacao",
-    },
+    { label: "Perfil do usuário", path: "/configuracoes/perfil", },
     {
       label: "Registros de frequência",
       path: "/configuracoes/registros-frequencia",
@@ -29,6 +22,19 @@ export default function Configuracoes() {
       path: "/configuracoes/relatorios-exports",
     },
   ];
+
+  if(role === "ADMIN"){
+    menuItems.push(
+      {
+        label: "Registros de graduação", 
+        path: "/configuracoes/registros-graduacao"
+      },
+      {
+        label: "Configurar graduação",
+        path: "/configuracoes/configurar-graduacao",
+      }
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">

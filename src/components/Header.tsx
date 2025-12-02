@@ -7,6 +7,7 @@ import NotificationModal from "./NotificationModal";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const role =  localStorage.getItem('role');
 
   return (
     <header className="bg-[#8B0000] text-white flex items-center justify-between px-6 py-3 shadow-md relative">
@@ -51,9 +52,11 @@ export default function Header() {
         <Link to="/alunos" className="hover:underline">
           Alunos
         </Link>
-        <Link to="/professores" className="hover:underline">
-          Professores
-        </Link>
+        {role === 'ADMIN' && (
+          <Link to="/professores" className="hover:underline">
+            Professores
+          </Link>
+        )}
         <Link to="/turmas" className="hover:underline">
           Turmas
         </Link>

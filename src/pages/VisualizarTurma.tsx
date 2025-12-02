@@ -20,6 +20,7 @@ export default function VisualizarTurma() {
   const [turma, setTurma] = useState<Turma>();
   const [turmaOriginal, setTurmaOriginal] = useState<Turma>();
   const [isEditing, setIsEditing] = useState(false);
+  const role =  localStorage.getItem('role');
 
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -132,6 +133,7 @@ export default function VisualizarTurma() {
           )}
 
           {!isEditing ? (
+            
             <button
               onClick={() => setIsEditing(true)}
               className="hover:opacity-80 cursor-pointer"
@@ -278,11 +280,13 @@ export default function VisualizarTurma() {
                 </Link>
               </div>
             ) : (
+              
               <div className="flex gap-3">
-                <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl">
-                  Vincular professor
-                </button>
-
+                {role === 'ADMIN' && (
+                  <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl">
+                    Vincular professor
+                  </button>
+                )}
                 <Link to={`/turma/${id}/inserir-alunos`}>
                   <button className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer">
                     Inserir alunos
@@ -295,12 +299,15 @@ export default function VisualizarTurma() {
                   </button>
                 </Link>
 
-                <button
-                  onClick={() => setIsDeleteOpen(true)}
-                  className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer"
-                >
-                  Excluir turma
-                </button>
+                {role === 'ADMIN' && (
+                  <button
+                    onClick={() => setIsDeleteOpen(true)}
+                    className="px-4 py-2 bg-[#1E1E1E] text-white rounded-xl cursor-pointer"
+                  >
+                    Excluir turma
+                  </button>
+                )}
+                
               </div>
             )}
           </div>
