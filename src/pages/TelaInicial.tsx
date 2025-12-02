@@ -23,7 +23,6 @@ export default function TelaInicial() {
   const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([]);
   const role =  localStorage.getItem('role');
 
-  //UseEffet para assim que a tela iniciar a função de listarTurmas seja executada retornando a lista de turmas
   useEffect(() => {
     const fetchTurmas = async () => {
       setLoading(true);

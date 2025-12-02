@@ -3,18 +3,20 @@ import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../../types/Rank";
 import { SquarePen } from "lucide-react";
 import { useState } from "react";
 
-// Removendo a faixa branca duplicada da lista de maiores de 16 anos
-// (assumindo que "faixa" é uma string como "Branca", "Cinza", etc.)
-const faixasMaior16SemBranca = faixasEGrausMaior16.filter(
-  (item) => item.faixa.toLowerCase() !== "branca"
-);
+const categoriasLabels = {
+  kids: "Kids",
+  juvenil: "Juvenil",
+} as const;
+
+type CategoriaMenor = keyof typeof categoriasLabels;
+
+const categoriasMenores: Record<CategoriaMenor, { faixa: string }[]> = {
+  kids: faixasEGrausMenor16,
+  juvenil: faixasEGrausMenor16,
+};
 
 export default function ConfigurarGraduacao() {
-  // Agora abre por padrão nos menores de 16 anos
   const [filtro, setFiltro] = useState<"maiores" | "menores">("menores");
-
-  const listaAtual =
-    filtro === "maiores" ? faixasMaior16SemBranca : faixasEGrausMenor16;
 
   const titulo =
     filtro === "maiores" ? "Maiores de 16 anos" : "Menores de 16 anos";
@@ -34,7 +36,7 @@ export default function ConfigurarGraduacao() {
         </button>
       </div>
 
-      {/* Abas na ordem correta: Menores primeiro */}
+      {/* Tabs Menores / Maiores */}
       <div className="flex gap-8 mb-8 border-b border-gray-200">
         <button
           onClick={() => setFiltro("menores")}
@@ -45,9 +47,6 @@ export default function ConfigurarGraduacao() {
           }`}
         >
           Menores de 16 anos
-          <span className="ml-2 text-sm font-normal text-gray-500">
-            ({faixasEGrausMenor16.length})
-          </span>
         </button>
 
         <button
@@ -60,31 +59,81 @@ export default function ConfigurarGraduacao() {
         >
           Maiores de 16 anos
           <span className="ml-2 text-sm font-normal text-gray-500">
-            ({faixasMaior16SemBranca.length})
+            ({faixasEGrausMaior16.length})
           </span>
         </button>
       </div>
 
       <h3 className="text-lg font-semibold text-gray-800 mb-4">{titulo}</h3>
 
-      {/* Tabela */}
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm border-collapse">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="py-4 px-6 font-bold text-base text-center">
-                  Faixa
-                </th>
-                <th className="py-4 px-6 font-bold text-center text-base">
-                  Frequências Necessárias
-                </th>
-              </tr>
-            </thead>
+      {filtro === "menores" && (
+        <div className="space-y-6">
+          {(Object.keys(categoriasMenores) as CategoriaMenor[]).map(
+            (categoria) => (
+              <div
+                key={categoria}
+                className="bg-white rounded-2xl shadow-sm overflow-hidden"
+              >
+                {/* Cabeçalho */}
+                <div className="px-6 py-4 bg-gray-100 border-b">
+                  <h3 className="text-lg font-semibold">
+                    {categoriasLabels[categoria]}
+                  </h3>
+                </div>
 
-            <tbody>
-              {listaAtual.length > 0 ? (
-                listaAtual.map((item, index) => (
+                {/* Tabela */}
+                <table className="min-w-full text-sm border-collapse">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="py-4 px-6 font-bold text-base text-center">
+                        Faixas da categoria
+                      </th>
+
+                      <th className="py-4 px-6 font-bold text-base text-center">
+                        Frequência Necessária (única)
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr className="border-t border-gray-200">
+                      <td className="py-4 px-6 text-center">
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {categoriasMenores[categoria].map((item, i) => (
+                            <BeltTag key={i} faixa={item.faixa} />
+                          ))}
+                        </div>
+                      </td>
+
+                      <td className="py-4 px-6 text-center">
+                        <p>0</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )
+          )}
+        </div>
+      )}
+
+      {filtro === "maiores" && (
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm border-collapse">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="py-4 px-6 font-bold text-base text-center">
+                    Faixa
+                  </th>
+                  <th className="py-4 px-6 font-bold text-base text-center">
+                    Frequências Necessárias
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {faixasEGrausMaior16.map((item, index) => (
                   <tr
                     key={index}
                     className="border-t border-gray-200 hover:bg-gray-50 transition"
@@ -92,21 +141,25 @@ export default function ConfigurarGraduacao() {
                     <td className="py-4 px-6 text-center">
                       <BeltTag faixa={item.faixa} />
                     </td>
-                    <td className="py-4 px-6 text-gray-900 font-medium text-center">0</td>
+
+                    <td className="py-4 px-6 text-center">
+                      <p>0</p>
+                    </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={2} className="py-12 text-center text-gray-500">
-                    Nenhuma faixa configurada para{" "}
-                    {filtro === "menores" ? "menores" : "maiores"} de 16 anos.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                ))}
+
+                {faixasEGrausMaior16.length === 0 && (
+                  <tr>
+                    <td colSpan={2} className="py-12 text-center text-gray-500">
+                      Nenhuma faixa configurada para maiores de 16 anos.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
