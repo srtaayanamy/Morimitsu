@@ -6,38 +6,30 @@ import { verificarLogin } from "../utils/VerficarLogin";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { useAuth } from "../hooks/Autenticao";
 
-/* Componente principal de Login */
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
-  //Variaveis de estado e navigate
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | boolean>("");
+
   const verificaLogin = useAuth();
   const navigate = useNavigate();
 
-  //Verifica se o usuário já está logado
   useEffect(() => {
     if (verificaLogin.isLoggedIn) {
       navigate("/inicio");
     }
   }, [verificaLogin.isLoggedIn, navigate]);
 
+  async function handleLogin() {
+    const result = await verificarLogin(email, senha);
 
-
-  //Função que redireciona o usuário se o email e senha estiverem corretos
-  async function handleLogin(){
-    const result = await verificarLogin(email, senha)
-
-    //Analisa o retorna da função e toma uma ação com base no retorno
-    if(result=== true){
-      console.log("Login feito")
-      navigate('/inicio')
+    if (result === true) {
+      navigate("/inicio");
       return;
-
-    } else{
-      setErro(result)
+    } else {
+      setErro(result);
       return;
     }
   }
@@ -46,8 +38,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-screen font-[Outfit] bg-[#F5F5F5]">
-      {/* Fundo superior (mobile) / Esquerdo (desktop) */}
-      <div className="flex items-center justify-center bg-gradient-to-b from-[#911418] to-[#2B0607] w-full md:w-1/2 h-[40vh] md:h-full">
+      <div className="flex items-center justify-center bg-gradient-to-b from-[#911418] to-[#2B0607] w-full md:w-1/2 h-[30vh] md:h-full">
         <img
           src={Logo}
           alt="Logo Morimitsu"
@@ -55,9 +46,9 @@ export default function Login() {
         />
       </div>
 
-      {/* Bloco inferior (mobile) / Direito (desktop) */}
-      <div className="flex items-start md:items-center justify-center w-full md:w-1/2 h-[60vh] md:h-full px-6 py-10 md:py-8">
-        <div className="bg-white shadow-md rounded-[1.8rem] md:rounded-2xl px-6 py-8 md:p-10 w-full max-w-sm -mt-8 md:mt-0 text-center">
+      {/* BLOCO DO LOGIN */}
+      <div className="flex items-start md:items-center justify-center w-full md:w-1/2 h-[70vh] md:h-full px-6 py-10 md:py-8">
+        <div className="bg-white shadow-md rounded-[1.8rem] md:rounded-2xl px-6 py-8 md:p-10 w-full max-w-sm mt-6 md:mt-0 text-center">
           <h2 className="text-2xl md:text-4xl font-semibold mb-8 text-black">
             Login
           </h2>
@@ -127,7 +118,7 @@ export default function Login() {
   );
 }
 
-/* 🔹 Componente isolado para campos de input */
+/* Campo reutilizável */
 type FormFieldProps = {
   id: string;
   label: string;
