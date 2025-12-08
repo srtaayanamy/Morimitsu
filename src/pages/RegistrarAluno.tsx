@@ -117,7 +117,7 @@ export default function RegistrarAluno() {
       return;
     }
 
-    const rankFormated = faixa.replace('/', "_");
+    const rankFormated = faixa.replace("/", "_");
 
     const novoAluno: Aluno = {
       nome,
@@ -156,7 +156,7 @@ export default function RegistrarAluno() {
 
       <main className="flex-1 p-4 md:p-8 flex flex-col space-y-3">
         <PageTitle title="Cadastro de aluno">
-          <div className="flex justify-end gap-3">
+          <div className="hidden md:flex justify-end gap-3">
             <button
               type="button"
               className="bg-[#1E1E1E] text-white px-6 py-3 rounded-xl font-medium"
@@ -220,7 +220,7 @@ export default function RegistrarAluno() {
             <div>
               <label className={labelBase}>Sexo:</label>
               <div
-                className={`${inputBase} flex items-center justify-between md:justify-start gap-6`}
+                className={`${inputBase} bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3 flex items-center gap-6`}
               >
                 {["Masculino", "Feminino"].map((sexo) => (
                   <label key={sexo} className="flex items-center gap-2">
@@ -368,6 +368,25 @@ export default function RegistrarAluno() {
               className={`${inputBase} resize-none`}
               onChange={(e) => setoObservacao(e.target.value)}
             />
+          </div>
+
+          {/* Botões mobile*/}
+          <div className="flex md:hidden gap-3 justify-end pt-4">
+            <button
+              type="button"
+              className="bg-[#1E1E1E] text-white px-3 py-2 rounded-xl font-medium w-1/4"
+              onClick={() => navigate("/alunos")}
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="button"
+              className="bg-[#7F1A17] text-white px-3 py-2 rounded-xl font-medium cursor-pointer w-1/3"
+              onClick={handleRegisterAluno}
+            >
+              Concluir
+            </button>
           </div>
         </div>
       </main>

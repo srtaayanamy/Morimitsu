@@ -93,18 +93,27 @@ export default function InserirAlunosTurma() {
       }
     }
 
+    setLoading(false);
+
     if (erros === 0) {
-      setMensagemSucesso(`Todos os ${sucessos} aluno(s) foram adicionados com sucesso!`);
+      // ✔ Tudo certo → mostra sucesso e volta para tela anterior
+      setMensagemSucesso(
+        `Todos os ${sucessos} aluno(s) foram adicionados com sucesso!`
+      );
+      setTimeout(() => navigate(-1), 300);
     } else {
-      setMensagemSucesso(sucessos > 0 ? `${sucessos} aluno(s) adicionado(s).` : "");
+      setMensagemSucesso(
+        sucessos > 0 ? `${sucessos} aluno(s) adicionado(s).` : ""
+      );
       setMensagemErro(
-        `${erros} aluno(s) não foram adicionados: ${errosDetalhados.slice(0, 3).join(" | ")}`
+        `${erros} aluno(s) não foram adicionados: ${errosDetalhados
+          .slice(0, 3)
+          .join(" | ")}`
       );
     }
 
-    // Limpa seleção após tentativa
+    // Limpa seleção
     setSelecionados({});
-    setLoading(false);
   };
 
   return (
@@ -128,10 +137,7 @@ export default function InserirAlunosTurma() {
             </button>
 
             <button
-              onClick={async () => {
-                await inserirAlunos();
-                navigate(-1);
-              }}
+              onClick={inserirAlunos}
               className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium hover:opacity-90"
             >
               Inserir alunos
@@ -144,7 +150,9 @@ export default function InserirAlunosTurma() {
           {mensagemErro && <ErrorMessage message={mensagemErro} />}
           {erro && <ErrorMessage message={erro} />}
 
-          {loading && <p className="text-center text-gray-500">Carregando...</p>}
+          {loading && (
+            <p className="text-center text-gray-500">Carregando...</p>
+          )}
 
           {!loading && alunosDisponiveis.length > 0 && (
             <>
@@ -155,8 +163,12 @@ export default function InserirAlunosTurma() {
                     <tr>
                       <th className="py-3 px-6 font-semibold">Nome</th>
                       <th className="py-3 px-6 font-semibold">Apelido</th>
-                      <th className="py-3 px-6 font-semibold text-center">Faixa atual</th>
-                      <th className="py-3 px-6 font-semibold text-center">Selecionar</th>
+                      <th className="py-3 px-6 font-semibold text-center">
+                        Faixa atual
+                      </th>
+                      <th className="py-3 px-6 font-semibold text-center">
+                        Selecionar
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -167,7 +179,9 @@ export default function InserirAlunosTurma() {
                           key={idStr}
                           className="bg-white shadow-sm rounded-xl hover:bg-gray-50"
                         >
-                          <td className="py-3 px-6 font-medium">{aluno.nome}</td>
+                          <td className="py-3 px-6 font-medium">
+                            {aluno.nome}
+                          </td>
                           <td className="py-3 px-6">{aluno.apelido || "—"}</td>
                           <td className="py-3 px-6 text-center">
                             <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
@@ -244,10 +258,7 @@ export default function InserirAlunosTurma() {
             </button>
 
             <button
-              onClick={async () => {
-                await inserirAlunos();
-                navigate(-1);
-              }}
+              onClick={inserirAlunos}
               className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-sm font-medium w-full"
             >
               Inserir alunos
