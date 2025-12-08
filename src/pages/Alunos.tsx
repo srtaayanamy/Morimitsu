@@ -1,11 +1,12 @@
-// src/pages/Alunos.tsx (ou onde estiver)
+// src/pages/Alunos.tsx
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 import BeltTag from "../components/BeltTag";
-import ConfirmPromotionModal from "../components/ConfirmPromotionModal"; 
+import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
+import { Avatar } from "../components/Avatar";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -23,7 +24,7 @@ export default function Alunos() {
       setLoading(true);
       const result = await listarAlunos();
 
-      if (typeof result === 'string') {
+      if (typeof result === "string") {
         setError("Erro ao carregar alunos.");
       } else {
         setAlunos(result || []);
@@ -45,9 +46,7 @@ export default function Alunos() {
   };
 
   const handleConfirm = () => {
-    // lógica de promoção no futuro
     console.log("Promovendo aluno:", selectedAluno?.nome);
-    // Ex: await promoverParaProfessor(selectedAluno.id);
   };
 
   return (
@@ -72,82 +71,151 @@ export default function Alunos() {
 
         {loading && <p>Carregando alunos...</p>}
         {error && <p className="text-red-500">{error}</p>}
+
         {!loading && !error && (
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="rounded-2xl p-2 shadow">
             {alunos.length === 0 ? (
               <p>Nenhum aluno encontrado.</p>
             ) : (
-              <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto">
-                <table className="w-full text-left border-separate border-spacing-y-2">
-                  <thead>
-                    <tr>
-                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
-                        Nome
-                      </th>
-                      <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
-                        Apelido
-                      </th>
-                      <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
-                        Faixa atual
-                      </th>
-                      <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
-                        Promover a professor
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alunos.map((aluno) => {
-                      let promover = false;
-                      if(podePromover(aluno.faixa) && aluno.userID === null){
-                        promover = true;
-                      }
+              <>
+                {/* MOBILE */}
+                <div className="md:hidden space-y-3">
+                  {alunos.map((aluno) => {
+                    let promover = false;
+                    if (podePromover(aluno.faixa) && aluno.userID === null) {
+                      promover = true;
+                    }
 
-                      return (
-                        <tr
-                          key={aluno.id}
-                          className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
-                        >
-                          <td className="py-3 px-6">
-                            <Link
-                              to={`/visualizar-aluno/${aluno.id}`}
-                              className="text-[#000000] hover:underline font-medium"
-                            >
-                              {aluno.nome}
-                            </Link>
-                          </td>
-                          <td className="py-3 px-6">{aluno.apelido || "—"}</td>
-                          <td className="py-3 px-6 text-center">
+                    return (
+                      <div
+                        key={aluno.id}
+                        className="bg-[#F1F1F1] shadow-sm rounded-xl p-4 pt-5 pb-5 flex items-center gap-4"
+                      >
+                        {/* Avatar */}
+                        <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
+                          <Avatar
+                            sexo={aluno.sexo}
+                            idade={aluno.idade}
+                            size={48}
+                            noWrapper={true}
+                          />
+                        </div>
+
+                        {/* Nome + apelido */}
+                        <div className="flex-1">
+                          <Link
+                            to={`/visualizar-aluno/${aluno.id}`}
+                            className="font-semibold text-[#1E1E1E] block leading-tight"
+                          >
+                            {aluno.nome}
+                          </Link>
+                          <span className="text-sm text-gray-600">
+                            {aluno.apelido || "—"}
+                          </span>
+                        </div>
+
+                        {/* Faixa + botão */}
+                        <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10 ">
+                          <div className="bg-white p-3 rounded-2xl w-28 shadow-sm flex flex-col items-center justify-center">
                             <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
-                          </td>
-                          <td className="py-3 px-6 rounded-r-xl">
-                            {promover ? (
-                              <div className="flex items-center gap-3">
-                                <button
-                                  type="button"
-                                  className="bg-[#1D1E1E] w-full text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800 transition cursor-pointer"
-                                  onClick={() => openModal(aluno)}
-                                >
-                                  Promover
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="h-10 flex items-center">
-                                <span className="text-gray-400 text-sm"></span>
-                              </div>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                            <p className="text-[0.7rem] font-semibold">Grau: {aluno.grau}</p>
+                          </div>
+
+                          {promover && (
+                            <button
+                              className="bg-[#7F1A17] text-white px-3 py-1.5 rounded-lg text-[0.7rem] font-semibold w-28"
+                              onClick={() => openModal(aluno)}
+                            >
+                              Promover
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* DESKTOP */}
+                <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto hidden md:block">
+                  <table className="w-full text-left border-separate border-spacing-y-2">
+                    <thead>
+                      <tr>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                          Nome
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                          Apelido
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
+                          Faixa atual
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
+                          Promover a professor
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {alunos.map((aluno) => {
+                        let promover = false;
+                        if (
+                          podePromover(aluno.faixa) &&
+                          aluno.userID === null
+                        ) {
+                          promover = true;
+                        }
+
+                        return (
+                          <tr
+                            key={aluno.id}
+                            className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
+                          >
+                            <td className="py-3 px-6">
+                              <Link
+                                to={`/visualizar-aluno/${aluno.id}`}
+                                className="text-[#000000] hover:underline font-medium"
+                              >
+                                {aluno.nome}
+                              </Link>
+                            </td>
+
+                            <td className="py-3 px-6">
+                              {aluno.apelido || "—"}
+                            </td>
+
+                            <td className="py-3 px-6 text-center">
+                              <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                            </td>
+
+                            <td className="py-3 px-6 rounded-r-xl">
+                              {promover ? (
+                                <div className="flex items-center gap-3">
+                                  <button
+                                    type="button"
+                                    className="bg-[#1D1E1E] w-full text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800 transition cursor-pointer"
+                                    onClick={() => openModal(aluno)}
+                                  >
+                                    Promover
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="h-10 flex items-center">
+                                  <span className="text-gray-400 text-sm"></span>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
         )}
       </main>
 
-      {/* Modal Componentizado */}
       <ConfirmPromotionModal
         isOpen={modalOpen}
         alunoNome={selectedAluno?.nome || ""}

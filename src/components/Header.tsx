@@ -11,6 +11,9 @@ export default function Header() {
   const role = localStorage.getItem("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  // controla o dropdown de busca no mobile
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
@@ -41,9 +44,15 @@ export default function Header() {
         >
           <Bell className="w-6 h-6 " />
         </button>
-        <button className="hover:text-gray-200 transition">
+
+        {/* Abre/fecha o dropdown */}
+        <button
+          className="hover:text-gray-200 transition"
+          onClick={() => setShowMobileSearch(!showMobileSearch)}
+        >
           <Search className="w-6 h-6" />
         </button>
+
         <button
           className="p-2 hover:bg-[#9b1a1a] rounded-lg transition"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -111,6 +120,37 @@ export default function Header() {
         </div>
       </nav>
 
+      {/* DROPDOWN DE PESQUISA NO MOBILE */}
+      {showMobileSearch && (
+        <div className="absolute top-full left-0 w-full bg-[#8B0000] px-4 pb-3 pt-2 z-40 md:hidden">
+          <form
+            onSubmit={(e) => {
+              handleSearch(e);
+              setShowMobileSearch(false);
+            }}
+            className="w-full"
+          >
+            <div className="relative bg-white rounded-full flex items-center px-4 py-2">
+              <input
+                type="text"
+                placeholder="Pesquisa por nome"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full text-gray-800 text-sm focus:outline-none placeholder-gray-400"
+              />
+
+              <button type="submit">
+                <Search className="w-6 h-6 pr-1 text-black cursor-pointer" />
+              </button>
+
+              <button type="button" onClick={() => setIsFilterOpen(true)}>
+                <Filter className="w-4 h-4 text-black cursor-pointer ml-2" />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       {/* MENU LATERAL MOBILE */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-[#8B0000] text-white transform ${
@@ -157,7 +197,7 @@ export default function Header() {
             Turmas
           </Link>
           <Link
-            to="/configuration"
+            to="/configuracoes"
             className="hover:text-gray-300"
             onClick={() => setIsMenuOpen(false)}
           >

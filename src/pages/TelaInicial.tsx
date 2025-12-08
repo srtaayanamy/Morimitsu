@@ -133,7 +133,7 @@ export default function TelaInicial() {
 
         {/* SEÇÃO ANIVERSARIANTES DO MÊS */}
         <SectionCard title="Aniversariantes do mês">
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide sm:flex-wrap sm:overflow-visible ">
             {loading && (
               <div className="flex items-center justify-center w-full h-40">
                 <Loader2 className="w-8 h-8 text-gray-600 animate-spin" />
@@ -175,12 +175,13 @@ export default function TelaInicial() {
         {/* SEÇÃO CALENDÁRIO */}
         <SectionCard>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#1E1E1E]">
+            <h2 className="text-lg sm:text-xl text-[#1E1E1E] font-semibold mb-3">
               Calendário
             </h2>
-            <div className="flex flex-row gap-3">
-              <SquarePen className="w-9 h-9 text-[#1E1E1E]" />
-              <button className="bg-black text-white rounded-md px-4 py-2 text-md hover:bg-gray-800 transition flex items-center gap-2">
+            <div className="flex flex-row gap-2 sm:gap-3 items-center">
+              <SquarePen className="w-7 h-7 sm:w-9 sm:h-9 text-[#1E1E1E]" />
+
+              <button className="bg-black text-white rounded-md px-3 py-1.5 text-sm sm:text-md sm:px-4 sm:py-2 hover:bg-gray-800 transition flex items-center gap-2">
                 Criar novo evento
               </button>
             </div>

@@ -1,6 +1,17 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday, addMonths, subMonths } from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isToday,
+  addMonths,
+  subMonths,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 import SectionCard from "../components/SectionCard";
 
@@ -31,15 +42,15 @@ export default function Calendario() {
 
         {/* Calendário*/}
         <div className="flex-1 max-w-100">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3 mt-5 text-sm sm:text-base">
             <button
               onClick={() => setCurrentDate(subMonths(currentDate, 1))}
               className="p-1 hover:bg-gray-200 rounded transition"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
-            <h3 className="text-lg font-semibold">
+            <h3 className="text-base sm:text-lg font-semibold">
               {format(currentDate, "MMMM - yyyy", { locale: ptBR })}
             </h3>
 
@@ -47,7 +58,7 @@ export default function Calendario() {
               onClick={() => setCurrentDate(addMonths(currentDate, 1))}
               className="p-1 hover:bg-gray-200 rounded transition"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
@@ -67,11 +78,9 @@ export default function Calendario() {
               return (
                 <div
                   key={idx}
-                  className={`
-                    relative h-12 flex items-center justify-center border border-gray-200
-                    hover:bg-gray-100 cursor-pointer transition-all
-                    ${!isCurrentMonth ? "text-gray-400" : "text-gray-900"}
-                  `}
+                  className={`relative h-10 sm:h-12 flex items-center justify-center border border-gray-200 hover:bg-gray-100 cursor-pointer transition-all ${
+                    !isCurrentMonth ? "text-gray-400" : "text-gray-900"
+                  }`}
                 >
                   <span className="relative z-10 font-medium">
                     {format(day, "d")}
@@ -79,7 +88,7 @@ export default function Calendario() {
 
                   {isCurrentDay && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-9 h-9 rounded-full bg-[#337bf79e]"></div>
+                      <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-[#337bf79e]"></div>
                     </div>
                   )}
                 </div>

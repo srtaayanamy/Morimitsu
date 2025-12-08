@@ -20,7 +20,7 @@ export default function ConfirmPromotionModal({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl p-8 w-[420px] h-[300px] shadow-2xl shadow-gray-600 flex flex-col justify-between"
+        className="bg-white rounded-2xl p-8 w-[320px] md:w-[420px] md:h-[300px] h-[250px] shadow-2xl shadow-gray-600 flex flex-col justify-between"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-medium text-[#1E1E1E] leading-snug">
