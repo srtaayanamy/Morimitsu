@@ -27,14 +27,16 @@ export default function Header() {
   return (
     <header className="bg-[#8B0000] text-white flex items-center justify-between px-6 py-3 shadow-md relative">
       {/* LOGO E NOME */}
-      <div className="flex items-center gap-3">
-        <img
-          src={Logo}
-          alt="Logo Morimitsu"
-          className="w-10 h-10 rounded-full"
-        />
-        <h1 className="text-xl font-medium tracking-wide">Morimitsu</h1>
-      </div>
+      <Link to="/inicio" className="cursor-pointer">
+        <div className="flex items-center gap-3">
+          <img
+            src={Logo}
+            alt="Logo Morimitsu"
+            className="w-10 h-10 rounded-full"
+          />
+          <h1 className="text-xl font-medium tracking-wide">Morimitsu</h1>
+        </div>
+      </Link>
 
       {/* ÍCONES FIXOS (MOBILE) */}
       <div className="flex items-center gap-5 md:hidden">
