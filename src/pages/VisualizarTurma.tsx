@@ -14,6 +14,7 @@ import { Avatar } from "../components/Avatar";
 import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
 
 import ImageOverlay from "../components/ImageOverlay";
+import { calcularIdade } from "../utils/CalcularIdade";
 
 export default function VisualizarTurma() {
   const { id } = useParams();
@@ -360,7 +361,7 @@ export default function VisualizarTurma() {
                 className="bg-[#F1F1F1] shadow-sm rounded-lg p-3 flex items-center gap-3"
               >
                 <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
-                  <Avatar sexo={a.sexo} idade={a.idade} size={40} noWrapper />
+                  <Avatar sexo={a.sexo} idade={calcularIdade(a.dataNascimento)} size={40} noWrapper />
                 </div>
 
                 <div className="flex-1">

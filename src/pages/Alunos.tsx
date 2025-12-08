@@ -7,6 +7,7 @@ import type { Aluno } from "../types/Aluno";
 import BeltTag from "../components/BeltTag";
 import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
 import { Avatar } from "../components/Avatar";
+import { calcularIdade } from "../utils/CalcularIdade";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -95,7 +96,7 @@ export default function Alunos() {
                         <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                           <Avatar
                             sexo={aluno.sexo}
-                            idade={aluno.idade}
+                            idade={calcularIdade(aluno.dataNascimento)}
                             size={48}
                             noWrapper={true}
                           />
