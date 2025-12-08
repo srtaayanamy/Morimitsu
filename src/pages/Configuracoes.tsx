@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Configuracoes() {
   const location = useLocation();
-  const role =  localStorage.getItem('role');
+  const role = localStorage.getItem("role");
 
   const menuItems = [
-    { label: "Perfil do usuário", path: "/configuracoes/perfil", },
+    { label: "Perfil do usuário", path: "/configuracoes/perfil" },
     {
       label: "Registros de frequência",
       path: "/configuracoes/registros-frequencia",
@@ -21,19 +21,21 @@ export default function Configuracoes() {
       label: "Relatórios e exports",
       path: "/configuracoes/relatorios-exports",
     },
+    { label: "Manual do usuário", 
+      path: "/configuracoes/manual-usuario" },
   ];
 
-  if(role === "ADMIN"){
+  if (role === "ADMIN") {
     menuItems.push(
       {
-        label: "Registros de graduação", 
-        path: "/configuracoes/registros-graduacao"
+        label: "Registros de graduação",
+        path: "/configuracoes/registros-graduacao",
       },
       {
         label: "Configurar graduação",
         path: "/configuracoes/configurar-graduacao",
       }
-    )
+    );
   }
 
   return (

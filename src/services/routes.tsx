@@ -25,6 +25,7 @@ import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
 import FrequenciaTurma from "../pages/FrequenciaTurma";
 import InserirAlunosTurma from "../pages/InserirAlunosTurma";
 import RemoverAlunosTurma from "../pages/RemoverAlunosTurma";
+import ManualUsuario from "../pages/configuracoes/ManualUsuário";
 
 export default function AppRoutes() {
   return (
@@ -56,6 +57,7 @@ export default function AppRoutes() {
         <Route path="registros-frequencia" element={<RegistrosFrequencia />} />
         <Route path="corrigir-frequencia" element={<CorrigirFrequencia />} />
         <Route path="relatorios-exports" element={<RelatoriosExports />} />
+        <Route path="manual-usuario" element={<ManualUsuario />} />
       </Route>
     </Routes>
   );
