@@ -9,6 +9,8 @@ import PageTitle from "../components/PageTitle";
 import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
 import CreateAcessModal from "../components/CreateAcessModal";
 import { pegaDadosAluno } from "../utils/getDadosAluno";
+import { calcularIdade } from "../utils/CalcularIdade";
+import { Avatar } from "../components/Avatar";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -27,12 +29,8 @@ export default function AlunosAptos() {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [acessoModalOpen, setAcessoModalOpen] = useState(false);
 
-  function VerificarAptidao(aluno: Aluno){
-    if(podePromover(aluno.faixa) === true && aluno.userID === null){
-      return true;
-    } else {
-      return false;
-    }
+  function VerificarAptidao(aluno: Aluno) {
+    return podePromover(aluno.faixa) && aluno.userID === null;
   }
 
   useEffect(() => {
@@ -40,12 +38,10 @@ export default function AlunosAptos() {
       setLoading(true);
       const result = await listarAlunos();
 
-      if (typeof result === 'string') {
+      if (typeof result === "string") {
         setError("Erro ao carregar alunos.");
       } else {
-        const aptos = (result || []).filter((aluno) =>
-          VerificarAptidao(aluno)
-        );
+        const aptos = (result || []).filter((aluno) => VerificarAptidao(aluno));
         setAlunosAptos(aptos);
       }
       setLoading(false);
@@ -54,11 +50,9 @@ export default function AlunosAptos() {
     fetchAlunos();
   }, []);
 
-  // 1. Clique no botão "Promover"
   const iniciarPromocao = async (aluno: Aluno) => {
     if (!aluno.id) return;
 
-    // Busca o e-mail real do aluno
     const dados = await pegaDadosAluno(aluno.id);
 
     if (!dados || typeof dados === "string" || !dados.email?.includes("@")) {
@@ -66,24 +60,21 @@ export default function AlunosAptos() {
       return;
     }
 
-    // Guarda tudo num objeto único
     setAlunoEmPromocao({
       id: aluno.id,
       nome: aluno.nome,
       email: dados.email.trim(),
     });
 
-    setConfirmModalOpen(true); // abre confirmação
+    setConfirmModalOpen(true);
   };
 
-  // Fecha tudo e limpa
   const fecharFluxo = () => {
     setConfirmModalOpen(false);
     setAcessoModalOpen(false);
     setAlunoEmPromocao(null);
   };
 
-  // Confirmar abre o modal de criar acesso
   const confirmarPromocao = () => {
     setConfirmModalOpen(false);
     setAcessoModalOpen(true);
@@ -94,19 +85,20 @@ export default function AlunosAptos() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 space-y-5">
-        <PageTitle title="Alunos aptos a se tornarem professores:" />
+        <PageTitle title="Elegíveis a professor:" />
 
         {loading && <p className="text-center">Carregando alunos...</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
 
         {!loading && !error && (
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-4 shadow-sm">
+            {/* DESKTOP TABLE */}
             {alunosAptos.length === 0 ? (
               <p className="text-center text-gray-500">
                 Nenhum aluno apto no momento.
               </p>
             ) : (
-              <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto">
+              <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto hidden md:block">
                 <table className="w-full text-left border-separate border-spacing-y-2">
                   <thead>
                     <tr>
@@ -159,11 +151,67 @@ export default function AlunosAptos() {
                 </table>
               </div>
             )}
+
+            {/* MOBILE CARDS */}
+            <div className="md:hidden space-y-3 mt-4">
+              {alunosAptos.map((a) => {
+                const promover = true; // todos aqui são aptos
+
+                return (
+                  <div
+                    key={a.id}
+                    className="bg-[#F1F1F1] shadow-sm rounded-xl p-2 pt-5 pb-5 flex items-center gap-4"
+                  >
+                    {/* Avatar */}
+                    <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
+                      <Avatar
+                        sexo={a.sexo}
+                        idade={calcularIdade(a.dataNascimento)}
+                        size={48}
+                        noWrapper={true}
+                      />
+                    </div>
+
+                    {/* Nome + apelido */}
+                    <div className="flex-1">
+                      <Link
+                        to={`/visualizar-aluno/${a.id}`}
+                        className="font-semibold text-[#1E1E1E] block leading-tight"
+                      >
+                        {a.nome}
+                      </Link>
+                      <span className="text-sm text-gray-600">
+                        {a.apelido || "—"}
+                      </span>
+                    </div>
+
+                    {/* Faixa + botão */}
+                    <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10">
+                      <div className="bg-white p-3 rounded-2xl w-28 shadow-sm flex flex-col items-center justify-center">
+                        <BeltTag faixa={a.faixa} grau={a.grau} />
+                        <p className="text-[0.7rem] font-semibold">
+                          Grau: {a.grau}
+                        </p>
+                      </div>
+
+                      {promover && (
+                        <button
+                          type="button"
+                          onClick={() => iniciarPromocao(a)}
+                          className="bg-[#7F1A17] text-white px-3 py-1.5 rounded-lg text-[0.7rem] font-semibold w-28"
+                        >
+                          Promover
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </main>
 
-      {/* Modal de Confirmação */}
       <ConfirmPromotionModal
         isOpen={confirmModalOpen}
         alunoNome={alunoEmPromocao?.nome || ""}
@@ -171,7 +219,6 @@ export default function AlunosAptos() {
         onConfirm={confirmarPromocao}
       />
 
-      {/* Modal de Criar Acesso*/}
       <CreateAcessModal
         isOpen={acessoModalOpen}
         alunoId={alunoEmPromocao?.id || ""}

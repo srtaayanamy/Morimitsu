@@ -35,10 +35,11 @@ export default function Professores() {
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
       <Header />
 
-      <main className="flex-1 p-4 md:p-8 space-y-5">
+      <main className="flex-1 p-4 md:p-8 space-y-3 md:space-y-5">
         {/* Cabeçalho da página */}
         <PageTitle title="Professores:">
-          <div className="flex flex-row items-center p-2 gap-3">
+          {/* DESKTOP */}
+          <div className="hidden md:flex flex-row items-center p-2 gap-3">
             <SquarePen className="w-9 h-9 text-[#1E1E1E] cursor-pointer" />
             <Link to="/alunos-aptos">
               <button
@@ -50,11 +51,26 @@ export default function Professores() {
             </Link>
           </div>
         </PageTitle>
+
+        {/* MOBILE */}
+        <div className="flex md:hidden flex-row items-center justify-end gap-3 mt-2">
+          <SquarePen className="w-7 h-7 text-[#1E1E1E] cursor-pointer" />
+
+          <Link to="/alunos-aptos">
+            <button
+              type="button"
+              className="bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition cursor-pointer"
+            >
+              Promover aluno a professor
+            </button>
+          </Link>
+        </div>
+
         {/* Conteúdo */}
         {loading && <p>Carregando professores...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && (
-          <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-3 shadow-sm">
             {Professores.length === 0 ? (
               <p>Nenhum professor encontrado.</p>
             ) : (

@@ -8,25 +8,38 @@ interface ProfessorCardProps {
 
 export default function ProfessorCard({ professor }: ProfessorCardProps) {
   return (
-    <Link
-      to={`/visualizar-aluno/${professor.studentId}`}
-      className="w-full flex items-center gap-4 bg-[#F1F1F1] rounded-xl shadow-md p-4 hover:bg-gray-50 transition cursor-pointer"
-    >
+    <div className="w-full flex items-center gap-4 bg-[#F1F1F1] rounded-xl shadow-md p-4">
       {/* Avatar */}
-      <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center">
+      <Link
+        to={`/visualizar-aluno/${professor.studentId}`}
+        className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center shrink-0"
+      >
         <img
           src={martialArts}
           alt="avatar"
           className="w-18 h-18"
         />
-      </div>
+      </Link>
 
-      {/* Dados do professor */}
-      <div className="flex flex-col flex-1 text-left">
-        <span className="text-lg font-semibold text-[#1E1E1E]">
-          {professor.nome}
-        </span>
+      {/* Nome + botão mobile */}
+      <div className="flex flex-1 items-center justify-between">
+        <Link
+          to={`/visualizar-aluno/${professor.studentId}`}
+          className="flex flex-col text-left"
+        >
+          <span className="text-lg font-semibold text-[#1E1E1E]">
+            {professor.nome}
+          </span>
+        </Link>
+
+        {/* BOTÃO MOBILE */}
+        <Link
+          to={`/visualizar-aluno/${professor.studentId}`}
+          className="block md:hidden bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md"
+        >
+          Acessar dados
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }

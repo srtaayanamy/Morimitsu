@@ -16,7 +16,7 @@ export default function VisualizarAluno() {
   const [aluno, setAluno] = useState<Aluno>();
   const [alunoOriginal, setAlunoOriginal] = useState<Aluno>();
   const [isEditing, setIsEditing] = useState(false);
-  const role =  localStorage.getItem('role');
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     async function fetchAluno() {
@@ -42,25 +42,20 @@ export default function VisualizarAluno() {
 
     const edit: Partial<Record<keyof Aluno, Aluno[keyof Aluno]>> = {};
 
-    for(const key in aluno){
+    for (const key in aluno) {
       const campoKey = key as keyof Aluno;
-    
-      if(!alunoOriginal) return;
-    
-      if(aluno[campoKey] !== alunoOriginal[campoKey]){
+      if (!alunoOriginal) return;
+
+      if (aluno[campoKey] !== alunoOriginal[campoKey]) {
         edit[campoKey] = aluno[campoKey];
       }
     }
 
     if (Object.keys(edit).length === 0) return;
-    
 
-    if(aluno.userID !== undefined && typeof edit.nome === "string"){
+    if (aluno.userID !== undefined && typeof edit.nome === "string") {
       editaUser(edit.nome);
     }
-
-    console.log(edit);
-    console.log(aluno['nome']);
 
     const dadosPersonal = {
       name: edit.nome,
@@ -78,7 +73,7 @@ export default function VisualizarAluno() {
       rank: edit.faixa,
       rating: edit.grau,
       comments: edit.observacao,
-      presence: edit.frequencia
+      presence: edit.frequencia,
     };
 
     const result = await editarAluno(id, dadosPersonal, dadosForm);
@@ -118,6 +113,7 @@ export default function VisualizarAluno() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 flex flex-col space-y-4">
+        {/* TOPO — agora sem botões no mobile; inputs de nome/apelido ficam aqui */}
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
           {!isEditing ? (
             <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
@@ -141,6 +137,7 @@ export default function VisualizarAluno() {
             </div>
           )}
 
+          {/* Botão de editar/ícone — aparece sempre quando NÃO está editando */}
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
@@ -149,7 +146,8 @@ export default function VisualizarAluno() {
               <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
             </button>
           ) : (
-            <div className="flex items-center gap-2">
+            /* Botões no TOPO apenas para desktop (md+). No mobile eles ficam ao final da página. */
+            <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={handleCancel}
                 className="px-2 py-2 bg-[#333434] w-[100px] text-white font-medium rounded-md hover:opacity-90 transition cursor-pointer"
@@ -167,6 +165,7 @@ export default function VisualizarAluno() {
           )}
         </div>
 
+        {/* CONTEÚDO */}
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <Avatar sexo={aluno.sexo} idade={aluno.idade} />
@@ -289,6 +288,27 @@ export default function VisualizarAluno() {
             onChange={(val) => handleChange("observacao", val)}
           />
         </div>
+
+        {/* BOTÕES no FINAL — aparecem apenas em MOBILE (md:hidden) */}
+        {isEditing && (
+          <div className="md:hidden bg-transparent px-2">
+            <div className="flex justify-center gap-3 mt-4">
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-[#333434] text-white w-[140px] font-medium rounded-md hover:opacity-90 transition"
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-[#7F1A17] text-white w-[180px] font-medium rounded-md hover:opacity-90 transition"
+              >
+                Salvar alterações
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
