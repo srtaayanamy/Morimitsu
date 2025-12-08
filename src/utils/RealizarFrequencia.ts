@@ -9,7 +9,7 @@ export async function fazerFrequencia(classID:string, studentsIds: string[], dat
             {
                 classId: classID,
                 Date: date,
-                studentId: studentsIds
+                studentIDs: studentsIds
             },
             {
                 headers:{
