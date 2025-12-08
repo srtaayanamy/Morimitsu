@@ -38,12 +38,11 @@ export async function verificarLogin(email: string, senha:string){
         console.log(decodedToken)
 
         //Verifica se a requisição foi um sucesso
-        if(response.data.statusCode=== 200){
-            console.log("Login feito com sucesso");
-            localStorage.setItem("token", response.data.userId);
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("role", decodedToken.role); 
-        }
+        console.log("Login feito com sucesso");
+        localStorage.setItem("token", response.data.userId);
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("role", decodedToken.role); 
+        
         return true;
     }   
     catch(error: any){

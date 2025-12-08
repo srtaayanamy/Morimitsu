@@ -1,5 +1,5 @@
 //Interface de aluno
-export interface Professor{
+export type Professor = {
     id: string;
     studentId: string;
     nome: string;

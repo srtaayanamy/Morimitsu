@@ -1,23 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { isLogedContext } from "../contexts/Auth";
 
 export function useAuth() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const {setIsLoged } = useContext(isLogedContext);
   const token= localStorage.getItem('token');
   const navigate= useNavigate();
 
-  useEffect(() => {
-    if(token){
-        setIsLoggedIn(true);
-    }
-  }, []);
-
   function logout() {
     localStorage.removeItem('token');
-    localStorage.removeItem('role')
-    setIsLoggedIn(false);
+    localStorage.removeItem('role');
+    setIsLoged(false);
     navigate('/')
   }
 
-  return { isLoggedIn, token: token, logout };
+  return { token: token, logout };
 }

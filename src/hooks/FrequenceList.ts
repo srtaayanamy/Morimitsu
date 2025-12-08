@@ -1,13 +1,12 @@
 import api from "../services/api";
+import type { Frequencie } from "../types/Frequencie";
 
-export async function pegarfrequencias(classID?:string, studentID?:string, date?:string) {
+export async function getFrequencies(date?:string) {
 
     try{
         //Filtra apenas os parametros que não são undefined
         const params: any = {};
 
-        if (classID) params.classID = classID;
-        if (studentID) params.studentID = studentID;
         if (date) params.date =  date;
 
         //Pega o token do usuário
@@ -26,8 +25,28 @@ export async function pegarfrequencias(classID?:string, studentID?:string, date?
             }
         )
 
-        console.log('Frequências pegas com sucesso.')
-        return response.data;
+        const frequencies = response.data.body;
+        const groups: Record<string, Frequencie> = {};
+
+        frequencies.forEach((f: any) => {
+
+        const key = `${f.Date}_${f.class_id}_${f.coach_id}`;
+
+        if (!groups[key]) {
+            groups[key] = {
+                Date: f.Date,
+                class: f.Class,
+                students: [],
+                teacher: f.Coach
+            };
+        }
+
+        groups[key].students.push(f.Student);
+        });
+
+        const FrequencieList: Frequencie[] = Object.values(groups);
+
+        return FrequencieList;
 
     }catch(error:any){
         //Tratamento de erros

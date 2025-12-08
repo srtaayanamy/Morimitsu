@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/Autenticao";
 import { useEffect, useState } from "react";
 import { pegaDadosUser } from "../../utils/getDadosUser";
 import { editaUser } from "../../utils/editarUser";
-import { ErrorMessage } from "../../components/ErrorMessage"; // ← importe o componente de erro
+import { ErrorMessage } from "../../components/ErrorMessage";
 
 export default function Perfil() {
   const auth = useAuth();

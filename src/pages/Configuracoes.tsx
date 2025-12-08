@@ -17,10 +17,7 @@ export default function Configuracoes() {
       label: "Corrigir frequência",
       path: "/configuracoes/corrigir-frequencia",
     },
-    {
-      label: "Relatórios e exports",
-      path: "/configuracoes/relatorios-exports",
-    },
+    
   ];
 
   if(role === "ADMIN"){
@@ -32,6 +29,10 @@ export default function Configuracoes() {
       {
         label: "Configurar graduação",
         path: "/configuracoes/configurar-graduacao",
+      },
+      {
+        label: "Relatórios e exports",
+        path: "/configuracoes/relatorios-exports",
       }
     )
   }

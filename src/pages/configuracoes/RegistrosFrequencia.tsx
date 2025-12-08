@@ -1,4 +1,28 @@
+import { useEffect, useState } from "react";
+import type { Frequencie } from "../../types/Frequencie";
+import { getFrequencies } from "../../hooks/FrequenceList";
+
 export default function RegistrosFrequencia() {
+
+  const [frequencieList, setFrequencieList] = useState<Frequencie[]>([])
+  const [error, setError] =  useState<String | undefined>(undefined);
+
+  useEffect(() => {
+
+    const fetchFrequencies = async () =>{
+
+      const result = await getFrequencies();
+
+      if(typeof result === 'string'){
+        setError(result)
+
+      }else{
+        setFrequencieList(result);
+      }
+    }
+    fetchFrequencies();
+  })
+
   return (
     <div className="p-4 text-gray-700 w-full">
 

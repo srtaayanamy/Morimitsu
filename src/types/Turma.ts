@@ -1,7 +1,8 @@
 import { type Aluno } from "./Aluno";
 import type { Professor } from "./Professor";
+
 //Interface de turma
-export interface Turma{
+export type Turma= {
     id: string;
     nome: string;
     idadeMin: number;
