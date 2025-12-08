@@ -64,7 +64,7 @@ export default function Perfil() {
         <h2 className="text-[20px] font-semibold">Perfil do Usuário</h2>
         <button
           onClick={handleEdit}
-          className={`text-[#1C1C1C] hover:text-[#8C0003] transition cursor-pointer disabled:opacity-50`}
+          className="text-[#1C1C1C] hover:text-[#8C0003] transition cursor-pointer disabled:opacity-50"
           title="Salvar alterações"
           disabled={loading}
         >
@@ -72,23 +72,37 @@ export default function Perfil() {
         </button>
       </div>
 
-      {/* Container principal */}
-      <div className="bg-white rounded-xl p-4 flex flex-col sm:flex-row gap-6 items-start">
+      {/* Conteúdo */}
+      <div
+        className="
+          bg-white rounded-xl p-4
+          flex flex-col sm:flex-row
+          gap-6 items-start
+          w-full
+        "
+      >
         {/* Avatar */}
-        <div className="w-32 h-32 rounded-md bg-gray-200 flex items-center justify-center">
+        <div
+          className="
+            w-28 h-28 sm:w-32 sm:h-32
+            rounded-md bg-gray-200
+            flex items-center justify-center
+            mx-auto sm:mx-0
+          "
+        >
           <img
             src={martialIcon}
             alt="Ícone do usuário"
-            className="w-28 h-28 object-contain"
+            className="w-24 h-24 sm:w-28 sm:h-28 object-contain"
           />
         </div>
 
         {/* Dados do usuário */}
         <div className="flex-1 flex flex-col gap-4">
-          {/* Mensagem de erro */}
+          {/* Erro */}
           <ErrorMessage message={error} />
 
-          {/* E-mail */}
+          {/* Email */}
           <div>
             <p className="text-[15px] font-medium mb-1">Acesso de Usuário:</p>
             <div className="bg-[#EFEFEF] rounded-md px-3 py-2 text-[14px] text-gray-800">
@@ -107,7 +121,7 @@ export default function Perfil() {
             />
           </div>
 
-          {/* Mensagem de sucesso */}
+          {/* Sucesso */}
           {success && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded text-sm">
               ✅ Perfil atualizado com sucesso!
@@ -116,7 +130,7 @@ export default function Perfil() {
         </div>
       </div>
 
-      {/* Botão de logout */}
+      {/* Logout */}
       <div className="mt-4 flex justify-end">
         <button
           onClick={handleLogout}

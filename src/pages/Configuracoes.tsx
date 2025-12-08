@@ -7,7 +7,8 @@ export default function Configuracoes() {
   const location = useLocation();
   const role = localStorage.getItem("role");
 
-  const menuItems = [
+  // ---- MENU BASE (SEM MUTAR ARRAY) ----
+  const baseMenu = [
     { label: "Perfil do usuário", path: "/configuracoes/perfil" },
     {
       label: "Registros de frequência",
@@ -17,42 +18,68 @@ export default function Configuracoes() {
       label: "Corrigir frequência",
       path: "/configuracoes/corrigir-frequencia",
     },
+    {
+      label: "Manual do usuário",
+      path: "/configuracoes/manual-usuario",
+    },
   ];
 
-  if (role === "ADMIN") {
-    menuItems.push(
-      {
-        label: "Registros de graduação",
-        path: "/configuracoes/registros-graduacao",
-      },
-      {
-        label: "Configurar graduação",
-        path: "/configuracoes/configurar-graduacao",
-      },
-      {
-        label: "Relatórios e exports",
-        path: "/configuracoes/relatorios-exports",
-      }
-    );
-  }
+  const adminExtras = [
+    {
+      label: "Registros de graduação",
+      path: "/configuracoes/registros-graduacao",
+    },
+    {
+      label: "Configurar graduação",
+      path: "/configuracoes/configurar-graduacao",
+    },
+    {
+      label: "Relatórios e exports",
+      path: "/configuracoes/relatorios-exports",
+    },
+  ];
+
+  const menuItems = role === "ADMIN" ? [...baseMenu, ...adminExtras] : baseMenu;
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#000000] flex flex-col">
       <Header />
 
       <main className="flex-1 p-4 md:p-8 space-y-5">
-        <PageTitle title="Configurações:"></PageTitle>
+        <PageTitle title="Configurações:" />
 
-        <div className="bg-white w-full rounded-2xl p-4 md:p-6 flex gap-6 shadow-sm">
+        <div
+          className="
+            bg-white w-full rounded-2xl
+            p-4 md:p-6
+            flex flex-col md:flex-row
+            gap-4 md:gap-6
+            shadow-sm
+          "
+        >
           {/* Sidebar */}
-          <aside className="w-64 bg-[#FFFFFF] rounded-xl p-2 flex flex-col gap-2 border border-gray-200">
+          <aside
+            className="
+              w-full md:w-64
+              bg-[#FFFFFF] rounded-xl
+              p-2 flex flex-col gap-2
+              border border-gray-200
+            "
+          >
             {menuItems.map((item) => {
               const active = location.pathname === item.path;
+
               return (
                 <Link key={item.path} to={item.path}>
                   <button
-                    className={`w-full transition cursor-pointer text-sm font-medium px-4 py-2 rounded-lg text-left shadow-sm
-${active ? "bg-[#8C0003] text-white" : "bg-[#EDEDED] hover:bg-[#dcdcdc]"}`}
+                    className={`
+                      w-full transition cursor-pointer text-sm font-medium px-4 py-2 rounded-lg text-left shadow-sm
+                      ${
+                        active
+                          ? "bg-[#8C0003] text-white"
+                          : "bg-[#EDEDED] hover:bg-[#dcdcdc]"
+                      }
+                    `}
                   >
                     {item.label}
                   </button>
@@ -61,8 +88,8 @@ ${active ? "bg-[#8C0003] text-white" : "bg-[#EDEDED] hover:bg-[#dcdcdc]"}`}
             })}
           </aside>
 
-          {/* Display area */}
-          <section className="flex-1 bg-[white] rounded-lg p-4 overflow-hidden">
+          {/* Área de conteúdo */}
+          <section className="flex-1 bg-white rounded-lg p-3 md:p-4 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
