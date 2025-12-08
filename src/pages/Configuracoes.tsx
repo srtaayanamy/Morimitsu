@@ -7,7 +7,6 @@ export default function Configuracoes() {
   const location = useLocation();
   const role = localStorage.getItem("role");
 
-  // ---- MENU BASE (SEM MUTAR ARRAY) ----
   const baseMenu = [
     { label: "Perfil do usuário", path: "/configuracoes/perfil" },
     {

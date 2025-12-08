@@ -10,12 +10,10 @@ export default function RegistrosFrequencia() {
   useEffect(() => {
 
     const fetchFrequencies = async () =>{
-
       const result = await getFrequencies();
 
       if(typeof result === 'string'){
         setError(result)
-
       }else{
         setFrequencieList(result);
       }
@@ -24,33 +22,40 @@ export default function RegistrosFrequencia() {
   })
 
   return (
-    <div className="p-4 text-gray-700 w-full">
+    <div className="p-4 text-gray-700 w-full max-sm:p-3">
 
-      <h2 className="font-semibold text-xl mb-4">Registros de frequências</h2>
+      <h2 className="font-semibold text-xl mb-4 max-sm:text-lg">
+        Registros de frequências
+      </h2>
 
       {/* Input de data */}
-      <div className="mb-4">
-        <label className="block text-sm mb-1">Selecione uma data:</label>
+      <div className="mb-4 max-sm:w-full">
+        <label className="block text-sm mb-1 max-sm:text-xs">
+          Selecione uma data:
+        </label>
         <input
           type="date"
-          className="border rounded-md px-3 py-2 w-48"
+          className="border rounded-md px-3 py-2 w-48 max-sm:w-full max-sm:text-sm"
         />
       </div>
 
-      {/* Tabela vazia */}
-      <div className="bg-white p-4 rounded-xl shadow w-full overflow-x-auto">
-        <table className="w-full border-collapse text-sm text-gray-600">
+      {/* Tabela */}
+      <div className="bg-white p-4 rounded-xl shadow w-full overflow-x-auto max-sm:p-3">
+        <table className="w-full border-collapse text-sm text-gray-600 min-w-[500px]">
           <thead>
             <tr className="border-b text-left">
-              <th className="py-2 px-2">Data</th>
-              <th className="py-2 px-2">Turma</th>
-              <th className="py-2 px-2">Horário</th>
-              <th className="py-2 px-2">Professor</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Data</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Turma</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Horário</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Professor</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td colSpan={4} className="text-center py-4 text-gray-400">
+              <td
+                colSpan={4}
+                className="text-center py-4 text-gray-400 max-sm:text-xs"
+              >
                 Nenhum registro encontrado
               </td>
             </tr>

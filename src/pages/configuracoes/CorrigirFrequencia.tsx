@@ -25,7 +25,7 @@ export default function CorrigirFrequencia() {
   
 
   return (
-    <div className="p-4 text-gray-700 w-full">
+    <div className="p-4 text-gray-700 w-full max-sm:p-3">
 
       <h2 className="font-semibold text-xl mb-4">Corrigir frequências:</h2>
 
@@ -40,13 +40,13 @@ export default function CorrigirFrequencia() {
 
       {/* Tabela para correção de frequência */}
       <div className="bg-white p-4 rounded-xl shadow w-full overflow-x-auto">
-        <table className="w-full border-collapse text-sm text-gray-600">
+        <table className="w-full border-collapse text-sm text-gray-600 min-w-[500px]">
           <thead>
             <tr className="border-b text-left">
-              <th className="py-2 px-2">Data</th>
-              <th className="py-2 px-2">Turma</th>
-              <th className="py-2 px-2">Horário</th>
-              <th className="py-2 px-2">Professor</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Data</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Turma</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Horário</th>
+              <th className="py-2 px-2 max-sm:px-1 max-sm:text-xs">Professor</th>
             </tr>
           </thead>
           <tbody>
