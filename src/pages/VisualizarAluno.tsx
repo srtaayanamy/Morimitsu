@@ -55,6 +55,7 @@ export default function VisualizarAluno() {
     if (aluno.userID !== undefined && typeof edit.nome === "string") {
       editaUser(edit.nome);
     }
+    console.log(edit)
 
     const dadosPersonal = {
       name: edit.nome,

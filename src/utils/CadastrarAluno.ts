@@ -23,8 +23,6 @@ export async function cadastrarAluno(aluno: Aluno) {
         if(aluno.turmas !== undefined && aluno.turmas.every(t => typeof t === "string")){
             classIds = aluno.turmas;
         }
-        
-        aluno.faixa
 
         //Requisição
         const response= await api.post('/student', 

@@ -6,9 +6,11 @@ export async function getFrequencies(date?:string) {
     try{
         //Filtra apenas os parametros que não são undefined
         const params: any = {};
-
-        if (date) params.date =  date;
-
+        if(date){
+            const formatedDate = new Date(date).toISOString();
+            params.date =  formatedDate;    
+        }
+      
         //Pega o token do usuário
         const token = localStorage.getItem('token')
 
