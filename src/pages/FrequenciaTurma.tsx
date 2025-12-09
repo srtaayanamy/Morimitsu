@@ -1,10 +1,12 @@
 import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { fazerFrequencia } from "../utils/RealizarFrequencia";
+import ConfirmFrequenciaModal from "../components/ConfirmFrequenciaModal";
 
 export default function FrequenciaTurma() {
   const { id } = useParams();
@@ -12,6 +14,8 @@ export default function FrequenciaTurma() {
   const [students, setStudents] = useState<any[]>([]);
   const [presentes, setPresentes] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchTurma() {
@@ -63,7 +67,7 @@ export default function FrequenciaTurma() {
     setLoading(false);
 
     if (result === true) {
-      alert("Frequência registrada!");
+      navigate(`/visualizar-turma/${id}`);
     } else {
       alert(result);
     }
@@ -90,7 +94,7 @@ export default function FrequenciaTurma() {
           }
         >
           <button
-            onClick={finalizarChamada}
+            onClick={() => setModalOpen(true)}
             disabled={loading}
             className="bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm sm:text-base font-medium hover:opacity-90 transition cursor-pointer"
           >
@@ -184,6 +188,15 @@ export default function FrequenciaTurma() {
           </div>
         </div>
       </main>
+      <ConfirmFrequenciaModal
+        isOpen={modalOpen}
+        turmaNome={turma?.nome || ""}
+        onClose={() => setModalOpen(false)}
+        onConfirm={() => {
+          setModalOpen(false);
+          finalizarChamada();
+        }}
+      />
     </div>
   );
 }

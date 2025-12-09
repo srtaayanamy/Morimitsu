@@ -121,7 +121,6 @@ export default function VisualizarTurma() {
       <Header />
 
       <main className="p-6 md:p-8 space-y-6">
-
         <ErrorMessage message={erro} />
 
         {/* Cabeçalho */}
@@ -345,7 +344,12 @@ export default function VisualizarTurma() {
               <tbody>
                 {turma.alunos?.map((a) => (
                   <tr key={a.id} className="bg-[#F5F5F5] rounded-xl">
-                    <td className="p-3 rounded-l-xl">{a.nome}</td>
+                    <Link
+                      to={`/visualizar-aluno/${a.id}`}
+                      className="hover:underline"
+                    >
+                      <td className="p-3 rounded-l-xl">{a.nome}</td>
+                    </Link>
                     <td className="p-3">{a.apelido}</td>
                     <td className="py-3 px-6 text-center">
                       <BeltTag faixa={a.faixa} grau={a.grau} />
@@ -365,7 +369,12 @@ export default function VisualizarTurma() {
                 className="bg-[#F1F1F1] shadow-sm rounded-lg p-3 flex items-center gap-3"
               >
                 <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
-                  <Avatar sexo={a.sexo} idade={calcularIdade(a.dataNascimento)} size={40} noWrapper />
+                  <Avatar
+                    sexo={a.sexo}
+                    idade={calcularIdade(a.dataNascimento)}
+                    size={40}
+                    noWrapper
+                  />
                 </div>
 
                 <div className="flex-1">
