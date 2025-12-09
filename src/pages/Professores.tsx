@@ -74,7 +74,7 @@ export default function Professores() {
             {Professores.length === 0 ? (
               <p>Nenhum professor encontrado.</p>
             ) : (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 cursor-pointer">
                 {Professores.map((professor) => (
                   <ProfessorCard key={professor.id} professor={professor} />
                 ))}
