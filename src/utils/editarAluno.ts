@@ -1,19 +1,33 @@
 import api from "../services/api";
+import { verificarEmail } from "./VerficarLogin";
+
+function parseBRDate(dateStr: string) {
+    const [dia, mes, ano] = dateStr.split("/");
+    return `${ano}-${mes}-${dia}`; // yyyy-mm-dd
+}
+
 
 export async function editarAluno(id:string, personal:any, form: any) {
     try{
         if(personal === undefined && form === undefined){
             return false
         }
-
+        
         const dadosPersonalFiltrados: any = {};
         for (const key in personal) {
             const value = personal[key];
             if (value !== null && value !== undefined) {
                 if(key=== 'birthDate'){
-                    const formatedValue = new Date(value).toISOString();
+                    const FormatedDate = parseBRDate(value)
+                    const formatedValue = new Date(FormatedDate).toISOString();
                     dadosPersonalFiltrados[key] = formatedValue;
-                }else{
+                }else if(key === 'email'){
+                    if (verificarEmail(value)){
+                        dadosPersonalFiltrados[key] = value;
+                    } else{
+                        return 'Formato de email inválido.'
+                    }
+                } else {
                     dadosPersonalFiltrados[key] = value;
                 }
                 
@@ -24,7 +38,7 @@ export async function editarAluno(id:string, personal:any, form: any) {
         const dadosFormFiltrados: any = {};
         for (const key in form) {
             const value = form[key];
-            if (value !== "" && value !== null && value !== undefined) {
+            if ( value !== null && value !== undefined) {
                 dadosFormFiltrados[key] = value;
             }
         }
