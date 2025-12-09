@@ -6,8 +6,10 @@ import { listarAlunos } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 import BeltTag from "../components/BeltTag";
 import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
+import CreateAcessModal from "../components/CreateAcessModal";
 import { Avatar } from "../components/Avatar";
 import { calcularIdade } from "../utils/CalcularIdade";
+import { pegaDadosAluno } from "../utils/getDadosAluno";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -17,8 +19,15 @@ export default function Alunos() {
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedAluno, setSelectedAluno] = useState<Aluno | null>(null);
+
+  const [alunoEmPromocao, setAlunoEmPromocao] = useState<{
+    id: string;
+    nome: string;
+    email: string;
+  } | null>(null);
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [acessoModalOpen, setAcessoModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchAlunos = async () => {
@@ -36,18 +45,34 @@ export default function Alunos() {
     fetchAlunos();
   }, []);
 
-  const openModal = (aluno: Aluno) => {
-    setSelectedAluno(aluno);
-    setModalOpen(true);
+  const iniciarPromocao = async (aluno: Aluno) => {
+    if (!aluno.id) return;
+
+    const dados = await pegaDadosAluno(aluno.id);
+
+    if (!dados || typeof dados === "string" || !dados.email?.includes("@")) {
+      alert(`O aluno ${aluno.nome} não tem um e-mail válido cadastrado.`);
+      return;
+    }
+
+    setAlunoEmPromocao({
+      id: aluno.id,
+      nome: aluno.nome,
+      email: dados.email.trim(),
+    });
+
+    setConfirmModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setSelectedAluno(null);
+  const fecharFluxo = () => {
+    setConfirmModalOpen(false);
+    setAcessoModalOpen(false);
+    setAlunoEmPromocao(null);
   };
 
-  const handleConfirm = () => {
-    console.log("Promovendo aluno:", selectedAluno?.nome);
+  const confirmarPromocao = () => {
+    setConfirmModalOpen(false);
+    setAcessoModalOpen(true);
   };
 
   return (
@@ -82,17 +107,14 @@ export default function Alunos() {
                 {/* MOBILE */}
                 <div className="md:hidden space-y-3">
                   {alunos.map((aluno) => {
-                    let promover = false;
-                    if (podePromover(aluno.faixa) && aluno.userID === null) {
-                      promover = true;
-                    }
+                    const promover =
+                      podePromover(aluno.faixa) && aluno.userID === null;
 
                     return (
                       <div
                         key={aluno.id}
                         className="bg-[#F1F1F1] shadow-sm rounded-xl p-4 pt-5 pb-5 flex items-center gap-4"
                       >
-                        {/* Avatar */}
                         <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                           <Avatar
                             sexo={aluno.sexo}
@@ -102,7 +124,6 @@ export default function Alunos() {
                           />
                         </div>
 
-                        {/* Nome + apelido */}
                         <div className="flex-1">
                           <Link
                             to={`/visualizar-aluno/${aluno.id}`}
@@ -115,17 +136,18 @@ export default function Alunos() {
                           </span>
                         </div>
 
-                        {/* Faixa + botão */}
-                        <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10 ">
+                        <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10">
                           <div className="bg-white p-3 rounded-2xl w-28 shadow-sm flex flex-col items-center justify-center">
                             <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
-                            <p className="text-[0.7rem] font-semibold">Grau: {aluno.grau}</p>
+                            <p className="text-[0.7rem] font-semibold">
+                              Grau: {aluno.grau}
+                            </p>
                           </div>
 
                           {promover && (
                             <button
                               className="bg-[#7F1A17] text-white px-3 py-1.5 rounded-lg text-[0.7rem] font-semibold w-28"
-                              onClick={() => openModal(aluno)}
+                              onClick={() => iniciarPromocao(aluno)}
                             >
                               Promover
                             </button>
@@ -158,13 +180,8 @@ export default function Alunos() {
 
                     <tbody>
                       {alunos.map((aluno) => {
-                        let promover = false;
-                        if (
-                          podePromover(aluno.faixa) &&
-                          aluno.userID === null
-                        ) {
-                          promover = true;
-                        }
+                        const promover =
+                          podePromover(aluno.faixa) && aluno.userID === null;
 
                         return (
                           <tr
@@ -194,7 +211,7 @@ export default function Alunos() {
                                   <button
                                     type="button"
                                     className="bg-[#1D1E1E] w-full text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-gray-800 transition cursor-pointer"
-                                    onClick={() => openModal(aluno)}
+                                    onClick={() => iniciarPromocao(aluno)}
                                   >
                                     Promover
                                   </button>
@@ -218,10 +235,22 @@ export default function Alunos() {
       </main>
 
       <ConfirmPromotionModal
-        isOpen={modalOpen}
-        alunoNome={selectedAluno?.nome || ""}
-        onClose={closeModal}
-        onConfirm={handleConfirm}
+        isOpen={confirmModalOpen}
+        alunoNome={alunoEmPromocao?.nome || ""}
+        onClose={fecharFluxo}
+        onConfirm={confirmarPromocao}
+      />
+
+      <CreateAcessModal
+        isOpen={acessoModalOpen}
+        alunoId={alunoEmPromocao?.id || ""}
+        alunoNome={alunoEmPromocao?.nome || ""}
+        alunoEmail={alunoEmPromocao?.email}
+        onClose={fecharFluxo}
+        onSuccess={() => {
+          alert("Professor criado com sucesso!");
+          fecharFluxo();
+        }}
       />
     </div>
   );
