@@ -3,6 +3,7 @@ import Logo from "../assets/Logo.png";
 import LoginHeader from "../components/LoginHeader";
 import { useState } from "react";
 import { EnviarEmail } from "../utils/EnviarEmail";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function RecuperarSenha() {
 
@@ -22,7 +23,7 @@ export default function RecuperarSenha() {
       console.log("Ocorreu um erro")
       setErro('Ocorreu um erro. Tente novamente.')
     }
-    }
+  }
     
   return (
     <div className="flex flex-col h-screen w-screen bg-[#F2F2F2] font-[Outfit]">
@@ -32,6 +33,9 @@ export default function RecuperarSenha() {
       {/* Conteúdo central */}
       <main className="flex flex-1 items-start justify-center mt-8 md:items-center md:mt-0">
         <section className="bg-white rounded-[1.5rem] shadow-md p-8 md:p-10 w-[90%] max-w-md text-center">
+
+          <ErrorMessage message={erro} />
+
           {/* Logo */}
           <LogoImage />
 

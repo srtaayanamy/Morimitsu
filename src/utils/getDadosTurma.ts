@@ -3,7 +3,6 @@ import type { Aluno } from "../types/Aluno";
 import type { Professor } from "../types/Professor";
 import type { Turma } from "../types/Turma";
 import { formataHorario } from "./formatarHorario";
-import { formatarData } from "./getDadosAluno";
 
 export async function pegaDadosTurma(id: string) {
   try {

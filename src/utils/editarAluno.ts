@@ -35,7 +35,7 @@ export async function editarAluno(id:string, personal:any, form: any) {
         const token = localStorage.getItem('token');
 
         if(dadosPersonalFiltrados.length !== 0){
-            const reponsePersonal = await api.put(`/student/${id}/personal`, 
+            await api.put(`/student/${id}/personal`, 
                 dadosPersonalFiltrados,
                 {
                     headers:{
@@ -46,7 +46,7 @@ export async function editarAluno(id:string, personal:any, form: any) {
         }
 
         if(dadosFormFiltrados.length !== 0){
-            const reponseForm = await api.put(`/student/${id}/form`, 
+            await api.put(`/student/${id}/form`, 
                 dadosFormFiltrados,
                 {
                     headers:{

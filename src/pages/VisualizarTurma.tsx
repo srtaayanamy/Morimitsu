@@ -15,6 +15,7 @@ import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
 
 import ImageOverlay from "../components/ImageOverlay";
 import { calcularIdade } from "../utils/CalcularIdade";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function VisualizarTurma() {
   const { id } = useParams();
@@ -120,6 +121,9 @@ export default function VisualizarTurma() {
       <Header />
 
       <main className="p-6 md:p-8 space-y-6">
+
+        <ErrorMessage message={erro} />
+
         {/* Cabeçalho */}
         <div className="bg-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
           {!isEditing ? (

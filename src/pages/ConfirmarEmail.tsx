@@ -3,35 +3,45 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import LoginHeader from "../components/LoginHeader";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function ConfirmarEmail() {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
   //Variável de estado e navigate
-  const [erro, setErro] = useState('');
+  const [erro, setErro] = useState("");
   const navigate = useNavigate();
 
   //Recebe e armazena o codigo e email recibidos da tela anterior
   const location = useLocation();
   const codigoRecebido = location.state?.codigo;
 
-  const VerificarCodigo=()=>{
+  const VerificarCodigo = () => {
     // Junta os 4 inputs em uma string
-    const codigoDigitado = inputsRef.current.map(input => input?.value || "").join("");
+    const codigoDigitado = inputsRef.current
+      .map((input) => input?.value || "")
+      .join("");
 
     // Valida se o usuário digitou 4 dígitos
     if (codigoDigitado.length !== 4) {
-      setErro('Digite o código completo!')
+      setErro("Digite o código completo!");
       return;
     }
-    if(codigoDigitado === codigoRecebido){
-      navigate("/NovaSenha", {state:{codigo:codigoRecebido, codigoDigitado: codigoDigitado}})
-      return;
-    }
-    setErro('Código inválido!')
-  }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    if (codigoDigitado === codigoRecebido) {
+      navigate("/NovaSenha", {
+        state: { codigo: codigoRecebido, codigoDigitado: codigoDigitado },
+      });
+      return;
+    }
+
+    setErro("Código inválido!");
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const value = e.target.value;
     if (!/^\d*$/.test(value)) {
       e.target.value = ""; // impede letras
@@ -43,7 +53,10 @@ export default function ConfirmarEmail() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
     if (e.key === "Backspace" && !e.currentTarget.value && index > 0) {
       inputsRef.current[index - 1]?.focus(); // volta ao campo anterior
     }
@@ -64,6 +77,8 @@ export default function ConfirmarEmail() {
             p-6 sm:p-10 mt-6 sm:mt-0
           "
         >
+          <ErrorMessage message={erro} />
+
           {/* Logo */}
           <img
             src={Logo}
@@ -82,7 +97,7 @@ export default function ConfirmarEmail() {
           </p>
 
           {/* Campos de código */}
-          <div className="flex justify-center gap-3 sm:gap-4 mb-6"> 
+          <div className="flex justify-center gap-3 sm:gap-4 mb-6">
             {[...Array(4)].map((_, index) => (
               <input
                 key={index}

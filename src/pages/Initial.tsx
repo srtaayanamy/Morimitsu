@@ -5,6 +5,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { verificarLogin } from "../utils/VerficarLogin";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { isLogedContext } from "../contexts/Auth";
+import SuccessAlert from "../components/SuccessAlert";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | boolean>("");
+  const [mensagemSucesso, setMensagemSucesso] = useState(""); // só string agora
   const { isLoged } = useContext(isLogedContext);
 
   const navigate = useNavigate();
@@ -27,11 +29,14 @@ export default function Login() {
     const result = await verificarLogin(email, senha)
 
     //Analisa o retorna da função e toma uma ação com base no retorno
-    if(result=== true){
+    if(result === true){
+      setErro(""); // limpa erro
+      setMensagemSucesso("Login feito");
       console.log("Login feito")
       navigate('/inicio')
       return;
     } else {
+      setMensagemSucesso(""); // limpa sucesso
       setErro(result);
       return;
     }
@@ -92,6 +97,9 @@ export default function Login() {
                 </button>
               </div>
             </div>
+
+            {/* Mensagem de sucesso */}
+            {mensagemSucesso && <SuccessAlert message={mensagemSucesso} />}
 
             {/* Mensagem de erro */}
             <ErrorMessage message={erro} />

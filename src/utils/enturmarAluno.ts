@@ -8,13 +8,11 @@ export async function enturmaAluno(idAluno: string, idTurma: string) {
       return false;
     }
 
-    const response = await api.post(`/student/${idAluno}/join/${idTurma}`);
+    await api.post(`/student/${idAluno}/join/${idTurma}`);
 
-    console.log(response.data);
-    if (response.status === 200) {
-      console.log("Aluno enturmado com sucesso.");
-      return true; // mudamos para true em caso de sucesso
-    }
+    console.log("Aluno enturmado com sucesso.");
+    return true; // mudamos para true em caso de sucesso
+    
 
     return false; // qualquer outro status que não seja 200
   } catch (error: any) {

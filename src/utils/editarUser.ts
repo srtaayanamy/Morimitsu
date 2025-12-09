@@ -1,9 +1,11 @@
 import api from "../services/api";
 
+
+//  editaUser(name: string) 
 export async function editaUser(name: string) {
   try {
     // Envia os dados diretamente (sem aninhar)
-    const response = await api.put("/user", name);
+    await api.put("/user", name);
 
     console.log("Usuário editado com sucesso.");
     return true;

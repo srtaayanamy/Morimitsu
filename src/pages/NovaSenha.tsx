@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginHeader from "../components/LoginHeader";
 import { mudarSenha } from "../utils/MudarSenha";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 // Campo de senha reutilizável, agora com suporte a onChange
 function PasswordField({
@@ -98,6 +99,8 @@ export default function NovaSenha() {
             text-center
           "
         >
+          <ErrorMessage message={erro} />
+
           {/* Título */}
           <h2 className="text-2xl sm:text-3xl font-semibold text-black mb-8 sm:mb-10">
             Redefina a senha:

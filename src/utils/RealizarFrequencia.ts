@@ -5,7 +5,7 @@ export async function fazerFrequencia(classID:string, studentsIds: string[], dat
     try{
         const token = localStorage.getItem('token');
 
-        const response = await api.post('/frequency', 
+        await api.post('/frequency', 
             {
                 classId: classID,
                 Date: date,

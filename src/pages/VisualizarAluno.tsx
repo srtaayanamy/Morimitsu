@@ -16,7 +16,6 @@ export default function VisualizarAluno() {
   const [aluno, setAluno] = useState<Aluno>();
   const [alunoOriginal, setAlunoOriginal] = useState<Aluno>();
   const [isEditing, setIsEditing] = useState(false);
-  const role = localStorage.getItem("role");
 
   useEffect(() => {
     async function fetchAluno() {

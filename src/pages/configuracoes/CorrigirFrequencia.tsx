@@ -3,9 +3,8 @@ import type { Frequencie } from "../../types/Frequencie";
 import { getFrequencies } from "../../hooks/FrequenceList";
 
 export default function CorrigirFrequencia() {
-
-  const [frequencieList, setFrequencieList] = useState<Frequencie[]>([])
-  const [error, setError] =  useState<String | undefined>(undefined);
+  const [, setFrequencieList] = useState<Frequencie[]>([])
+  const [, setError] =  useState<String | undefined>(undefined);
 
   useEffect(() => {
 
