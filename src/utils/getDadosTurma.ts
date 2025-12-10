@@ -19,6 +19,7 @@ export async function pegaDadosTurma(id: string) {
         nome: coach.name,
       })
     );
+    console.log(professores)
 
     //Guarda a lista de alunos retornados pela API
     const alunos: Aluno[] = response.data.students.map((student: any) => ({
@@ -30,6 +31,7 @@ export async function pegaDadosTurma(id: string) {
       sexo: student.personal.gender || "",
       dataNascimento: student.personal.birthDate || ""
     }));
+    console.log(alunos)
 
     const NumeroDeAlunos = alunos.length;
 

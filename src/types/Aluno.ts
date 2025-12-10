@@ -14,6 +14,7 @@ export type Aluno = {
     faixa: string;
     grau?: number;
     frequencia: number;
+    frequenciaRequerida?: number;
     Responsavel?: string;
     telefoneResponsavel?: string;
     matricula?: string; 

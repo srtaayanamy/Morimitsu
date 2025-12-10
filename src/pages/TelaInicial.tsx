@@ -11,6 +11,8 @@ import { filtrarAniversariantes } from "../hooks/ListaAlunos";
 import type { Aluno } from "../types/Aluno";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
+import BeltTag from "../components/BeltTag";
+import { Avatar } from "../components/Avatar";
 
 export default function TelaInicial() {
   //Variáveis de estado
@@ -128,7 +130,163 @@ export default function TelaInicial() {
 
         {/* SEÇÃO PRÓXIMOS GRADUANDOS */}
         <SectionCard title="Próximos graduandos">
-          {/* Conteúdos da seção na próxima entrega */}
+          {/* aqui é só substituir depois por uma chamada real */}
+          {/* esse mock é só pra arrumar o estilo, pode apagar dpeois e inserir os dados reais */}
+          {(() => {
+            const graduandosMock = [
+              {
+                id: "1",
+                nome: "Carlos Eduardo Silva",
+                apelido: "",
+                turma: "Turma Mista",
+                data: "08/09/2025",
+                faixaAtual: "BRANCA",
+                grauAtual: 0,
+                proximaFaixa: "AZUL",
+                proximoGrau: 1,
+              },
+              {
+                id: "2",
+                nome: "Carlos Henrique Silva",
+                apelido: "",
+                turma: "Turma Mista",
+                data: "08/09/2025",
+                faixaAtual: "BRANCA",
+                grauAtual: 0,
+                proximaFaixa: "AZUL",
+                proximoGrau: 1,
+              },
+              {
+                id: "3",
+                nome: "Juliana Alexana",
+                apelido: "",
+                turma: "Turma Mista",
+                data: "08/09/2025",
+                faixaAtual: "PRETA",
+                grauAtual: 6,
+                proximaFaixa: "CORAL",
+                proximoGrau: 7,
+              },
+            ];
+
+            return (
+              <>
+                {/* MOBILE */}
+                <div className="md:hidden space-y-3">
+                  {graduandosMock.map((g) => (
+                    <div
+                      key={g.id}
+                      className="bg-[#F1F1F1] shadow-sm rounded-xl p-4 pt-5 pb-5 flex items-center gap-4"
+                    >
+                      {/* Avatar*/}
+                      <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
+                        {/* placeholder de avatar — IMPLEMENTAR DADOS REAIS*/}
+                        <Avatar
+                          sexo={"male"}
+                          idade={6}
+                          size={48}
+                          noWrapper={true}
+                        />
+                      </div>
+
+                      {/* Texto principal */}
+                      <div className="flex-1">
+                        <Link
+                          to={`/visualizar-aluno/${g.id}`}
+                          className="font-semibold text-[#1E1E1E] block leading-tight"
+                        >
+                          {g.nome}
+                        </Link>
+
+                        <div className="flex flex-col leading-tight mt-1">
+                          <span className="text-[0.8rem] text-gray-600">
+                            {g.turma}
+                          </span>
+                          <span className="text-[0.75rem] text-gray-500">
+                            {g.data}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Faixas */}
+                      <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10">
+                        <div className="bg-white p-3 rounded-2xl w-36 shadow-sm flex items-center justify-between">
+                          {/* Faixa atual */}
+                          <div className="flex flex-col items-center">
+                            <BeltTag faixa={g.faixaAtual} grau={g.grauAtual} />
+                            <p className="text-[0.65rem] font-semibold mt-1">
+                              Grau: {g.grauAtual}
+                            </p>
+                          </div>
+
+                          {/* Seta */}
+                          <div className="px-2 text-gray-400">→</div>
+
+                          {/* Próxima faixa */}
+                          <div className="flex flex-col items-center">
+                            <BeltTag
+                              faixa={g.proximaFaixa}
+                              grau={g.proximoGrau}
+                            />
+                            <p className="text-[0.65rem] font-semibold mt-1">
+                              Grau: {g.proximoGrau}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* DESKTOP */}
+                <div className="bg-white rounded-2xl shadow-md p-4 overflow-x-auto hidden md:block">
+                  <table className="w-full text-left border-separate border-spacing-y-2">
+                    <thead>
+                      <tr>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                          Nome
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E]">
+                          Turma
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
+                          Data
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
+                          Faixa atual
+                        </th>
+                        <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
+                          Próxima faixa
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {graduandosMock.map((g) => (
+                        <tr
+                          key={g.id}
+                          className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
+                        >
+                          <td className="py-3 px-6 font-medium">{g.nome}</td>
+                          <td className="py-3 px-6">{g.turma}</td>
+                          <td className="py-3 px-6 text-center">{g.data}</td>
+                          <td className="py-3 px-6 text-center">
+                            <BeltTag faixa={g.faixaAtual} grau={g.grauAtual} />
+                          </td>
+                          <td className="py-3 px-6 text-center">
+                            <BeltTag
+                              faixa={g.proximaFaixa}
+                              grau={g.proximoGrau}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            );
+          })()}
         </SectionCard>
 
         {/* SEÇÃO ANIVERSARIANTES DO MÊS */}

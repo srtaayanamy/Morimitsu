@@ -24,6 +24,7 @@ export async function cadastrarAluno(aluno: Aluno) {
             classIds = aluno.turmas;
         }
 
+        console.log(aluno)
         //Requisição
         const response= await api.post('/student', 
             {

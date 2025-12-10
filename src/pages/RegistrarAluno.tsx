@@ -70,6 +70,22 @@ export default function RegistrarAluno() {
     setTurmaSelecionada("");
   }
 
+  const formatarCPF = (value: string) => {
+  value = value.replace(/\D/g, "");
+  if (value.length > 11) value = value.slice(0, 11);
+
+  if (value.length <= 3) return value;
+  if (value.length <= 6) return `${value.slice(0, 3)}.${value.slice(3)}`;
+  if (value.length <= 9)
+    return `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6)}`;
+
+  return `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(
+    6,
+    9
+  )}-${value.slice(9)}`;
+};
+
+
   const formatarTelefone = (value: string) => {
     value = value.replace(/\D/g, "");
     if (value.length > 11) value = value.slice(0, 11);
@@ -136,6 +152,7 @@ export default function RegistrarAluno() {
       observacao,
       turmas: turmasVinculadas,
     };
+    console.log(novoAluno);
     const result = await cadastrarAluno(novoAluno);
 
     if (result === true) {
@@ -242,7 +259,7 @@ export default function RegistrarAluno() {
               <input
                 type="text"
                 className={inputBase}
-                value={CPF}
+                value={formatarCPF(CPF)}
                 onChange={handleCPFChange}
               />
             </div>
