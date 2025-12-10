@@ -14,6 +14,9 @@ import Professores from "../pages/Professores";
 import Configuration from "../pages/Configuracoes";
 import AlunosAptos from "../pages/AlunosAptos";
 import ResultadoPesquisa from "../pages/ResultadoPesquisa";
+import FrequenciaTurma from "../pages/FrequenciaTurma";
+import InserirAlunosTurma from "../pages/InserirAlunosTurma";
+import RemoverAlunosTurma from "../pages/RemoverAlunosTurma";
 
 // telas de configuração
 import Perfil from "../pages/configuracoes/Perfil";
@@ -22,10 +25,8 @@ import ConfigurarGraduacao from "../pages/configuracoes/ConfigurarGraduacao";
 import RegistrosFrequencia from "../pages/configuracoes/RegistrosFrequencia";
 import CorrigirFrequencia from "../pages/configuracoes/CorrigirFrequencia";
 import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
-import FrequenciaTurma from "../pages/FrequenciaTurma";
-import InserirAlunosTurma from "../pages/InserirAlunosTurma";
-import RemoverAlunosTurma from "../pages/RemoverAlunosTurma";
 import ManualUsuario from "../pages/configuracoes/ManualUsuário";
+import FrequenciaDoDia from "../pages/configuracoes/FrequenciaDoDia";
 
 export default function AppRoutes() {
   return (
@@ -44,11 +45,16 @@ export default function AppRoutes() {
       <Route path="/professores" element={<Professores />} />
       <Route path="/alunos-aptos" element={<AlunosAptos />} />
       <Route path="/frequencia-turma/:id" element={<FrequenciaTurma />} />
-      <Route path="/turma/:id/inserir-alunos" element={<InserirAlunosTurma />} />
-      <Route path="/turma/:id/remover-alunos" element={<RemoverAlunosTurma />} />
+      <Route
+        path="/turma/:id/inserir-alunos"
+        element={<InserirAlunosTurma />}
+      />
+      <Route
+        path="/turma/:id/remover-alunos"
+        element={<RemoverAlunosTurma />}
+      />
       <Route path="/pesquisa" element={<ResultadoPesquisa />} />
 
-      
       {/* rotas pai/filho de configuração */}
       <Route path="/configuracoes" element={<Configuration />}>
         <Route path="perfil" element={<Perfil />} />
@@ -58,6 +64,7 @@ export default function AppRoutes() {
         <Route path="corrigir-frequencia" element={<CorrigirFrequencia />} />
         <Route path="relatorios-exports" element={<RelatoriosExports />} />
         <Route path="manual-usuario" element={<ManualUsuario />} />
+        <Route path="frequencia-do-dia" element={<FrequenciaDoDia />} />
       </Route>
     </Routes>
   );

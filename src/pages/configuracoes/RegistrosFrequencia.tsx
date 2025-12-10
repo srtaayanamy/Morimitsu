@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getFrequencies } from "../../hooks/FrequenceList";
+import { useNavigate } from "react-router-dom";
 
 interface Turma {
   id: string | number;
@@ -23,10 +24,11 @@ export default function RegistrosFrequencia() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFrequencies = async () => {
-      if (!selectedDate && selectedDate !== "") return; // não busca se vazio
+      if (!selectedDate && selectedDate !== "") return;
 
       setLoading(true);
       setError(undefined);
@@ -41,17 +43,28 @@ export default function RegistrosFrequencia() {
           Date: freq.Date,
           class: {
             id: freq.class?.id || freq.Class?.id,
-            name: freq.class?.nome || freq.class?.name || freq.Class?.nome || freq.Class?.name || "—"
+            name:
+              freq.class?.nome ||
+              freq.class?.name ||
+              freq.Class?.nome ||
+              freq.Class?.name ||
+              "—",
           },
           teacher: {
             id: freq.teacher?.id || freq.Coach?.id,
-            name: freq.teacher?.nome || freq.teacher?.name || freq.Coach?.nome || freq.Coach?.name || "—"
+            name:
+              freq.teacher?.nome ||
+              freq.teacher?.name ||
+              freq.Coach?.nome ||
+              freq.Coach?.name ||
+              "—",
           },
-          students: freq.students || []
+          students: freq.students || [],
         }));
 
         setFrequencieList(normalizado);
       }
+
       setLoading(false);
     };
 
@@ -65,9 +78,7 @@ export default function RegistrosFrequencia() {
       </h2>
 
       {error && (
-        <div className="mb-4 bg-red-100 text-red-600 p-3 rounded">
-          {error}
-        </div>
+        <div className="mb-4 bg-red-100 text-red-600 p-3 rounded">{error}</div>
       )}
 
       <div className="mb-4 max-sm:w-full">
@@ -98,21 +109,24 @@ export default function RegistrosFrequencia() {
               {frequencieList.length === 0 ? (
                 <tr>
                   <td colSpan={3} className="text-center py-8 text-gray-400">
-                    {selectedDate ? "Nenhum registro nesta data" : "Selecione uma data"}
+                    {selectedDate
+                      ? "Nenhum registro nesta data"
+                      : "Selecione uma data"}
                   </td>
                 </tr>
               ) : (
                 frequencieList.map((freq, i) => (
                   <tr key={i} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-2 text-center text-sm">
+                    <td
+                      className="py-3 px-2 text-center text-sm cursor-pointer text-blue-600 underline"
+                      onClick={() =>
+                        navigate(`/configuracoes/frequencia-do-dia`, { state: freq })
+                      }
+                    >
                       {new Date(freq.Date).toLocaleDateString("pt-BR")}
                     </td>
-                    <td className="py-3 px-2 text-center font-medium">
-                      {freq.class.name}
-                    </td>
-                    <td className="py-3 px-2 text-center font-medium">
-                      {freq.teacher.name}
-                    </td>
+                    <td className="py-3 px-2 text-center font-medium">{freq.class.name}</td>
+                    <td className="py-3 px-2 text-center font-medium">{freq.teacher.name}</td>
                   </tr>
                 ))
               )}

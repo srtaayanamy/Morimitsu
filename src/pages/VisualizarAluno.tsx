@@ -136,7 +136,6 @@ export default function VisualizarAluno() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 flex flex-col space-y-4">
-        {/* TOPO — agora sem botões no mobile; inputs de nome/apelido ficam aqui */}
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
           {!isEditing ? (
             <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
@@ -160,7 +159,6 @@ export default function VisualizarAluno() {
             </div>
           )}
 
-          {/* Botão de editar/ícone — aparece sempre quando NÃO está editando */}
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
@@ -169,7 +167,6 @@ export default function VisualizarAluno() {
               <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
             </button>
           ) : (
-            /* Botões no TOPO apenas para desktop (md+). No mobile eles ficam ao final da página. */
             <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={() => setDeleteModalOpen(true)}

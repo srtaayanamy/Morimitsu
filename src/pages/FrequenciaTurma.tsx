@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { fazerFrequencia } from "../utils/RealizarFrequencia";
 import ConfirmFrequenciaModal from "../components/ConfirmFrequenciaModal";
+import { Avatar } from "../components/Avatar";
+import { calcularIdade } from "../utils/CalcularIdade";
 
 export default function FrequenciaTurma() {
   const { id } = useParams();
@@ -30,7 +32,6 @@ export default function FrequenciaTurma() {
 
       setTurma(result);
 
-      // LISTA DE ALUNOS — IGUAL À TELA DE VISUALIZAR
       const alunos =
         result.alunos?.map((a: any) => ({
           id: a.id,
@@ -104,7 +105,6 @@ export default function FrequenciaTurma() {
 
         {/* CARD PRINCIPAL */}
         <div className="bg-white p-8 rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-10">
-          {/* FOTO DA TURMA */}
           <div>
             {turma.URLImage ? (
               <img
@@ -118,7 +118,6 @@ export default function FrequenciaTurma() {
             )}
           </div>
 
-          {/* INFORMAÇÕES */}
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="sm:col-span-3 w-full">
               <p className="text-sm font-medium">Professor responsável:</p>
@@ -150,11 +149,49 @@ export default function FrequenciaTurma() {
           </div>
         </div>
 
-        {/* LISTA DE ALUNOS */}
+        {/* LISTA DE ALUNOS — CORRIGIDA */}
         <div className="bg-white rounded-2xl p-8 shadow-sm space-y-4">
           <h2 className="text-2xl font-semibold">Alunos matriculados:</h2>
 
-          <div className="overflow-x-auto">
+          {/* MOBILE — CARDS IGUAIS À TELA DE ALUNOS */}
+          <div className="md:hidden space-y-3">
+            {students.map((aluno) => (
+              <div
+                key={aluno.id}
+                className="bg-[#F5F5F5] shadow-sm rounded-xl p-4 flex items-center gap-4"
+              >
+                <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
+                  <Avatar
+                    sexo={aluno.sexo}
+                    idade={calcularIdade(aluno.dataNascimento)}
+                    size={48}
+                    noWrapper={true}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <p className="font-semibold text-[#1E1E1E] leading-tight">
+                    {aluno.nome}
+                  </p>
+                  <span className="text-sm text-gray-600">
+                    {aluno.apelido || "—"}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={!!presentes[aluno.id]}
+                    onChange={() => togglePresente(aluno.id)}
+                    className="w-6 h-6 accent-[#1E1E1E]"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* DESKTOP — TABELA ORIGINAL */}
+          <div className="overflow-x-auto hidden md:block">
             <table className="min-w-full border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-left text-sm text-gray-600">
@@ -188,6 +225,7 @@ export default function FrequenciaTurma() {
           </div>
         </div>
       </main>
+
       <ConfirmFrequenciaModal
         isOpen={modalOpen}
         turmaNome={turma?.nome || ""}
