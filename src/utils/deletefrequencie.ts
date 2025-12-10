@@ -1,6 +1,6 @@
 import api from "../services/api";
 
-export async function fazerFrequencia(FrequeciesIds: string[]) {
+export async function fazerFrequencia(FrequecieId: string) {
 
     try{
         const token = localStorage.getItem('token');
@@ -8,7 +8,7 @@ export async function fazerFrequencia(FrequeciesIds: string[]) {
         await api.delete('/frequency', 
             {
                 params:{
-                    
+                    id: FrequecieId
                 },
                 headers:{
                     Authorization: `Bearer ${token}`
@@ -24,14 +24,14 @@ export async function fazerFrequencia(FrequeciesIds: string[]) {
         if (error.response) {
             switch(error.response.status){
                 case 404:
-                    console.log("Alguma das entidades nao foi encontrada, forneça o token, o id da turma e o id do estudante corretamente e verifique sua existencia. Erro: ", error);
-                    return "Algum dos alunos não foi encontradou.";
+                    console.log("Verfique se o registro de frequencia realmente existe Erro: ", error);
+                    return "Registro de frequencia não encontrado.";
                 case 500:
                     console.log("Erro interno no servidor. Erro:", error);
-                    return "Erro ao fazer frequência. Tente novamente!";
+                    return "Erro ao excluir frequência. Tente novamente!";
                 default:
                     console.log("Erro desconhecido da API:", error.response.status);
-                    return "Erro ao fazer frequência. Tente novamente!";
+                    return "Erro ao excluir frequência. Tente novamente!";
             }
         }  
 
@@ -43,7 +43,7 @@ export async function fazerFrequencia(FrequeciesIds: string[]) {
         
         //Qualquer outro erro
         console.log("Erro: ", error);
-        return "Erro ao fazer frequência. Tente novamente!";        
+        return "Erro ao excluir frequência. Tente novamente!";
     }
     
 }
