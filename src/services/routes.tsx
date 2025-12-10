@@ -28,6 +28,7 @@ import CorrigirFrequencia from "../pages/configuracoes/CorrigirFrequencia";
 import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
 import ManualUsuario from "../pages/configuracoes/ManualUsuário";
 import FrequenciaDoDia from "../pages/configuracoes/FrequenciaDoDia";
+import CorrigirFrequenciaDoDia from "../pages/configuracoes/CorrigirFrequenciaDoDia";
 
 export default function AppRoutes() {
   return (
@@ -70,6 +71,7 @@ export default function AppRoutes() {
         <Route path="relatorios-exports" element={<RelatoriosExports />} />
         <Route path="manual-usuario" element={<ManualUsuario />} />
         <Route path="frequencia-do-dia" element={<FrequenciaDoDia />} />
+        <Route path="corr-freq-do-dia" element={<CorrigirFrequenciaDoDia />} />
       </Route>
     </Routes>
   );
