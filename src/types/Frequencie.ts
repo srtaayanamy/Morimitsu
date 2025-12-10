@@ -5,6 +5,6 @@ import type { Turma } from "./Turma";
 export type Frequencie = {
     Date: string,
     class: Turma,
-    students: Aluno[],
-    teacher: Professor
+    students: Partial<Aluno>[],
+    teacher: Partial<Professor>
 }

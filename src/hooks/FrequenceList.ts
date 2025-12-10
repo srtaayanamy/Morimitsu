@@ -26,28 +26,42 @@ export async function getFrequencies(date?:string) {
                 }
             }
         )
+        console.log(response.data)
 
         const frequencies = response.data.body;
         const groups: Record<string, Frequencie> = {};
 
         frequencies.forEach((f: any) => {
 
-        const key = `${f.Date}_${f.class_id}_${f.coach_id}`;
+            const key = `${f.Date}_${f.class_id}_${f.coach_id}`;
+            if (!groups[key]) {
+                groups[key] = {
+                    Date: f.Date,
+                    class:{
+                        id: f.Class.id,
+                        nome: f.Class.name,
+                        idadeMax: f.Class.maxAge,
+                        idadeMin: f.Class.minAge
+                    },
+                    students: [],
+                    teacher: {
+                        id: f.Coach.id,
+                        nome: f.Coach.name
+                    }
+                };
+            }
 
-        if (!groups[key]) {
-            groups[key] = {
-                Date: f.Date,
-                class: f.Class,
-                students: [],
-                teacher: f.Coach
-            };
-        }
-
-        groups[key].students.push(f.Student);
+            groups[key].students.push(
+                {
+                    id: f.Student.id,
+                    nome: f.Student.name,
+                    apelido: f.Student.nickname
+                }
+            );
         });
 
         const FrequencieList: Frequencie[] = Object.values(groups);
-
+        console.log(FrequencieList)
         return FrequencieList;
 
     }catch(error:any){
