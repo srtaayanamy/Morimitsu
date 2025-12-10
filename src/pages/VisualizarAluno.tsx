@@ -13,7 +13,11 @@ import { deleteAluno } from "../utils/deletarAluno";
 import ConfirmActionModal from "../components/ConfirmActionModal";
 import SuccessAlert from "../components/SuccessAlert";
 import { useNavigate } from "react-router-dom";
-import { faixasEGrausMaior16, faixasEGrausMenor16, Ranking } from "../types/Rank";
+import {
+  faixasEGrausMaior16,
+  faixasEGrausMenor16,
+  Ranking,
+} from "../types/Rank";
 
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
@@ -39,7 +43,7 @@ export default function VisualizarAluno() {
     fetchAluno();
   }, [id]);
 
-  const handleChange = (field: keyof Aluno, value: string) => {
+  const handleChange = (field: keyof Aluno, value: string | number) => {
     if (!aluno) return;
     setAluno({ ...aluno, [field]: value });
   };
@@ -233,10 +237,7 @@ export default function VisualizarAluno() {
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
                       value={(aluno.grau ?? 0) > 0 ? aluno.grau : "Nenhum"}
-                      onChange={(e) =>
-                        handleChange("grau", e.target.value
-)
-                      }
+                      onChange={(e) => handleChange("grau", e.target.value)}
                     >
                       {Ranking[aluno.faixa].map((g) => (
                         <option key={g} value={g > 0 ? g : "Nenhum"}>
@@ -252,12 +253,31 @@ export default function VisualizarAluno() {
                 <p className="font-semibold text-sm md:text-base">
                   Progresso / Frequência:
                 </p>
-                <div className="mt-2">
-                  <ProgressBar percent={aluno.frequencia} />
-                </div>
-                <p className="text-sm text-right mt-1 text-[#1E1E1E]">
-                  {aluno.frequencia}%
-                </p>
+
+                {!isEditing ? (
+                  <>
+                    <div className="mt-2">
+                      <ProgressBar percent={aluno.frequencia} />
+                    </div>
+                    <p className="text-sm text-right mt-1 text-[#1E1E1E]">
+                      {aluno.frequencia}%
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-3 mt-2">
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      className="w-24 border border-gray-300 rounded-lg p-2 text-center"
+                      value={aluno.frequencia ?? 0}
+                      onChange={(e) =>
+                        handleChange("frequencia", e.target.value)
+                      }
+                    />
+                    <span className="font-medium">%</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
