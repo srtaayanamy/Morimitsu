@@ -34,12 +34,13 @@ export default function ConfigurarGraduacao() {
       if(typeof result === 'string'){
         alert(result)
       } else{
+        console.log(result)
         setConfigurations(result);
-      };
-    };
+      }
+    }
 
-    fetchConfigurations();
-  });
+    fetchConfigurations()
+  }, [])
 
   const [frequenciasMaiores, setFrequenciasMaiores] = useState(
     faixasEGrausMaior16.map((rank) => rank )
