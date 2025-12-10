@@ -23,8 +23,8 @@ export default function ConfigurarGraduacao() {
   const [isEditing, setIsEditing] = useState(false);
 
   const [frequenciasMenores, setFrequenciasMenores] = useState({
-    kids: 0,
-    juvenil: 0,
+    KIDS: 0,
+    JUVENIL: 0,
   });
 
   useEffect(()=>{
@@ -34,12 +34,13 @@ export default function ConfigurarGraduacao() {
       if(typeof result === 'string'){
         alert(result)
       } else{
+        console.log(result)
         setConfigurations(result);
-      };
-    };
+      }
+    }
 
-    fetchConfigurations();
-  });
+    fetchConfigurations()
+  }, [])
 
   const [frequenciasMaiores, setFrequenciasMaiores] = useState(
     faixasEGrausMaior16.map((rank) => rank )
