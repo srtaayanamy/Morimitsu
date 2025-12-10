@@ -1,26 +1,10 @@
 import { useEffect, useState } from "react";
 import { getFrequencies } from "../../hooks/FrequenceList";
 import { useNavigate } from "react-router-dom";
-
-interface Turma {
-  id: string | number;
-  name: string;
-}
-
-interface Professor {
-  id: string | number;
-  name: string;
-}
-
-interface FrequenciaNormalizada {
-  Date: string;
-  class: Turma;
-  teacher: Professor;
-  students: any[];
-}
+import type { Frequencie } from "../../types/Frequencie";
 
 export default function RegistrosFrequencia() {
-  const [frequencieList, setFrequencieList] = useState<FrequenciaNormalizada[]>([]);
+  const [frequencieList, setFrequencieList] = useState<Frequencie[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -39,30 +23,8 @@ export default function RegistrosFrequencia() {
         setError(result);
         setFrequencieList([]);
       } else {
-        const normalizado: FrequenciaNormalizada[] = result.map((freq: any) => ({
-          Date: freq.Date,
-          class: {
-            id: freq.class?.id || freq.Class?.id,
-            name:
-              freq.class?.nome ||
-              freq.class?.name ||
-              freq.Class?.nome ||
-              freq.Class?.name ||
-              "—",
-          },
-          teacher: {
-            id: freq.teacher?.id || freq.Coach?.id,
-            name:
-              freq.teacher?.nome ||
-              freq.teacher?.name ||
-              freq.Coach?.nome ||
-              freq.Coach?.name ||
-              "—",
-          },
-          students: freq.students || [],
-        }));
-
-        setFrequencieList(normalizado);
+        console.log(result)
+        setFrequencieList(result);
       }
 
       setLoading(false);
@@ -125,8 +87,8 @@ export default function RegistrosFrequencia() {
                     >
                       {new Date(freq.Date).toLocaleDateString("pt-BR")}
                     </td>
-                    <td className="py-3 px-2 text-center font-medium">{freq.class.name}</td>
-                    <td className="py-3 px-2 text-center font-medium">{freq.teacher.name}</td>
+                    <td className="py-3 px-2 text-center font-medium">{freq.class.nome}</td>
+                    <td className="py-3 px-2 text-center font-medium">{freq.teacher.nome}</td>
                   </tr>
                 ))
               )}
