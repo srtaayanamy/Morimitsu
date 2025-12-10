@@ -7,12 +7,14 @@ import { listarProfessores } from "../hooks/ListaProfessores";
 import type { Turma } from "../types/Turma";
 import type { Professor } from "../types/Professor";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { vincularProfessor } from "../utils/vincularProfessor";
 
 export default function VincularProfessoresTurma() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [turma, setTurma] = useState<Turma | null>(null);
+  const [selecionados, setSelecionados] = useState<Record<string, boolean>>({});
   const [professoresTotais, setProfessoresTotais] = useState<Professor[]>([]);
   const [erro, setErro] = useState<string | boolean>("");
   const [loading, setLoading] = useState(true);
@@ -26,18 +28,60 @@ export default function VincularProfessoresTurma() {
         setErro(turmaDados);
       } else {
         setTurma(turmaDados);
+        if(turmaDados.professores){
+          const professoresTurmaAtual = turmaDados.professores;
+          const lista = await listarProfessores();
+          if (typeof lista !== "string" && lista !== false) {
+            const professores = lista.filter((teacher) => !professoresTurmaAtual.some(p => p.id === teacher.id))
+            setProfessoresTotais(professores);
+          }
+        }
       }
 
-      const lista = await listarProfessores();
-      if (typeof lista !== "string") {
-        setProfessoresTotais(lista || []);
-      }
-
+      
+      
       setLoading(false);
     }
 
     fetch();
-  }, [id]);
+  }, []);
+
+  const toggleSelecionado = (idAluno: string) => {
+    setSelecionados((prev) => ({
+      ...prev,
+      [idAluno]: !prev[idAluno],
+    }));
+  };
+
+  const inserirProfessores = async () => {
+    if (!id) return;
+
+    const idsSelecionados = Object.keys(selecionados).filter(
+      (idProfessor) => selecionados[idProfessor]
+    );
+
+    if (idsSelecionados.length === 0) {
+      return;
+    }
+    setLoading(true);
+
+    let sucessos = 0;
+    let erros = 0;
+    const errosDetalhados: string[] = [];
+
+    for (const idProfessor of idsSelecionados) {
+      const resultado = await vincularProfessor( id, idProfessor);
+
+      if (resultado === true) {
+        sucessos++;
+      } else {
+        erros++;
+        if (typeof resultado === "string") {
+          errosDetalhados.push(resultado);
+        }
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#1E1E1E] flex flex-col">
@@ -60,7 +104,7 @@ export default function VincularProfessoresTurma() {
             </button>
 
             <button
-              disabled
+              onClick={() => inserirProfessores()}
               className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium hover:opacity-90"
             >
               Vincular professores
@@ -96,7 +140,8 @@ export default function VincularProfessoresTurma() {
                       <td className="py-3 px-6 text-center">
                         <input
                           type="checkbox"
-                          disabled
+                          checked={!!selecionados[prof.id]}
+                          onChange={() => toggleSelecionado(prof.id)}
                           className="w-5 h-5 accent-[#1E1E1E]"
                         />
                       </td>
