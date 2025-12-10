@@ -3,6 +3,7 @@ import { configGraduantionsList } from "../../hooks/configurationsList";
 import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../../types/Rank";
 import { SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
+import type {Graduation} from "../../types/Graduation";
 
 const categoriasLabels = {
   kids: "Kids",
@@ -18,6 +19,7 @@ const categoriasMenores: Record<CategoriaMenor, { faixa: string }[]> = {
 
 export default function ConfigurarGraduacao() {
   const [filtro, setFiltro] = useState<"maiores" | "menores">("menores");
+  const [configurations, setConfigurations] =  useState<Graduation[]>();
   const [isEditing, setIsEditing] = useState(false);
 
   const [frequenciasMenores, setFrequenciasMenores] = useState({
@@ -32,15 +34,15 @@ export default function ConfigurarGraduacao() {
       if(typeof result === 'string'){
         alert(result)
       } else{
-        console.log(result)
-      }
-    }
+        setConfigurations(result);
+      };
+    };
 
-    fetchConfigurations()
-  })
+    fetchConfigurations();
+  });
 
   const [frequenciasMaiores, setFrequenciasMaiores] = useState(
-    faixasEGrausMaior16.map(() => 0)
+    faixasEGrausMaior16.map((rank) => rank )
   );
 
   const toggleEditing = () => setIsEditing(!isEditing);

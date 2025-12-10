@@ -1,4 +1,5 @@
 import api from "../services/api";
+import type {Graduation} from "../types/Graduation";
 
 export async function configGraduantionsList(){
 
@@ -10,11 +11,20 @@ export async function configGraduantionsList(){
             headers:{
                 Authorization: `Bearer ${token}`
             }
-        })
-
+        });
+        const ranks = ['BRANCA', 'AZUL', 'ROXA', 'MARROM', 'PRETA', 'VERMELHA', 'KIDS', 'JUVENIL']
         console.log(response.data.configs)
 
+        const graduations: Graduation[] = response.data.configs.map((g:any) =>({
+            id: g.id,
+            rank: g.ref_rank,
+            needed_frequency: g.needed_frequency
+        }));
 
+        const graduationsFiltred: Graduation[] = graduations
+            .filter(g => ranks.includes(g.rank))
+            .sort((a, b) => ranks.indexOf(a.rank) - ranks.indexOf(b.rank));
+        return graduationsFiltred;
 
     }catch(error:any){
         //Tratamento de erros

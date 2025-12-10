@@ -4,7 +4,7 @@ export async function GraduationStudent(studentId: string) {
     
     try{
         //Requisição
-        await api.patch(`/student/promote/rank/${studentId}`);
+        await api.patch(`/student/promote/rank`, {params:{studentId: studentId}});
 
         //Verifica se a requisição foi um sucesso
         console.log('Aluno graduado com sucesso.')
