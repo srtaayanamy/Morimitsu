@@ -13,6 +13,7 @@ import { deleteAluno } from "../utils/deletarAluno";
 import ConfirmActionModal from "../components/ConfirmActionModal";
 import SuccessAlert from "../components/SuccessAlert";
 import { useNavigate } from "react-router-dom";
+import { faixasEGrausMaior16, faixasEGrausMenor16, Ranking } from "../types/Rank";
 
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
@@ -202,12 +203,53 @@ export default function VisualizarAluno() {
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <Avatar sexo={aluno.sexo} idade={aluno.idade} />
             <div className="flex-1 space-y-4 w-full">
-              <InfoField
-                label="Faixa / grau:"
-                value={`${aluno.faixa || ""} / ${aluno.grau || ""}`}
-                editable={isEditing}
-                onChange={(val) => handleChange("faixa", val)}
-              />
+              <div>
+                <p className="font-semibold text-sm md:text-base mb-1">
+                  Faixa / Grau:
+                </p>
+
+                {!isEditing ? (
+                  <InfoField
+                    label=""
+                    value={`${aluno.faixa || ""} / ${aluno.grau || ""}`}
+                    editable={false}
+                  />
+                ) : (
+                  <div className="flex w-full gap-3 justify-center">
+                    {/* SELECT DE FAIXA */}
+                    <select
+                      className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
+                      value={aluno.faixa}
+                      onChange={(e) => handleChange("faixa", e.target.value)}
+                    >
+                      {((aluno.idade ?? 0) >= 16
+                        ? faixasEGrausMaior16
+                        : faixasEGrausMenor16
+                      ).map((item, index) => (
+                        <option key={index} value={item.faixa}>
+                          {item.faixa}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* SELECT DE GRAU */}
+                    <select
+                      className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
+                      value={(aluno.grau ?? 0) > 0 ? aluno.grau : "Nenhum"}
+                      onChange={(e) =>
+                        handleChange("grau", e.target.value
+)
+                      }
+                    >
+                      {Ranking[aluno.faixa].map((g) => (
+                        <option key={g} value={g > 0 ? g : "Nenhum"}>
+                          {g > 0 ? g : "Nenhum"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
 
               <div>
                 <p className="font-semibold text-sm md:text-base">
