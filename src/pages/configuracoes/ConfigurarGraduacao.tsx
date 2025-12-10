@@ -23,8 +23,8 @@ export default function ConfigurarGraduacao() {
   const [isEditing, setIsEditing] = useState(false);
 
   const [frequenciasMenores, setFrequenciasMenores] = useState({
-    KIDS: 0,
-    JUVENIL: 0,
+    kids: 0,
+    juvenil: 0,
   });
 
   useEffect(()=>{
