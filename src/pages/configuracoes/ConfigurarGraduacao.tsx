@@ -1,7 +1,8 @@
 import BeltTag from "../../components/BeltTag";
+import { configGraduantionsList } from "../../hooks/configurationsList";
 import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../../types/Rank";
 import { SquarePen } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const categoriasLabels = {
   kids: "Kids",
@@ -23,6 +24,20 @@ export default function ConfigurarGraduacao() {
     kids: 0,
     juvenil: 0,
   });
+
+  useEffect(()=>{
+    const fetchConfigurations =  async ()=>{
+      const result = await configGraduantionsList();
+
+      if(typeof result === 'string'){
+        alert(result)
+      } else{
+        console.log(result)
+      }
+    }
+
+    fetchConfigurations()
+  })
 
   const [frequenciasMaiores, setFrequenciasMaiores] = useState(
     faixasEGrausMaior16.map(() => 0)

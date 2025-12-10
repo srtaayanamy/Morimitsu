@@ -152,6 +152,7 @@ export default function RegistrarAluno() {
       observacao,
       turmas: turmasVinculadas,
     };
+    console.log(novoAluno);
     const result = await cadastrarAluno(novoAluno);
 
     if (result === true) {

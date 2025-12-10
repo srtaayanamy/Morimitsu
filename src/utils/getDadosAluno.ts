@@ -1,6 +1,7 @@
 import api from "../services/api";
 import type { Aluno } from "../types/Aluno";
 import type { Turma } from "../types/Turma";
+import { getFrequencieRequired } from "./getFrequencieRequered";
 
 export function formatarData(dataISO: string) {
   if (!dataISO) return "Não informada";
@@ -22,8 +23,18 @@ export async function pegaDadosAluno(id: string) {
     }));
 
     let rank = response.data.data.student.form.Rank;
+    let required_frequencie = await getFrequencieRequired(rank);
+
     rank = rank.replace('_', '/')
 
+    if(typeof required_frequencie === 'string'){
+      required_frequencie = 0
+    } else{
+      
+      required_frequencie = required_frequencie.needed_frequency;
+    }
+
+    console.log(required_frequencie)
     const aluno: Aluno = {
       nome: response.data.data.student.personal.name || "",
       apelido: response.data.data.student.nickname || "",
@@ -34,6 +45,7 @@ export async function pegaDadosAluno(id: string) {
       faixa: rank || "",
       grau: response.data.data.student.form.Rating || "",
       frequencia: response.data.data.student.form.Presence || 0,
+      frequenciaRequerida: required_frequencie,
       Responsavel: response.data.data.student.parents.parentName || "",
       telefoneResponsavel: response.data.data.student.parents.parentContact || "",
       matricula: response.data.data.student.form.IFCE_student_registration || "",
