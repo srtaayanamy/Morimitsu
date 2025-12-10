@@ -55,7 +55,9 @@ export async function getFrequencies(date?:string) {
                 {
                     id: f.Student.id,
                     nome: f.Student.name,
-                    apelido: f.Student.nickname
+                    apelido: f.Student.nickname,
+                    faixa: f.StudentForm.Rank,
+                    present: true
                 }
             );
         });

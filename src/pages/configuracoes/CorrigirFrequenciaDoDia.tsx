@@ -1,8 +1,34 @@
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { listarAlunos } from "../../hooks/ListaAlunos";
+import type { Frequencie } from "../../types/Frequencie";
+import type { Aluno, StudentParams } from "../../types/Aluno";
 
-export default function FrequenciaDoDia() {
+export default function CorrigirFrequenciaDoDia() {
   const { state } = useLocation();
-  const freq = state; // Recebe um item da lista retornada por getFrequencies()
+  const [alunos, setAlunos] = useState<Aluno[]>([])
+  const freq : Frequencie= state; // Recebe um item da lista retornada por getFrequencies()
+
+  useEffect(()=>{
+    const fetchAlunosTurma = async () =>{
+        const filter: StudentParams = {class: freq.class.id}
+        const result = await listarAlunos(filter)
+
+        if(typeof result === 'string'){
+            alert(result)
+        } else{
+            const idsAlunosPresentes = new Set(freq.students.map(item => item.id));
+
+            const FiltredStudent = result.map(item => ({
+            ...item,
+            present: idsAlunosPresentes.has(item.id) ? true : false
+            }));
+
+            setAlunos(FiltredStudent);
+        }
+    }
+    fetchAlunosTurma();
+  }, [])
 
   if (!freq) {
     return (
@@ -29,8 +55,8 @@ export default function FrequenciaDoDia() {
           </thead>
 
           <tbody>
-            {freq.students.length > 0 ? (
-              freq.students.map((aluno: any, i: number) => (
+            {alunos.length > 0 ? (
+              alunos.map((aluno: any, i: number) => (
                 <tr key={i} className="border-b">
                   <td className="py-3 text-center underline cursor-pointer">
                     {aluno?.nome}
