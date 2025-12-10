@@ -9,9 +9,17 @@ export async function editConfigGraduation(id: string, frequencie: number){
             return 'Id da configuração não informado.';
         }
 
-        const response = await api.put(`/config/${id}`, {
-            needed_frequency: frequencie
-        });
+        const token = localStorage.getItem('token');
+        const response = await api.put(`/config/${id}`, 
+            {
+                needed_frequency: frequencie
+            },
+            {
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
 
         console.log(response.data)
         if(response.status===200){

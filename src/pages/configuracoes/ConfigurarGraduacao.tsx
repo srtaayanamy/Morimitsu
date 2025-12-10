@@ -1,9 +1,10 @@
 import BeltTag from "../../components/BeltTag";
 import { configGraduantionsList } from "../../hooks/configurationsList";
+import { editConfigGraduation } from "../../utils/editConfigGraduation";
 import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../../types/Rank";
 import { SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
-import type {Graduation} from "../../types/Graduation";
+import type { Graduation } from "../../types/Graduation";
 
 const categoriasLabels = {
   kids: "Kids",
@@ -19,34 +20,62 @@ const categoriasMenores: Record<CategoriaMenor, { faixa: string }[]> = {
 
 export default function ConfigurarGraduacao() {
   const [filtro, setFiltro] = useState<"maiores" | "menores">("menores");
-  const [configurations, setConfigurations] =  useState<Graduation[]>();
+  const [configurations, setConfigurations] = useState<Graduation[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [edicoes, setEdicoes] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(false);
 
-  const [frequenciasMenores, setFrequenciasMenores] = useState({
-    kids: 0,
-    juvenil: 0,
-  });
+  async function fetchConfigurations() {
+    const result = await configGraduantionsList();
 
-  useEffect(()=>{
-    const fetchConfigurations =  async ()=>{
-      const result = await configGraduantionsList();
-
-      if(typeof result === 'string'){
-        alert(result)
-      } else{
-        console.log(result)
-        setConfigurations(result);
-      }
+    if (typeof result === "string") {
+      alert(result);
+      return;
     }
 
-    fetchConfigurations()
-  }, [])
+    setConfigurations(result);
 
-  const [frequenciasMaiores, setFrequenciasMaiores] = useState(
-    faixasEGrausMaior16.map((rank) => rank )
-  );
+    const mapaEdicoes: Record<string, number> = {};
+    result.forEach((item) => {
+      mapaEdicoes[item.id] = item.needed_frequency;
+    });
 
-  const toggleEditing = () => setIsEditing(!isEditing);
+    setEdicoes(mapaEdicoes);
+  }
+
+  useEffect(() => {
+    fetchConfigurations();
+  }, []);
+
+  async function toggleEditing() {
+    if (!isEditing) {
+      setIsEditing(true);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      for (const id in edicoes) {
+        await editConfigGraduation(id, edicoes[id]);
+      }
+
+      const novasConfigs = configurations.map((item) => ({
+        ...item,
+        needed_frequency: edicoes[item.id],
+      }));
+
+      setConfigurations(novasConfigs);
+
+      setIsEditing(false);
+      alert("Configurações salvas com sucesso!");
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao salvar as configurações.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const titulo =
     filtro === "maiores" ? "Maiores de 16 anos" : "Menores de 16 anos";
@@ -61,12 +90,21 @@ export default function ConfigurarGraduacao() {
         <button
           type="button"
           onClick={toggleEditing}
+          disabled={loading}
           className={`flex items-center gap-2 px-4 py-2 rounded-md transition cursor-pointer max-sm:w-full max-sm:justify-center
-            ${isEditing ? "bg-[#7F1A17] text-white" : "bg-transparent"}
-          `}
+    ${isEditing ? "bg-[#7F1A17] text-white" : "bg-transparent"}
+    ${loading && "opacity-70 cursor-not-allowed"}
+  `}
         >
-          {!isEditing && <SquarePen className="w-8 h-8 text-[#1E1E1E]" />}
-          {isEditing && "Salvar alterações"}
+          {!isEditing && !loading && (
+            <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
+          )}
+
+          {loading && (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          )}
+
+          {isEditing && !loading && "Salvar alterações"}
         </button>
       </div>
 
@@ -115,72 +153,79 @@ export default function ConfigurarGraduacao() {
         {titulo}
       </h3>
 
-      {/* MENOR DE 16 */}
+      {/* ------------------ MENORES ------------------ */}
       {filtro === "menores" && (
         <div className="space-y-6">
           {(Object.keys(categoriasMenores) as CategoriaMenor[]).map(
-            (categoria) => (
-              <div
-                key={categoria}
-                className="bg-white rounded-2xl shadow-sm overflow-hidden max-sm:text-sm"
-              >
-                <div className="px-6 py-4 bg-gray-100 border-b max-sm:px-4">
-                  <h3 className="text-lg font-semibold max-sm:text-base">
-                    {categoriasLabels[categoria]}
-                  </h3>
+            (categoria) => {
+              const apiRank = categoria === "kids" ? "KIDS" : "JUVENIL";
+
+              const config = configurations.find((c) => c.rank === apiRank);
+
+              return (
+                <div
+                  key={categoria}
+                  className="bg-white rounded-2xl shadow-sm overflow-hidden max-sm:text-sm"
+                >
+                  <div className="px-6 py-4 bg-gray-100 border-b max-sm:px-4">
+                    <h3 className="text-lg font-semibold max-sm:text-base">
+                      {categoriasLabels[categoria]}
+                    </h3>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-sm border-collapse">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="py-4 px-6 font-bold text-base text-center max-sm:px-3 max-sm:text-sm">
+                            Faixas da categoria
+                          </th>
+                          <th className="py-4 px-6 font-bold text-base text-center max-sm:px-3 max-sm:text-sm">
+                            Frequência Necessária (única)
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr className="border-t border-gray-200">
+                          <td className="py-4 px-6 text-center max-sm:px-3">
+                            <div className="flex flex-wrap justify-center gap-2 max-sm:gap-1">
+                              {categoriasMenores[categoria].map((item, i) => (
+                                <BeltTag key={i} faixa={item.faixa} />
+                              ))}
+                            </div>
+                          </td>
+
+                          <td className="py-4 px-6 text-center max-sm:px-3">
+                            {isEditing ? (
+                              <input
+                                type="number"
+                                value={edicoes[config?.id || ""] ?? 0}
+                                onChange={(e) => {
+                                  if (!config?.id) return;
+                                  setEdicoes((prev) => ({
+                                    ...prev,
+                                    [config.id]: Number(e.target.value),
+                                  }));
+                                }}
+                                className="w-20 border rounded-lg px-2 py-1 text-center max-sm:w-16"
+                              />
+                            ) : (
+                              <p>{config?.needed_frequency ?? 0}</p>
+                            )}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm border-collapse">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="py-4 px-6 font-bold text-base text-center max-sm:px-3 max-sm:text-sm">
-                          Faixas da categoria
-                        </th>
-                        <th className="py-4 px-6 font-bold text-base text-center max-sm:px-3 max-sm:text-sm">
-                          Frequência Necessária (única)
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <tr className="border-t border-gray-200">
-                        <td className="py-4 px-6 text-center max-sm:px-3">
-                          <div className="flex flex-wrap justify-center gap-2 max-sm:gap-1">
-                            {categoriasMenores[categoria].map((item, i) => (
-                              <BeltTag key={i} faixa={item.faixa} />
-                            ))}
-                          </div>
-                        </td>
-
-                        <td className="py-4 px-6 text-center max-sm:px-3">
-                          {isEditing ? (
-                            <input
-                              type="number"
-                              value={frequenciasMenores[categoria]}
-                              onChange={(e) =>
-                                setFrequenciasMenores((prev) => ({
-                                  ...prev,
-                                  [categoria]: Number(e.target.value),
-                                }))
-                              }
-                              className="w-20 border rounded-lg px-2 py-1 text-center max-sm:w-16"
-                            />
-                          ) : (
-                            <p>{frequenciasMenores[categoria]}</p>
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )
+              );
+            }
           )}
         </div>
       )}
 
-      {/* MAIOR DE 16 */}
+      {/* ------------------ MAIORES ------------------ */}
       {filtro === "maiores" && (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden max-sm:text-sm">
           <div className="overflow-x-auto">
@@ -197,43 +242,41 @@ export default function ConfigurarGraduacao() {
               </thead>
 
               <tbody>
-                {faixasEGrausMaior16.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="border-t border-gray-200 hover:bg-gray-50 transition"
-                  >
-                    <td className="py-4 px-6 text-center max-sm:px-3">
-                      <BeltTag faixa={item.faixa} />
-                    </td>
+                {faixasEGrausMaior16.map((item, index) => {
+                  const config = configurations.find(
+                    (c) => c.rank === item.faixa.toUpperCase()
+                  );
 
-                    <td className="py-4 px-6 text-center max-sm:px-3">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          value={frequenciasMaiores[index]}
-                          onChange={(e) =>
-                            setFrequenciasMaiores((prev) => {
-                              const clone = [...prev];
-                              clone[index] = Number(e.target.value);
-                              return clone;
-                            })
-                          }
-                          className="w-20 border rounded-lg px-2 py-1 text-center max-sm:w-16"
-                        />
-                      ) : (
-                        <p>{frequenciasMaiores[index]}</p>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                  return (
+                    <tr
+                      key={index}
+                      className="border-t border-gray-200 hover:bg-gray-50 transition"
+                    >
+                      <td className="py-4 px-6 text-center max-sm:px-3">
+                        <BeltTag faixa={item.faixa} />
+                      </td>
 
-                {faixasEGrausMaior16.length === 0 && (
-                  <tr>
-                    <td colSpan={2} className="py-12 text-center text-gray-500">
-                      Nenhuma faixa configurada para maiores de 16 anos.
-                    </td>
-                  </tr>
-                )}
+                      <td className="py-4 px-6 text-center max-sm:px-3">
+                        {isEditing ? (
+                          <input
+                            type="number"
+                            value={edicoes[config?.id || ""] ?? 0}
+                            onChange={(e) => {
+                              if (!config?.id) return;
+                              setEdicoes((prev) => ({
+                                ...prev,
+                                [config.id]: Number(e.target.value),
+                              }));
+                            }}
+                            className="w-20 border rounded-lg px-2 py-1 text-center max-sm:w-16"
+                          />
+                        ) : (
+                          <p>{config?.needed_frequency ?? 0}</p>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
