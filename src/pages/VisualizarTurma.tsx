@@ -192,14 +192,52 @@ export default function VisualizarTurma() {
             )}
           </div>
 
-          <div className="text-center w-full">
-            <p className="text-xs md:text-sm font-medium">
-              Professor responsável:
+          {/* PROFESSORES VINCULADOS (CAIXA EXPANSÍVEL) */}
+          <div className="w-[200px]">
+            <p className="font-semibold text-sm md:text-base mb-1 text-center">
+              Professores da turma:
             </p>
 
-            <p className="bg-[#F5F5F5] w-44 md:w-56 mx-auto mt-2 p-2 md:p-3 rounded-xl text-sm md:text-base">
-              {turma.professores?.[0]?.nome || "-"}
-            </p>
+            <div className="relative bg-[#F5F5F5] rounded-xl">
+              <details className="group rounded-xl">
+                <summary className="flex justify-between items-center cursor-pointer px-5 py-3 select-none font-mono text-[#1E1E1E] list-none">
+                  <span>
+                    {turma.professores && turma.professores.length > 0
+                      ? `${turma.professores.length} professor${
+                          turma.professores.length > 1 ? "es" : ""
+                        }`
+                      : "Nenhum professor vinculado"}
+                  </span>
+
+                  <svg
+                    className="w-5 h-5 transition-transform duration-300 group-open:rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </summary>
+
+                {turma.professores && turma.professores.length > 0 && (
+                  <ul className="px-8 pb-4 space-y-2 text-[#1E1E1E]">
+                    {turma.professores.map((prof, index) => (
+                      <li
+                        key={index}
+                        className="bg-[#F5F5F5] font-mono rounded-lg px-3 py-2 shadow-[#F1F1F1]"
+                      >
+                        {typeof prof === "string" ? prof : prof.nome}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </details>
+            </div>
           </div>
 
           <div className="w-full flex flex-col md:flex-row text-center gap-4 md:gap-6">
@@ -288,13 +326,13 @@ export default function VisualizarTurma() {
               <div className="flex gap-2">
                 {role === "ADMIN" && (
                   <Link to={`/turmas/${turma.id}/vincular-professores`}>
-                  <button
-                    className="bg-[#1E1E1E] text-white rounded-md cursor-pointer
+                    <button
+                      className="bg-[#1E1E1E] text-white rounded-md cursor-pointer
                       px-3 py-2 text-xs
                       md:px-4 md:py-2 md:text-base"
-                  >
-                    Vincular professor
-                  </button>
+                    >
+                      Vincular professor
+                    </button>
                   </Link>
                 )}
 
@@ -359,7 +397,7 @@ export default function VisualizarTurma() {
                     </tr>
                   </Link>
                 ))}
-              </tbody> 
+              </tbody>
             </table>
           </div>
 
