@@ -85,7 +85,7 @@ export default function VisualizarAluno() {
       rank: edit.faixa,
       rating: edit.grau,
       comments: edit.observacao,
-      presence: edit.frequencia,
+      presence: Number(edit.frequencia),
     };
 
     const result = await editarAluno(id, dadosPersonal, dadosForm);
