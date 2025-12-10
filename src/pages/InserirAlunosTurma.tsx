@@ -96,7 +96,7 @@ export default function InserirAlunosTurma() {
     setLoading(false);
 
     if (erros === 0) {
-      // ✔ Tudo certo → mostra sucesso e volta para tela anterior
+      // Tudo certo mostra sucesso e volta para tela anterior
       setMensagemSucesso(
         `Todos os ${sucessos} aluno(s) foram adicionados com sucesso!`
       );

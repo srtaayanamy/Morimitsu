@@ -287,6 +287,7 @@ export default function VisualizarTurma() {
             ) : (
               <div className="flex gap-2">
                 {role === "ADMIN" && (
+                  <Link to={`/turmas/${turma.id}/vincular-professores`}>
                   <button
                     className="bg-[#1E1E1E] text-white rounded-md cursor-pointer
                       px-3 py-2 text-xs
@@ -294,6 +295,7 @@ export default function VisualizarTurma() {
                   >
                     Vincular professor
                   </button>
+                  </Link>
                 )}
 
                 <Link to={`/turma/${id}/inserir-alunos`}>
