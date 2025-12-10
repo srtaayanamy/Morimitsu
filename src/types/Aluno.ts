@@ -20,6 +20,7 @@ export type Aluno = {
     matricula?: string; 
     observacao?: string;
     turmas?: string[] | Turma[];
+    present?: boolean;
     userID?: string
 }
 
@@ -30,5 +31,5 @@ export type StudentParams ={
     email?: string,
     Rank?: string,
     class?: string,
-    Presence: number
+    Presence?: number
 }
