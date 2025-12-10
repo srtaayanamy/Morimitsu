@@ -1,34 +1,53 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { listarAlunos } from "../../hooks/ListaAlunos";
 import type { Frequencie } from "../../types/Frequencie";
-import type { Aluno, StudentParams } from "../../types/Aluno";
+import type { StudentParams } from "../../types/Aluno";
 
 export default function CorrigirFrequenciaDoDia() {
   const { state } = useLocation();
-  const [alunos, setAlunos] = useState<Aluno[]>([])
-  const freq : Frequencie= state; // Recebe um item da lista retornada por getFrequencies()
+  const navigate = useNavigate();
+  const [alunos, setAlunos] = useState<any[]>([]);
 
-  useEffect(()=>{
-    const fetchAlunosTurma = async () =>{
-        const filter: StudentParams = {class: freq.class.id}
-        const result = await listarAlunos(filter)
+  const freq: Frequencie | null = state;
 
-        if(typeof result === 'string'){
-            alert(result)
-        } else{
-            const idsAlunosPresentes = new Set(freq.students.map(item => item.id));
+  useEffect(() => {
+    if (!freq?.class?.id) return;
 
-            const FiltredStudent = result.map(item => ({
-            ...item,
-            present: idsAlunosPresentes.has(item.id) ? true : false
-            }));
+    async function fetchAlunosTurma() {
+      if(!freq){
+        throw new Error()
+      }
+         
+      const filter: StudentParams = { classid: freq.class.id };
 
-            setAlunos(FiltredStudent);
-        }
+      const result = await listarAlunos(filter);
+
+      if (typeof result === "string") {
+        alert(result);
+        return;
+      }
+
+      const idsPresentes = new Set(freq.students.map((s: any) => s.id));
+
+      const lista = result.map((aluno: any) => ({
+        ...aluno,
+        present: idsPresentes.has(aluno.id),
+      }));
+
+      setAlunos(lista);
     }
+
     fetchAlunosTurma();
-  }, [])
+  }, [freq]);
+
+  function togglePresenca(id: number) {
+    setAlunos((prev) =>
+      prev.map((a) =>
+        a.id === id ? { ...a, present: !a.present } : a
+      )
+    );
+  }
 
   if (!freq) {
     return (
@@ -40,8 +59,8 @@ export default function CorrigirFrequenciaDoDia() {
 
   return (
     <div className="p-4 text-gray-700 w-full">
-      <h2 className="text-xl font-semibold mb-4">
-        Presentes – Turma “{freq.class?.nome}” em{" "}
+      <h2 className="text-2xl font-semibold mb-6">
+        Corrigir frequência – Turma “{freq.class?.nome}” em{" "}
         {new Date(freq.Date).toLocaleDateString("pt-BR")}:
       </h2>
 
@@ -51,31 +70,60 @@ export default function CorrigirFrequenciaDoDia() {
             <tr className="border-b">
               <th className="py-2 text-center">Nome</th>
               <th className="py-2 text-center">Apelido</th>
+              <th className="py-2 text-center">Presença</th>
             </tr>
           </thead>
 
           <tbody>
             {alunos.length > 0 ? (
-              alunos.map((aluno: any, i: number) => (
-                <tr key={i} className="border-b">
-                  <td className="py-3 text-center underline cursor-pointer">
-                    {aluno?.nome}
+              alunos.map((aluno: any) => (
+                <tr key={aluno.id} className="border-b">
+                  <td className="py-4 text-center underline cursor-pointer">
+                    {aluno.nome}
                   </td>
-                  <td className="py-3 text-center">{aluno?.apelido}</td>
+
+                  <td className="py-4 text-center">
+                    {aluno.apelido || "—"}
+                  </td>
+
+                  <td className="py-4 text-center">
+                    <input
+                      type="checkbox"
+                      checked={aluno.present}
+                      onChange={() => togglePresenca(aluno.id)}
+                      className="w-6 h-6 accent-black cursor-pointer"
+                    />
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan={2}
+                  colSpan={3}
                   className="py-4 text-center text-gray-500 italic"
                 >
-                  Nenhum aluno presente registrado nesse dia.
+                  Nenhum aluno encontrado nesta turma.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex justify-end gap-3 mt-6">
+        <button
+          className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg"
+          onClick={() => navigate(-1)}
+        >
+          Cancelar
+        </button>
+
+        <button
+          className="bg-[#7F1A17] hover:bg-red-950 text-white px-6 py-2 rounded-lg cursor-pointer"
+          onClick={() => console.log("Salvar", alunos)}
+        >
+          Salvar alterações
+        </button>
       </div>
     </div>
   );

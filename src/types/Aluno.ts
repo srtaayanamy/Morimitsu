@@ -30,6 +30,6 @@ export type StudentParams ={
     CPF?: string,
     email?: string,
     Rank?: string,
-    class?: string,
+    classid?: string,
     Presence?: number
 }

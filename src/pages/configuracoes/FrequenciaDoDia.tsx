@@ -1,8 +1,9 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function FrequenciaDoDia() {
   const { state } = useLocation();
-  const freq = state; // Recebe um item da lista retornada por getFrequencies()
+  const navigate = useNavigate();
+  const freq = state;
 
   if (!freq) {
     return (
@@ -12,12 +13,26 @@ export default function FrequenciaDoDia() {
     );
   }
 
+  function irParaEditar() {
+    navigate("/configuracoes/corr-freq-do-dia", { state: freq });
+  }
+
   return (
     <div className="p-4 text-gray-700 w-full">
-      <h2 className="text-xl font-semibold mb-4">
-        Presentes – Turma “{freq.class?.nome}” em{" "}
-        {new Date(freq.Date).toLocaleDateString("pt-BR")}:
-      </h2>
+      {/* Cabeçalho com botão */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">
+          Presentes – Turma “{freq.class?.nome}” em{" "}
+          {new Date(freq.Date).toLocaleDateString("pt-BR")}:
+        </h2>
+
+        <button
+          onClick={irParaEditar}
+          className="bg-[#7F1A17] hover:bg-red-950 text-white px-4 py-2 rounded-lg transition"
+        >
+          Editar
+        </button>
+      </div>
 
       <div className="bg-white rounded-xl shadow p-4 overflow-x-auto">
         <table className="w-full border-collapse text-sm text-gray-700">
