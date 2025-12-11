@@ -8,6 +8,7 @@ import type { Turma } from "../types/Turma";
 import type { Professor } from "../types/Professor";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { vincularProfessor } from "../utils/vincularProfessor";
+import { Loader2 } from "lucide-react";
 
 export default function VincularProfessoresTurma() {
   const { id } = useParams();
@@ -81,6 +82,7 @@ export default function VincularProfessoresTurma() {
         }
       }
     }
+    navigate(-1);
   }
 
   return (
@@ -91,21 +93,21 @@ export default function VincularProfessoresTurma() {
         <PageTitle
           title={
             <span>
-              Vincular professores - turma <strong>{turma?.nome || "..."}</strong>:
+              Vincular professores - <strong>{turma?.nome || "..."}</strong>:
             </span>
           }
         >
           <div className="hidden md:flex gap-2">
             <button
               onClick={() => navigate(-1)}
-              className="bg-[#333434] text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium hover:opacity-90"
+              className="bg-[#333434] text-white px-4 py-2 rounded-xl cursor-pointer text-xs sm:text-sm font-medium hover:opacity-90"
             >
               Cancelar
             </button>
 
             <button
               onClick={() => inserirProfessores()}
-              className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-medium hover:opacity-90"
+              className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-xs sm:text-sm cursor-pointer font-medium hover:opacity-90"
             >
               Vincular professores
             </button>
@@ -116,7 +118,7 @@ export default function VincularProfessoresTurma() {
           {erro && <ErrorMessage message={erro} />}
 
           {loading && (
-            <p className="text-center text-gray-500">Carregando...</p>
+            <Loader2 className="w-8 h-8 text-gray-600 items-center animate-spin" />
           )}
 
           {!loading && professoresTotais.length > 0 && (

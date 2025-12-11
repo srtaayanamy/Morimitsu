@@ -8,6 +8,7 @@ interface ProfessorCardProps {
 
 export default function ProfessorCard({ professor }: ProfessorCardProps) {
   return (
+    <Link to={`/visualizar-aluno/${professor.studentId}`}>
     <div className="w-full flex items-center gap-4 bg-[#F1F1F1] rounded-xl shadow-md p-4">
       {/* Avatar */}
       <Link
@@ -41,5 +42,6 @@ export default function ProfessorCard({ professor }: ProfessorCardProps) {
         </Link>
       </div>
     </div>
+    </Link>
   );
 }
