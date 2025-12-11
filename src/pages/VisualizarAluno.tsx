@@ -19,6 +19,41 @@ import {
   Ranking,
 } from "../types/Rank";
 
+function maskTelefone(value: string) {
+  value = value.replace(/\D/g, "");
+  value = value.substring(0, 11);
+  if (value.length <= 10) {
+    return value
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{4})(\d)/, "$1-$2");
+  }
+
+  return value
+    .replace(/(\d{2})(\d)/, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2");
+}
+
+function maskCPF(value: string) {
+  value = value.replace(/\D/g, "");
+  value = value.substring(0, 11);
+  return value
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{2})$/, "$1-$2");
+}
+
+function maskDate(value: string) {
+  value = value.replace(/\D/g, ""); // remove tudo que não for número
+  value = value.substring(0, 8);    // só permite 8 dígitos (DDMMAAAA)
+
+  // coloca DD/MM/AAAA
+  value = value.replace(/(\d{2})(\d)/, "$1/$2");
+  value = value.replace(/(\d{2})(\d)/, "$1/$2");
+
+  return value;
+}
+
+
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
   const [erro, setErro] = useState("");
@@ -45,8 +80,28 @@ export default function VisualizarAluno() {
 
   const handleChange = (field: keyof Aluno, value: string | number) => {
     if (!aluno) return;
-    setAluno({ ...aluno, [field]: value });
-  };
+
+    let novoValor: string | number = value;
+
+    if (field === "telefone") {
+      novoValor = maskTelefone(String(value));
+    }
+
+    if (field === "telefoneResponsavel") {
+      novoValor = maskTelefone(String(value));
+    }
+
+    if (field === "CPF") {
+      novoValor = maskCPF(String(value));
+    }
+
+    if (field === "dataNascimento") {
+      novoValor = maskDate(String(value));
+    }
+
+    setAluno({ ...aluno, [field]: novoValor });
+};
+
 
   const handleSave = async () => {
     if (!id || !aluno) return;
@@ -217,7 +272,6 @@ export default function VisualizarAluno() {
                   />
                 ) : (
                   <div className="flex w-full gap-3 justify-center">
-                    {/* SELECT DE FAIXA */}
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
                       value={aluno.faixa}
@@ -233,7 +287,6 @@ export default function VisualizarAluno() {
                       ))}
                     </select>
 
-                    {/* SELECT DE GRAU */}
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
                       value={(aluno.grau ?? 0) > 0 ? aluno.grau : "Nenhum"}
@@ -260,7 +313,7 @@ export default function VisualizarAluno() {
                       <ProgressBar percent={aluno.frequencia} />
                     </div>
                     <p className="text-sm text-right mt-1 text-[#1E1E1E]">
-                      {aluno.frequencia}%
+                      {aluno.frequencia}
                     </p>
                   </>
                 ) : (
@@ -275,7 +328,7 @@ export default function VisualizarAluno() {
                         handleChange("frequencia", e.target.value)
                       }
                     />
-                    <span className="font-medium">%</span>
+                    <span className="font-medium"></span>
                   </div>
                 )}
               </div>
@@ -326,7 +379,9 @@ export default function VisualizarAluno() {
                   label=""
                   value={aluno.telefoneResponsavel || ""}
                   editable={isEditing}
-                  onChange={(val) => handleChange("telefoneResponsavel", val)}
+                  onChange={(val) =>
+                    handleChange("telefoneResponsavel", val)
+                  }
                 />
               </div>
             </div>
