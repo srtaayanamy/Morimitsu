@@ -1,3 +1,4 @@
+import { SquarePen } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function FrequenciaDoDia() {
@@ -22,15 +23,15 @@ export default function FrequenciaDoDia() {
       {/* Cabeçalho com botão */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">
-          Presentes – Turma “{freq.class?.nome}” em{" "}
+          Presentes – “{freq.class?.nome}” em{" "}
           {new Date(freq.Date).toLocaleDateString("pt-BR")}:
         </h2>
 
         <button
           onClick={irParaEditar}
-          className="bg-[#7F1A17] hover:bg-red-950 text-white px-4 py-2 rounded-lg transition"
+          className="cursor-pointer text-black px-4 py-2 rounded-lg transition"
         >
-          Editar
+          <SquarePen className="w-8 h-8"></SquarePen>
         </button>
       </div>
 
@@ -47,7 +48,7 @@ export default function FrequenciaDoDia() {
             {freq.students.length > 0 ? (
               freq.students.map((aluno: any, i: number) => (
                 <tr key={i} className="border-b">
-                  <td className="py-3 text-center underline cursor-pointer">
+                  <td className="py-3 text-center">
                     {aluno?.nome}
                   </td>
                   <td className="py-3 text-center">{aluno?.apelido}</td>

@@ -15,10 +15,10 @@ export default function CorrigirFrequenciaDoDia() {
     if (!freq?.class?.id) return;
 
     async function fetchAlunosTurma() {
-      if(!freq){
-        throw new Error()
+      if (!freq) {
+        throw new Error();
       }
-         
+
       const filter: StudentParams = { classid: freq.class.id };
 
       const result = await listarAlunos(filter);
@@ -43,9 +43,7 @@ export default function CorrigirFrequenciaDoDia() {
 
   function togglePresenca(id: number) {
     setAlunos((prev) =>
-      prev.map((a) =>
-        a.id === id ? { ...a, present: !a.present } : a
-      )
+      prev.map((a) => (a.id === id ? { ...a, present: !a.present } : a))
     );
   }
 
@@ -68,9 +66,9 @@ export default function CorrigirFrequenciaDoDia() {
         <table className="w-full border-collapse text-sm text-gray-700">
           <thead>
             <tr className="border-b">
-              <th className="py-2 text-center">Nome</th>
-              <th className="py-2 text-center">Apelido</th>
-              <th className="py-2 text-center">Presença</th>
+              <th className="py-2 px-4">Nome</th>
+              <th className="py-2 px-4 text-center">Apelido</th>
+              <th className="py-2 px-4 text-center">Presença</th>
             </tr>
           </thead>
 
@@ -78,15 +76,15 @@ export default function CorrigirFrequenciaDoDia() {
             {alunos.length > 0 ? (
               alunos.map((aluno: any) => (
                 <tr key={aluno.id} className="border-b">
-                  <td className="py-4 text-center underline cursor-pointer">
+                  <td className="py-4 px-4">
                     {aluno.nome}
                   </td>
 
-                  <td className="py-4 text-center">
+                  <td className="py-4 px-4 text-center">
                     {aluno.apelido || "—"}
                   </td>
 
-                  <td className="py-4 text-center">
+                  <td className="py-4 px-4 text-center">
                     <input
                       type="checkbox"
                       checked={aluno.present}
@@ -100,7 +98,7 @@ export default function CorrigirFrequenciaDoDia() {
               <tr>
                 <td
                   colSpan={3}
-                  className="py-4 text-center text-gray-500 italic"
+                  className="py-4 px-4 text-center text-gray-500 italic"
                 >
                   Nenhum aluno encontrado nesta turma.
                 </td>
@@ -112,7 +110,7 @@ export default function CorrigirFrequenciaDoDia() {
 
       <div className="flex justify-end gap-3 mt-6">
         <button
-          className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg"
+          className="bg-[#333434] hover:bg-gray-900 text-white px-6 py-2 rounded-lg"
           onClick={() => navigate(-1)}
         >
           Cancelar
