@@ -13,6 +13,7 @@ import { deleteAluno } from "../utils/deletarAluno";
 import ConfirmActionModal from "../components/ConfirmActionModal";
 import SuccessAlert from "../components/SuccessAlert";
 import { useNavigate } from "react-router-dom";
+import { getFrequencieRequired } from "../utils/getFrequencieRequered";
 import {
   faixasEGrausMaior16,
   faixasEGrausMenor16,
@@ -45,7 +46,7 @@ function maskCPF(value: string) {
 
 function maskDate(value: string) {
   value = value.replace(/\D/g, ""); // remove tudo que não for número
-  value = value.substring(0, 8);    // só permite 8 dígitos (DDMMAAAA)
+  value = value.substring(0, 8); // só permite 8 dígitos (DDMMAAAA)
 
   // coloca DD/MM/AAAA
   value = value.replace(/(\d{2})(\d)/, "$1/$2");
@@ -53,7 +54,6 @@ function maskDate(value: string) {
 
   return value;
 }
-
 
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
@@ -64,6 +64,9 @@ export default function VisualizarAluno() {
   const [isEditing, setIsEditing] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [freqNecessaria, setFreqNecessaria] = useState<number>(0);
+  const [percentualProgresso, setPercentualProgresso] = useState<number>(0);
+  const aptoAGraduar = percentualProgresso >= 100;
 
   useEffect(() => {
     async function fetchAluno() {
@@ -78,6 +81,30 @@ export default function VisualizarAluno() {
     }
     fetchAluno();
   }, [id]);
+
+  useEffect(() => {
+  async function fetchFrequencia() {
+    if (!aluno?.faixa) return;
+
+    const response = await getFrequencieRequired(aluno.faixa);
+
+    if (typeof response === "string") {
+      console.log("Erro ao carregar frequência necessária:", response);
+      return;
+    }
+
+    const needed = response.needed_frequency ?? 0;
+    setFreqNecessaria(needed);
+
+    const percent =
+      needed > 0 ? (aluno.frequencia / needed) * 100 : 0;
+
+    setPercentualProgresso(percent);
+  }
+
+  fetchFrequencia();
+}, [aluno?.faixa, aluno?.frequencia]);
+
 
   const handleChange = (field: keyof Aluno, value: string | number) => {
     if (!aluno) return;
@@ -101,8 +128,7 @@ export default function VisualizarAluno() {
     }
 
     setAluno({ ...aluno, [field]: novoValor });
-};
-
+  };
 
   const handleSave = async () => {
     if (!id || !aluno) return;
@@ -228,12 +254,25 @@ export default function VisualizarAluno() {
           )}
 
           {!isEditing ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-transparent hover:opacity-80 transition cursor-pointer"
-            >
-              <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
-            </button>
+            <div className="flex items-center gap-3">
+              {/* BOTÃO PARA GRADUAR */}
+              {aptoAGraduar && (
+                <button
+                  onClick={() => alert("Abrir modal ou página de graduação")}
+                  className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:opacity-80 transition"
+                >
+                  Graduar aluno
+                </button>
+              )}
+
+              {/* BOTÃO DE EDITAR */}
+              <button
+                onClick={() => setIsEditing(true)}
+                className="bg-transparent hover:opacity-80 transition cursor-pointer"
+              >
+                <SquarePen className="w-8 h-8 text-[#1E1E1E]" />
+              </button>
+            </div>
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <button
@@ -312,17 +351,19 @@ export default function VisualizarAluno() {
               </div>
 
               <div>
-                <p className="font-semibold text-sm md:text-base">
-                  Progresso / Frequência:
-                </p>
-
                 {!isEditing ? (
                   <>
                     <div className="mt-2">
-                      <ProgressBar percent={aluno.frequencia} />
+                      <ProgressBar percent={percentualProgresso} />
                     </div>
+
                     <p className="text-sm text-right mt-1 text-[#1E1E1E]">
-                      {aluno.frequencia}
+                      {aluno.frequencia} treinos
+                    </p>
+
+                    <p className="text-sm text-right mt-1">
+                      {aluno.frequencia} / {freqNecessaria} treinos (
+                      {Math.round(percentualProgresso)}%)
                     </p>
                   </>
                 ) : (
@@ -388,9 +429,7 @@ export default function VisualizarAluno() {
                   label=""
                   value={aluno.telefoneResponsavel || ""}
                   editable={isEditing}
-                  onChange={(val) =>
-                    handleChange("telefoneResponsavel", val)
-                  }
+                  onChange={(val) => handleChange("telefoneResponsavel", val)}
                 />
               </div>
             </div>

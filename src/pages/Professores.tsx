@@ -11,6 +11,7 @@ export default function Professores() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [Professores, setProfessores] = useState<Professor[]>([]);
+  const [editMode, setEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProfessores = async () => {
@@ -36,11 +37,16 @@ export default function Professores() {
       <Header />
 
       <main className="flex-1 p-4 md:p-8 space-y-3 md:space-y-5">
+        
         {/* Cabeçalho da página */}
         <PageTitle title="Professores:">
+          
           {/* DESKTOP */}
           <div className="hidden md:flex flex-row items-center p-2 gap-3">
-            <SquarePen className="w-9 h-9 text-[#1E1E1E] cursor-pointer" />
+            <SquarePen
+              className="w-9 h-9 text-[#1E1E1E] cursor-pointer"
+              onClick={() => setEditMode(!editMode)}
+            />
             <Link to="/alunos-aptos">
               <button
                 type="button"
@@ -54,7 +60,10 @@ export default function Professores() {
 
         {/* MOBILE */}
         <div className="flex md:hidden flex-row items-center justify-end gap-3 mt-2">
-          <SquarePen className="w-7 h-7 text-[#1E1E1E] cursor-pointer" />
+          <SquarePen
+            className="w-7 h-7 text-[#1E1E1E] cursor-pointer"
+            onClick={() => setEditMode(!editMode)}
+          />
 
           <Link to="/alunos-aptos">
             <button
@@ -69,6 +78,7 @@ export default function Professores() {
         {/* Conteúdo */}
         {loading && <p>Carregando professores...</p>}
         {error && <p className="text-red-500">{error}</p>}
+
         {!loading && !error && (
           <div className="bg-white rounded-2xl p-3 shadow-sm">
             {Professores.length === 0 ? (
@@ -76,7 +86,11 @@ export default function Professores() {
             ) : (
               <div className="flex flex-col gap-4 cursor-pointer">
                 {Professores.map((professor) => (
-                  <ProfessorCard key={professor.id} professor={professor} />
+                  <ProfessorCard
+                    key={professor.id}
+                    professor={professor}
+                    editMode={editMode}
+                  />
                 ))}
               </div>
             )}

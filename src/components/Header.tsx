@@ -3,13 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { Bell, Search, Menu, X, Filter, Settings } from "lucide-react";
 import Logo from "../assets/Logo.png";
 import NotificationModal from "./NotificationModal";
+import type { notification } from "../types/User";
 import FilterOverlay from "./FilterOverlay";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [notifications] = useState<notification[] | string>("");
   const role = localStorage.getItem("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  
 
   // controla o dropdown de busca no mobile
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -220,6 +223,7 @@ export default function Header() {
       <NotificationModal
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
+        notifications={notifications}
       />
 
       <FilterOverlay

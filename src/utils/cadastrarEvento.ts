@@ -18,7 +18,7 @@ export async function registerEvent(title:string, date: string, classId: string)
         const token = localStorage.getItem('token');
 
         //Requisição
-        await api.post('/event', 
+        await api.post('/events', 
             {
                 title: title,
                 event_date: formatedDate,

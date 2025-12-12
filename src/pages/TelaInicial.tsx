@@ -16,6 +16,7 @@ import { Avatar } from "../components/Avatar";
 import EventModal from "../components/EventModal";
 import type { event } from "../types/event";
 import { eventList } from "../hooks/eventList";
+import { registerEvent } from "../utils/cadastrarEvento";
 
 
 export default function TelaInicial() {
@@ -23,8 +24,8 @@ export default function TelaInicial() {
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorTurmas, setErrorTurmas] = useState<string | null>(null);
-  const [errorEvents, setErrorEvents] = useState<string | null>(null);
-  const [events, setEvents] = useState<event[]>()
+  const [, setErrorEvents] = useState<string | null>(null);
+  const [events, setEvents] = useState<event[]>();
   const [errorAniversariantes, setErrorAniversariantes] = useState<
     string | null
   >(null);
@@ -35,9 +36,28 @@ export default function TelaInicial() {
   const abrirModal = () => setModalOpen(true);
   const fecharModal = () => setModalOpen(false);
 
-  const salvarEvento = () => {
-    console.log("Evento criado:");
-    fecharModal();
+  const salvarEvento = async (data: {
+    nome: string;
+    data: string;
+    turma: string;
+  }) => {
+    const { nome, data: dateValue, turma } = data;
+
+    const result = await registerEvent(nome, dateValue, turma);
+
+    if (result === true) {
+      console.log("Evento criado com sucesso!");
+
+      // Atualizar lista de eventos após salvar
+      const updated = await eventList();
+      if (typeof updated !== "string") {
+        setEvents(updated);
+      }
+
+      fecharModal();
+    } else {
+      alert(result); // mostra erro retornado pela API
+    }
   };
 
   useEffect(() => {
@@ -171,7 +191,6 @@ export default function TelaInicial() {
                 nome: "Carlos Eduardo Silva",
                 apelido: "",
                 turma: "Turma Mista",
-                data: "08/09/2025",
                 faixaAtual: "BRANCA",
                 grauAtual: 0,
                 proximaFaixa: "AZUL",
@@ -182,7 +201,6 @@ export default function TelaInicial() {
                 nome: "Carlos Henrique Silva",
                 apelido: "",
                 turma: "Turma Mista",
-                data: "08/09/2025",
                 faixaAtual: "BRANCA",
                 grauAtual: 0,
                 proximaFaixa: "AZUL",
@@ -193,7 +211,6 @@ export default function TelaInicial() {
                 nome: "Juliana Alexana",
                 apelido: "",
                 turma: "Turma Mista",
-                data: "08/09/2025",
                 faixaAtual: "PRETA",
                 grauAtual: 6,
                 proximaFaixa: "CORAL",
@@ -233,9 +250,6 @@ export default function TelaInicial() {
                         <div className="flex flex-col leading-tight mt-1">
                           <span className="text-[0.8rem] text-gray-600">
                             {g.turma}
-                          </span>
-                          <span className="text-[0.75rem] text-gray-500">
-                            {g.data}
                           </span>
                         </div>
                       </div>
@@ -282,9 +296,6 @@ export default function TelaInicial() {
                           Turma
                         </th>
                         <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
-                          Data
-                        </th>
-                        <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
                           Faixa atual
                         </th>
                         <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
@@ -301,7 +312,6 @@ export default function TelaInicial() {
                         >
                           <td className="py-3 px-6 font-medium">{g.nome}</td>
                           <td className="py-3 px-6">{g.turma}</td>
-                          <td className="py-3 px-6 text-center">{g.data}</td>
                           <td className="py-3 px-6 text-center">
                             <BeltTag faixa={g.faixaAtual} grau={g.grauAtual} />
                           </td>
@@ -380,7 +390,7 @@ export default function TelaInicial() {
             </div>
           </div>
           {/* conteúdo do calendário */}
-          <Calendario />
+          <Calendario events={events} />
         </SectionCard>
       </main>
       <EventModal

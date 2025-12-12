@@ -5,7 +5,7 @@ export async function deleteUser(id: string) {
   try {
     // Envia os dados diretamente (sem aninhar)
     const token = localStorage.getItem('token');
-    await api.put("/user",
+    await api.delete("/user",
       {
         params:{
           id: id
