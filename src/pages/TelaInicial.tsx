@@ -13,6 +13,7 @@ import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
+import EventModal from "../components/EventModal";
 
 export default function TelaInicial() {
   //Variáveis de estado
@@ -24,6 +25,15 @@ export default function TelaInicial() {
   >(null);
   const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([]);
   const role = localStorage.getItem("role");
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const abrirModal = () => setModalOpen(true);
+  const fecharModal = () => setModalOpen(false);
+
+  const salvarEvento = () => {
+    console.log("Evento criado:");
+    fecharModal();
+  };
 
   useEffect(() => {
     const fetchTurmas = async () => {
@@ -339,7 +349,10 @@ export default function TelaInicial() {
             <div className="flex flex-row gap-2 sm:gap-3 items-center">
               <SquarePen className="w-7 h-7 sm:w-9 sm:h-9 text-[#1E1E1E]" />
 
-              <button className="bg-black text-white rounded-md px-3 py-1.5 text-sm sm:text-md sm:px-4 sm:py-2 hover:bg-gray-800 transition flex items-center gap-2">
+              <button
+                onClick={abrirModal}
+                className="bg-black cursor-pointer text-white rounded-md px-3 py-1.5 text-sm sm:text-md sm:px-4 sm:py-2 hover:bg-gray-800 transition flex items-center gap-2"
+              >
                 Criar novo evento
               </button>
             </div>
@@ -348,6 +361,12 @@ export default function TelaInicial() {
           <Calendario />
         </SectionCard>
       </main>
+      <EventModal
+        isOpen={modalOpen}
+        onClose={fecharModal}
+        onSave={salvarEvento}
+        turmas={turmas}
+      />
     </div>
   );
 }
