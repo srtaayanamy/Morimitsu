@@ -1,4 +1,8 @@
 import { X, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { filtrarAniversariantes } from "../hooks/ListaAlunos";
+import { listarTurmas } from "../hooks/ListaTurmas";
+
 
 interface FilterOverlayProps {
   isOpen: boolean;
@@ -7,6 +11,26 @@ interface FilterOverlayProps {
 }
 
 export default function FilterOverlay({ isOpen, onClose, onApply }: FilterOverlayProps) {
+  const [turmas, setTurmas] = useState<any[]>([]);
+  const [aniversariantes, setAniversariantes] = useState<any[]>([]);
+
+  const [selectedTurma, setSelectedTurma] = useState("");
+  const [selectedAniversariante, setSelectedAniversariante] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      carregarListas();
+    }
+  }, [isOpen]);
+
+  async function carregarListas() {
+    const t = await listarTurmas();
+    const a = await filtrarAniversariantes();
+
+    if (t && Array.isArray(t)) setTurmas(t);
+    if (a && Array.isArray(a)) setAniversariantes(a);
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -43,22 +67,38 @@ export default function FilterOverlay({ isOpen, onClose, onApply }: FilterOverla
             </button>
           </div>
 
-          {/* Turma */}
+          {/* TURMA */}
           <div className="flex items-center justify-between">
             <span className="font-medium text-black">Turma:</span>
-            <button className="w-36 bg-gray-100 px-3 py-2 rounded-lg flex items-center justify-between">
-              <span className="text-gray-500">Selecione</span>
-              <ChevronDown className="w-4 h-4 text-black" />
-            </button>
+
+            <select
+              value={selectedTurma}
+              onChange={(e) => setSelectedTurma(e.target.value)}
+              className="w-36 bg-gray-100 px-1 py-2 rounded-lg text-gray-500 outline-none"
+            >
+              <option value="">Selecione</option>
+              {turmas.map((t) => (
+                <option key={t.id} value={t.id}>{t.nome}</option>
+              ))}
+            </select>
           </div>
 
-          {/* Aniversariantes */}
+          {/* ANIVERSARIANTES */}
           <div className="flex items-center justify-between">
             <span className="font-medium text-black">Aniversariantes:</span>
-            <button className="w-36 bg-gray-100 px-3 py-2 rounded-lg flex items-center justify-between">
-              <span className="text-gray-500">Selecione</span>
-              <ChevronDown className="w-4 h-4 text-black" />
-            </button>
+
+            <select
+              value={selectedAniversariante}
+              onChange={(e) => setSelectedAniversariante(e.target.value)}
+              className="w-36 bg-gray-100 px-1 py-2 rounded-lg text-gray-500 outline-none"
+            >
+              <option  value="">Selecione</option>
+              {aniversariantes.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nome}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Faixa etária */}
