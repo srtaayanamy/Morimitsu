@@ -28,9 +28,16 @@ export default function EventModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 px-4">
       <div className="bg-[#F1F1F1] w-full max-w-md rounded-2xl p-6 shadow-xl relative">
-        
+
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-600 hover:text-black text-xl font-bold cursor-pointer"
+        >
+          ×
+        </button>
+
         <h2 className="text-xl font-semibold text-[#1E1E1E] mb-4">
           Criar novo evento:
         </h2>
@@ -68,14 +75,14 @@ export default function EventModal({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="bg-[#3C3C3C] text-white px-4 py-2 rounded-lg"
+            className="bg-[#3C3C3C] text-white px-4 py-2 rounded-lg cursor-pointer"
           >
             Cancelar
           </button>
 
           <button
             onClick={() => onSave({ nome, data, turma })}
-            className="bg-[#8A1311] text-white px-4 py-2 rounded-lg"
+            className="bg-[#8A1311] text-white px-4 py-2 rounded-lg cursor-pointer"
           >
             Salvar alterações
           </button>
