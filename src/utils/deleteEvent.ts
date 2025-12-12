@@ -1,26 +1,25 @@
 import api from "../services/api";
 
-export async function deleteAluno(id:string) {
-    
+export async function deleteEvent(id:string) {
     try{
-        await api.delete(`/student/${id}`);
+        await api.delete(`/events/${id}`);
+        //Veriica se a requisição foi um succeso
         
-        console.log('Aluno deletado com sucesso');
+        console.log('Evento deletado com sucesso');
         return true;
-    
     } catch(error: any){
         //Tratamento de erros
         if (error.response) {
             switch(error.response.status){
                 case 404:
-                    console.log("Aluno não encontrado. Erro: ", error);
-                    return "Aluno não encontrado.";
+                    console.log("Evento não encontrado. Erro: ", error);
+                    return "Evento não encontrado.";
                 case 500:
                     console.log("Erro interno no servidor. Erro:", error);
-                    return "Erro ao deletar o aluno. Tente novamente!";
+                    return "Erro ao deletar a evento. Tente novamente!";
                 default:
                     console.log("Erro desconhecido da API:", error.response.status);
-                    return "Erro ao deletar o aluno. Tente novamente!";
+                    return "Erro ao deletar a evento. Tente novamente!";
             }
         }  
 
@@ -32,8 +31,7 @@ export async function deleteAluno(id:string) {
         
         //Qualquer outro erro
         console.log("Erro: ", error);
-        return "Erro ao deletar o aluno. Tente novamente!";
+        return "Erro ao deletar a evento. Tente novamente!";
         
     }
-
 }

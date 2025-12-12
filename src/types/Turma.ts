@@ -1,5 +1,5 @@
 import { type Aluno } from "./Aluno";
-import type { Professor } from "./Professor";
+import type { Professor } from "./User";
 
 //Interface de turma
 export type Turma= {

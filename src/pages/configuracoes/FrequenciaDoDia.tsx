@@ -48,9 +48,9 @@ export default function FrequenciaDoDia() {
               freq.students.map((aluno: any, i: number) => (
                 <tr key={i} className="border-b">
                   <td className="py-3 text-center underline cursor-pointer">
-                    {aluno?.nome}
+                    {aluno?.student.nome}
                   </td>
-                  <td className="py-3 text-center">{aluno?.apelido}</td>
+                  <td className="py-3 text-center">{aluno?.student.apelido}</td>
                 </tr>
               ))
             ) : (

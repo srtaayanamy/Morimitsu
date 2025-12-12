@@ -1,7 +1,7 @@
 import api from "../services/api";
 import { verificarEmail } from "./VerficarLogin";
 
-function parseBRDate(dateStr: string) {
+export function parseBRDate(dateStr: string) {
     const [dia, mes, ano] = dateStr.split("/");
     return `${ano}-${mes}-${dia}`; // yyyy-mm-dd
 }

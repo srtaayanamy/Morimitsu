@@ -14,12 +14,17 @@ import { SquarePen } from "lucide-react";
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
 import EventModal from "../components/EventModal";
+import type { event } from "../types/event";
+import { eventList } from "../hooks/eventList";
+
 
 export default function TelaInicial() {
   //Variáveis de estado
   const [turmas, setTurmas] = useState<Turma[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorTurmas, setErrorTurmas] = useState<string | null>(null);
+  const [errorEvents, setErrorEvents] = useState<string | null>(null);
+  const [events, setEvents] = useState<event[]>()
   const [errorAniversariantes, setErrorAniversariantes] = useState<
     string | null
   >(null);
@@ -34,6 +39,23 @@ export default function TelaInicial() {
     console.log("Evento criado:");
     fecharModal();
   };
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      const result = await eventList();
+
+      if (typeof result === "string") {
+        setErrorEvents(result);
+      } else {
+        setEvents(result);
+      }
+
+      setLoading(false);
+    };
+
+    fetchEvents();
+  }, []);
 
   useEffect(() => {
     const fetchTurmas = async () => {

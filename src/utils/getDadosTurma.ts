@@ -1,6 +1,6 @@
 import api from "../services/api";
 import type { Aluno } from "../types/Aluno";
-import type { Professor } from "../types/Professor";
+import type { Professor } from "../types/User";
 import type { Turma } from "../types/Turma";
 import { formataHorario } from "./formatarHorario";
 

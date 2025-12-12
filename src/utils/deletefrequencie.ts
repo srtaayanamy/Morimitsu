@@ -1,6 +1,6 @@
 import api from "../services/api";
 
-export async function fazerFrequencia(FrequecieId: string) {
+export async function deleteFrequencie(FrequecieId: string) {
 
     try{
         const token = localStorage.getItem('token');

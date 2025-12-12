@@ -383,19 +383,17 @@ export default function VisualizarTurma() {
 
               <tbody>
                 {turma.alunos?.map((a) => (
-                  <Link
+                  <tr
                     key={a.id}
-                    to={`/visualizar-aluno/${a.id}`}
-                    className="contents"
+                    onClick={() => navigate(`/visualizar-aluno/${a.id}`)}
+                    className="bg-[#F5F5F5] rounded-xl hover:bg-gray-100 cursor-pointer"
                   >
-                    <tr className="bg-[#F5F5F5] rounded-xl hover:bg-gray-100 cursor-pointer">
-                      <td className="p-3 rounded-l-xl">{a.nome}</td>
-                      <td className="p-3">{a.apelido}</td>
-                      <td className="py-3 px-6 text-center">
-                        <BeltTag faixa={a.faixa} grau={a.grau} />
-                      </td>
-                    </tr>
-                  </Link>
+                    <td className="p-3 rounded-l-xl">{a.nome}</td>
+                    <td className="p-3">{a.apelido}</td>
+                    <td className="py-3 px-6 text-center">
+                      <BeltTag faixa={a.faixa} grau={a.grau} />
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>

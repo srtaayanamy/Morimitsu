@@ -1,19 +1,22 @@
 import api from "../services/api";
 
 //  editaUser(name: string) 
-export async function editaUser(name: string) {
+export async function deleteUser(id: string) {
   try {
     // Envia os dados diretamente (sem aninhar)
     const token = localStorage.getItem('token');
-    await api.put("/user", {name: name},
+    await api.put("/user",
       {
+        params:{
+          id: id
+        },
         headers:{
           Authorization: `Bearer ${token}`
         }
       }
     );
 
-    console.log("Usuário editado com sucesso.");
+    console.log("Usuário deletado com sucesso.");
     return true;
     
   } catch (error: any) {
@@ -26,10 +29,10 @@ export async function editaUser(name: string) {
           return "Usuário não encontrado.";
         case 500:
           console.log("Erro interno no servidor. Erro:", error);
-          return "Erro ao tentar editar usuário. Tente novamente!";
+          return "Erro ao tentar deletar usuário. Tente novamente!";
         default:
           console.log("Erro desconhecido da API:", error.response.status);
-          return "Erro ao tentar editar usuário. Tente novamente!";
+          return "Erro ao tentar deletar usuário. Tente novamente!";
       }
 
     } 
@@ -41,6 +44,6 @@ export async function editaUser(name: string) {
 
     // Qualquer outro erro
     console.log("Erro interno no servidor: ", error);
-    return "Erro ao tentar editar do usuário. Tente novamente.";
+    return "Erro ao tentar deletar do usuário. Tente novamente.";
   }
 }

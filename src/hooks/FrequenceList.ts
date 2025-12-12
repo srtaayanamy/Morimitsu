@@ -53,11 +53,14 @@ export async function getFrequencies(date?:string) {
 
             groups[key].students.push(
                 {
-                    id: f.Student.id,
-                    nome: f.Student.name,
-                    apelido: f.Student.nickname,
-                    faixa: f.StudentForm.Rank,
-                    present: true
+                    idFrequencie: f.id,
+                    student:{
+                        id: f.Student.id,
+                        nome: f.Student.name,
+                        apelido: f.Student.nickname,
+                        faixa: f.StudentForm.Rank,
+                        present: true
+                    }
                 }
             );
         });

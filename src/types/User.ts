@@ -19,3 +19,10 @@ export type Professor = {
     observacao?: string;
     turmas?: string[];
 }
+
+export type notification = {
+    date: string,
+    category: string,
+    description: string,
+    read: boolean
+}

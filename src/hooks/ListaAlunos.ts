@@ -54,7 +54,7 @@ export async function listarAlunos(filters?:StudentParams) {
           console.log("Erro interno no servidor. Erro:", error);
           return "Erro ao listar alunos. Tente novamente!";
         default:
-          console.log("Erro desconhecido da API:", error.response.status);
+          console.log("Erro desconhecido da API:", error);
           return "Erro ao listar alunos. Tente novamente!";
       }
 

@@ -1,6 +1,29 @@
+import { useEffect, useState } from "react";
 import Logo from "../../assets/Logo.png";
+import { getRelatoriosAndExports } from "../../utils/relatoriosAndExports";
 
 export default function RelatoriosExports() {
+
+  const [relatorio, setRelatorio] = useState();
+  const [error, setError] = useState<string>()
+
+  useEffect(() =>{
+    const fetchRelatoriosAndExports = async () =>{
+      const result = await getRelatoriosAndExports();
+
+      if(typeof result === "string"){
+        setError(result);
+        return;
+      }else{
+        setRelatorio(result);
+        return;
+      }
+    }
+
+    fetchRelatoriosAndExports()
+  }, [])
+
+
   return (
     <div className="p-4 text-gray-700 w-full">
       <h2 className="font-semibold text-xl mb-6">Relatórios e exports</h2>

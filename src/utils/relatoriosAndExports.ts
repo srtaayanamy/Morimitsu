@@ -1,38 +1,32 @@
 import api from "../services/api";
 
-export async function GraduationStudent(studentId: string) {
-    
+export async function getRelatoriosAndExports() {
     try{
-        //Requisição
+
         const token = localStorage.getItem('token')
-        await api.patch(`/student/promote/rank`, 
+        const response = await api.get(`/dashboard`, 
             {
-                params:{
-                    studentId: studentId
-                },
                 headers:{
                     Authorization: `Bearer ${token}`
                 }
             }
         );
 
-        //Verifica se a requisição foi um sucesso
-        console.log('Aluno graduado com sucesso.')
-        return true;
-    }   
-    catch(error: any){
+        console.log(response.data)
+        
+        console.log('Dados retornados com sucesso.');
+        return response.data;
+
+    } catch(error: any){
         //Tratamento de erros
         if (error.response) {
-            switch(error.response.status){
-                case 404:
-                    console.log("Aluno não encontrado. Erro: ", error);
-                    return "Aluno não encontrado.";
+            switch(error.response.status){ 
                 case 500:
                     console.log("Erro interno no servidor. Erro:", error);
-                    return "Erro ao graduar aluno. Tente novamente!";
+                    return "Erro ao pegar os dados. Tente novamente!";
                 default:
                     console.log("Erro desconhecido da API:", error.response.status);
-                    return "Erro ao graduar aluno. Tente novamente!";
+                    return "Erro ao pegar os dados. Tente novamente!";
             }
         }  
 
@@ -44,6 +38,7 @@ export async function GraduationStudent(studentId: string) {
         
         //Qualquer outro erro
         console.log("Erro: ", error);
-        return "Erro ao graduar aluno. Tente novamente!";
+        return "Erro ao pegar os dados. Tente novamente!";
+       
     }
 }

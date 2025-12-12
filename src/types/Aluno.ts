@@ -33,3 +33,4 @@ export type StudentParams ={
     classid?: string,
     Presence?: number
 }
+

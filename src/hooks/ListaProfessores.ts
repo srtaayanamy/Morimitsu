@@ -1,5 +1,5 @@
 import api from "../services/api";
-import { type Professor } from "../types/Professor";
+import { type Professor } from "../types/User";
 
 export async function listarProfessores(): Promise<Professor[] | false | string> {
   try {

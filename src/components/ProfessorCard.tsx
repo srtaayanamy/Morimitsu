@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { Professor } from "../types/Professor";
+import type { Professor } from "../types/User";
 import martialArts from "../assets/presets/martial-arts.png";
 
 interface ProfessorCardProps {

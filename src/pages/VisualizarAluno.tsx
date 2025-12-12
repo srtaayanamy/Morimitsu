@@ -18,6 +18,7 @@ import {
   faixasEGrausMenor16,
   Ranking,
 } from "../types/Rank";
+import { deleteUser } from "../utils/deleteUser";
 
 function maskTelefone(value: string) {
   value = value.replace(/\D/g, "");
@@ -138,9 +139,9 @@ export default function VisualizarAluno() {
 
     const dadosForm = {
       rank: edit.faixa,
-      rating: edit.grau,
+      rating: edit.grau ? Number(edit.grau) : undefined,
       comments: edit.observacao,
-      presence: Number(edit.frequencia),
+      presence: edit.frequencia ? Number(edit.frequencia) : undefined,
     };
 
     const result = await editarAluno(id, dadosPersonal, dadosForm);
@@ -162,6 +163,14 @@ export default function VisualizarAluno() {
   const handleDelete = async () => {
     if (!id) return;
 
+    if(aluno?.userID !== undefined){
+      const response = await deleteUser(aluno.userID);
+      if(typeof response === 'string'){
+        setErro(response);
+        return;
+      }
+    }
+
     const result = await deleteAluno(id);
 
     if (result === true) {
@@ -170,7 +179,7 @@ export default function VisualizarAluno() {
         navigate("/alunos");
       }, 2000);
     } else {
-      alert(result);
+      setErro(result);
     }
   };
 

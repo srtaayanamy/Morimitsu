@@ -7,7 +7,7 @@ import ClockOverlay from "../components/ClockOverlay";
 import { cadastrarTurma } from "../utils/CadastrarTurma";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
-import type { Professor } from "../types/Professor";
+import type { Professor } from "../types/User";
 import { listarProfessores } from "../hooks/ListaProfessores";
 
 export default function RegistrarTurma() {

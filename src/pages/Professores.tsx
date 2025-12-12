@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { useEffect, useState } from "react";
-import type { Professor } from "../types/Professor";
+import type { Professor } from "../types/User";
 import { listarProfessores } from "../hooks/ListaProfessores";
 import ProfessorCard from "../components/ProfessorCard";
 import { SquarePen } from "lucide-react";

@@ -1,4 +1,22 @@
+import { useEffect, useState } from "react";
+import type { graduationRegister } from "../../types/Graduation";
+import { getRegistersGraduations } from "../../utils/registersGraduations";
+
 export default function RegistrosGraduacao() {
+
+  const [error, setError] = useState<string>();
+  const [registers, setRegisters] = useState<graduationRegister>();
+
+  useEffect(() =>{
+    const fetchRegistersGraduations = async () => {
+      
+      const result = await getRegistersGraduations();
+
+    }
+
+    fetchRegistersGraduations()
+  }, [])
+
   return (
     <div className="p-4 text-gray-700 w-full max-sm:p-3">
       <h2 className="font-semibold text-2xl mb-4">Registros de graduação:</h2>

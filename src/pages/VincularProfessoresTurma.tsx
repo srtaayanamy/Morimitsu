@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { listarProfessores } from "../hooks/ListaProfessores";
 import type { Turma } from "../types/Turma";
-import type { Professor } from "../types/Professor";
+import type { Professor } from "../types/User";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { vincularProfessor } from "../utils/vincularProfessor";
 import { Loader2 } from "lucide-react";
@@ -82,6 +82,8 @@ export default function VincularProfessoresTurma() {
         }
       }
     }
+
+    setLoading(false);
     navigate(-1);
   }
 
