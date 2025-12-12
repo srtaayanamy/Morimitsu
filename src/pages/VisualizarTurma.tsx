@@ -192,7 +192,7 @@ export default function VisualizarTurma() {
             )}
           </div>
 
-          {/* PROFESSORES VINCULADOS (CAIXA EXPANSÍVEL) */}
+          {/* PROFESSORES VINCULADOS */}
           <div className="w-[200px]">
             <p className="font-semibold text-sm md:text-base mb-1 text-center">
               Professores da turma:

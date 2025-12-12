@@ -14,10 +14,6 @@ export default function Configuracoes() {
       path: "/configuracoes/registros-frequencia",
     },
     {
-      label: "Corrigir frequência",
-      path: "/configuracoes/corrigir-frequencia",
-    },
-    {
       label: "Manual do usuário",
       path: "/configuracoes/manual-usuario",
     },

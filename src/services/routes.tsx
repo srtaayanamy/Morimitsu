@@ -24,7 +24,6 @@ import Perfil from "../pages/configuracoes/Perfil";
 import RegistrosGraduacao from "../pages/configuracoes/RegistrosGraduacao";
 import ConfigurarGraduacao from "../pages/configuracoes/ConfigurarGraduacao";
 import RegistrosFrequencia from "../pages/configuracoes/RegistrosFrequencia";
-import CorrigirFrequencia from "../pages/configuracoes/CorrigirFrequencia";
 import RelatoriosExports from "../pages/configuracoes/RelatoriosExports";
 import ManualUsuario from "../pages/configuracoes/ManualUsuário";
 import FrequenciaDoDia from "../pages/configuracoes/FrequenciaDoDia";
@@ -67,7 +66,6 @@ export default function AppRoutes() {
         <Route path="registros-graduacao" element={<RegistrosGraduacao />} />
         <Route path="configurar-graduacao" element={<ConfigurarGraduacao />} />
         <Route path="registros-frequencia" element={<RegistrosFrequencia />} />
-        <Route path="corrigir-frequencia" element={<CorrigirFrequencia />} />
         <Route path="relatorios-exports" element={<RelatoriosExports />} />
         <Route path="manual-usuario" element={<ManualUsuario />} />
         <Route path="frequencia-do-dia" element={<FrequenciaDoDia />} />
