@@ -12,9 +12,7 @@ export async function enturmaAluno(idAluno: string, idTurma: string) {
 
     console.log("Aluno enturmado com sucesso.");
     return true; // mudamos para true em caso de sucesso
-    
 
-    return false; // qualquer outro status que não seja 200
   } catch (error: any) {
     // Tratamento de erros (mantido exatamente como você fez)
     if (error.response) {

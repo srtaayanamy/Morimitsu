@@ -1,12 +1,15 @@
 import api from "../services/api";
 
 //  editaUser(name: string) 
-export async function editaUser(name: string) {
+export async function editaUser(name: string, id?:string) {
   try {
     // Envia os dados diretamente (sem aninhar)
     const token = localStorage.getItem('token');
     await api.put("/user", {name: name},
       {
+        params:{
+          id: id
+        },
         headers:{
           Authorization: `Bearer ${token}`
         }

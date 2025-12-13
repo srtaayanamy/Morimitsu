@@ -20,6 +20,9 @@ import {
   Ranking,
 } from "../types/Rank";
 import { deleteUser } from "../utils/deleteUser";
+import { calcularIdade } from "../utils/CalcularIdade";
+import { parseDateBRToISO } from "../utils/formatarHorario";
+import { ErrorMessage } from "../components/ErrorMessage";
 
 function maskTelefone(value: string) {
   value = value.replace(/\D/g, "");
@@ -58,6 +61,7 @@ function maskDate(value: string) {
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
   const [erro, setErro] = useState("");
+  const [errorMenssage, setErrorMenssage] =  useState("");
   const [mensagemSucesso, setMensagemSucesso] = useState("");
   const [aluno, setAluno] = useState<Aluno>();
   const [alunoOriginal, setAlunoOriginal] = useState<Aluno>();
@@ -82,6 +86,17 @@ export default function VisualizarAluno() {
     fetchAluno();
   }, [id]);
 
+
+  useEffect(() => {
+    if (!mensagemSucesso) return;
+
+    const timer = setTimeout(() => {
+      setMensagemSucesso("");
+    }, 2000); // tempo em ms (3 segundos)
+
+    return () => clearTimeout(timer);
+  }, [mensagemSucesso]);
+
   useEffect(() => {
   async function fetchFrequencia() {
     if (!aluno?.faixa) return;
@@ -103,7 +118,7 @@ export default function VisualizarAluno() {
   }
 
   fetchFrequencia();
-}, [aluno?.faixa, aluno?.frequencia]);
+}, [aluno?.faixa]);
 
 
   const handleChange = (field: keyof Aluno, value: string | number) => {
@@ -145,9 +160,22 @@ export default function VisualizarAluno() {
     }
 
     if (Object.keys(edit).length === 0) return;
+    console.log(aluno.userID)
 
-    if (aluno.userID !== undefined && typeof edit.nome === "string") {
-      editaUser(edit.nome);
+    if (aluno.userID && typeof edit.nome === "string") {
+      console.log(aluno.userID)
+      editaUser(edit.nome, aluno.userID);
+    }
+
+    if(edit.dataNascimento && edit.dataNascimento !== '' && typeof edit.dataNascimento === "string"){
+      const FormatedDate = parseDateBRToISO(edit.dataNascimento);
+      const age = FormatedDate !== null ? calcularIdade(FormatedDate): 0;
+      
+      console.log(age);
+      if((age <16 && faixasEGrausMaior16.find(item => item.faixa === aluno.faixa)) || (age >16 && faixasEGrausMenor16.find(item => item.faixa === aluno.faixa)) ){
+        setErrorMenssage('A idade não corresponde a faixa. Por favor insira uma data de nascimento ou faixa correspondente.')
+        return;
+      } 
     }
     console.log(edit);
 
@@ -173,11 +201,12 @@ export default function VisualizarAluno() {
     const result = await editarAluno(id, dadosPersonal, dadosForm);
 
     if (result === true) {
-      alert("Alterações salvas com sucesso!");
+      setErrorMenssage('');
+      setMensagemSucesso("Alterações salvas com sucesso!");
       setAlunoOriginal(aluno);
       setIsEditing(false);
     } else {
-      alert(result || "Erro ao atualizar aluno.");
+      setErrorMenssage(result || "Erro ao atualizar aluno.");
     }
   };
 
@@ -200,12 +229,13 @@ export default function VisualizarAluno() {
     const result = await deleteAluno(id);
 
     if (result === true) {
+      setErrorMenssage('');
       setMensagemSucesso("Aluno apagado com sucesso!");
       setTimeout(() => {
         navigate("/alunos");
       }, 2000);
     } else {
-      setErro(result);
+      setErrorMenssage(result);
     }
   };
 
@@ -298,6 +328,9 @@ export default function VisualizarAluno() {
             </div>
           )}
         </div>
+
+        {/*Mensagem de erro*/}
+        {errorMenssage && <ErrorMessage message={errorMenssage} />}
 
         {/* Mensagem de sucesso */}
         {mensagemSucesso && <SuccessAlert message={mensagemSucesso} />}

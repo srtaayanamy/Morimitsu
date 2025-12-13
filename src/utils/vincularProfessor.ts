@@ -2,6 +2,7 @@ import api from "../services/api";
 
 export async function vincularProfessor(classId: string, coachId: string) {
     try{
+        console.log("Id da turma: ",classId,"\nId do professor: ", coachId)
 
         const token = localStorage.getItem('token');
         const response= await api.post(`/class/${classId}/assign-coach/${coachId}`,{},
@@ -21,14 +22,14 @@ export async function vincularProfessor(classId: string, coachId: string) {
     } catch(error: any){
         if(error.response){
             switch(error.response.status){
-                case 401:
-                    console.log('Usuário não autorizado: ', error);
-                    return 'Usuário não autorizado.';
+                case 404:
+                    console.log('Turma ou professor não econtrado. Erro: ', error);
+                    return 'Turma ou professor não econtrado.';
                 case 500:
-                    console.log('Erro interno no servidor.');
-                    return 'Não foi possível mudar a senha. Tente novamente.';
+                    console.log('Erro interno no servidor.', error);
+                    return 'Não foi possível vincular o professor a turma. Tente novamente.';
                 default:
-                    console.log("Erro desconhecido da API:", error.response.status);
+                    console.log("Erro desconhecido da API:", error.response);
                     return "Erro ao tentar mudar a senha. Tente novamente!";
             }
         }

@@ -53,6 +53,7 @@ export async function pegaDadosAluno(id: string) {
       observacao: response.data.data.student.form.Comments || "",
       turmas,
       idade: response.data.data.student.personal.age,
+      userID: response.data.data.student.form.userId
     };
 
     return aluno;

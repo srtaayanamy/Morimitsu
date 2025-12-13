@@ -98,7 +98,7 @@ export default function InserirAlunosTurma() {
     if (erros === 0) {
       // Tudo certo mostra sucesso e volta para tela anterior
       setMensagemSucesso(
-        `Todos os ${sucessos} aluno(s) foram adicionados com sucesso!`
+        `Todos os ${sucessos} professor(s) foram adicionados com sucesso!`
       );
       setTimeout(() => navigate(-1), 300);
     } else {
@@ -106,7 +106,7 @@ export default function InserirAlunosTurma() {
         sucessos > 0 ? `${sucessos} aluno(s) adicionado(s).` : ""
       );
       setMensagemErro(
-        `${erros} aluno(s) não foram adicionados: ${errosDetalhados
+        `${erros} professor(s) não foram adicionados: ${errosDetalhados
           .slice(0, 3)
           .join(" | ")}`
       );

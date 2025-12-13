@@ -4,6 +4,9 @@ export async function getFrequencieRequired(rank: string){
     try{
         
         const token = localStorage.getItem('token');
+        if(rank.includes('/')){
+            rank = rank.replace('/', '_')
+        }
 
         //Requisição
         const response = await api.get(`/config/rank/${rank}`, 

@@ -9,6 +9,7 @@ import type { Professor } from "../types/User";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { vincularProfessor } from "../utils/vincularProfessor";
 import { Loader2 } from "lucide-react";
+import SuccessAlert from "../components/SuccessAlert";
 
 export default function VincularProfessoresTurma() {
   const { id } = useParams();
@@ -19,6 +20,8 @@ export default function VincularProfessoresTurma() {
   const [professoresTotais, setProfessoresTotais] = useState<Professor[]>([]);
   const [erro, setErro] = useState<string | boolean>("");
   const [loading, setLoading] = useState(true);
+  const [mensagemSucesso, setMensagemSucesso] = useState("");
+  const [mensagemErro, setMensagemErro] = useState("");
 
   useEffect(() => {
     async function fetch() {
@@ -64,6 +67,9 @@ export default function VincularProfessoresTurma() {
     if (idsSelecionados.length === 0) {
       return;
     }
+
+    setMensagemErro("");
+    setMensagemSucesso("");
     setLoading(true);
 
     let sucessos = 0;
@@ -84,7 +90,23 @@ export default function VincularProfessoresTurma() {
     }
 
     setLoading(false);
-    navigate(-1);
+
+    if (erros === 0) {
+      // Tudo certo mostra sucesso e volta para tela anterior
+      setMensagemSucesso(
+        `Todos os ${sucessos} aluno(s) foram adicionados com sucesso!`
+      );
+      setTimeout(() => navigate(-1), 300);
+    } else {
+      setMensagemSucesso(
+        sucessos > 0 ? `${sucessos} aluno(s) adicionado(s).` : ""
+      );
+      setMensagemErro(
+        `${erros} aluno(s) não foram adicionados: ${errosDetalhados
+          .slice(0, 3)
+          .join(" | ")}`
+      );
+    }
   }
 
   return (
@@ -117,6 +139,8 @@ export default function VincularProfessoresTurma() {
         </PageTitle>
 
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
+          {mensagemSucesso && <SuccessAlert message={mensagemSucesso} />}
+          {mensagemErro && <ErrorMessage message={mensagemErro} />}
           {erro && <ErrorMessage message={erro} />}
 
           {loading && (

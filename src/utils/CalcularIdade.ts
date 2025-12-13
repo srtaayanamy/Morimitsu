@@ -1,6 +1,8 @@
 export function calcularIdade(dataNascimento: string): number {
   if (!dataNascimento) return 0;
 
+  console.log(dataNascimento)
+
   const nascimento = new Date(dataNascimento);
   const hoje = new Date();
 

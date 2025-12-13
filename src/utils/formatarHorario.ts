@@ -12,3 +12,16 @@ export function formataHorario(horario:string){
 
     return horarioFormatado;
 };
+
+
+
+export function parseDateBRToISO(dateBR: string): string | null {
+  const [day, month, year] = dateBR.split("/");
+
+  if (!day || !month || !year) return null;
+
+  const iso = `${year}-${month}-${day}`;
+  const date = new Date(iso);
+
+  return isNaN(date.getTime()) ? null : date.toISOString();
+}
