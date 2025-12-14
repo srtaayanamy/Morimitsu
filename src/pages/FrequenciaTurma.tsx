@@ -104,45 +104,54 @@ export default function FrequenciaTurma() {
         </PageTitle>
 
         {/* CARD PRINCIPAL */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-10">
-          <div>
+        <div className="bg-white p-4 md:p-8 rounded-2xl shadow-sm flex flex-col items-center gap-6">
+          {/* IMAGEM */}
+          <div className="flex justify-center">
             {turma.URLImage ? (
               <img
                 src={turma.URLImage}
-                className="w-36 h-36 rounded-full object-cover"
+                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover"
               />
             ) : (
-              <div className="w-36 h-36 bg-gray-200 rounded-full flex items-center justify-center">
+              <div className="w-28 h-28 md:w-36 md:h-36 bg-gray-200 rounded-full flex items-center justify-center text-sm">
                 Foto
               </div>
             )}
           </div>
 
-          <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="sm:col-span-3 w-full">
-              <p className="text-sm font-medium">Professor responsável:</p>
-              <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl text-center">
+          {/* DADOS */}
+          <div className="flex flex-col items-center gap-5 w-full">
+            {/* PROFESSOR */}
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-sm font-semibold text-center">
+                Professor responsável:
+              </p>
+              <p className="bg-[#F5F5F5] px-6 py-2 rounded-full text-sm text-center min-w-[220px]">
                 {turma.professores?.[0]?.nome || "-"}
               </p>
             </div>
 
-            <div>
-              <p className="text-sm font-medium">Total de alunos:</p>
-              <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl">
-                {turma.numAlunos}
-              </p>
+            {/* INFO EM LINHA */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-sm font-semibold">Total de alunos:</p>
+                <p className="bg-[#F5F5F5] px-5 py-2 rounded-full text-sm">
+                  {turma.numAlunos} aluno(s)
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center gap-1">
+                <p className="text-sm font-semibold">Faixa etária:</p>
+                <p className="bg-[#F5F5F5] px-5 py-2 rounded-full text-sm">
+                  {turma.idadeMin} a {turma.idadeMax} anos
+                </p>
+              </div>
             </div>
 
-            <div>
-              <p className="text-sm font-medium">Faixa etária:</p>
-              <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl">
-                {turma.idadeMin} a {turma.idadeMax} anos
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm font-medium">Horário da aula:</p>
-              <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl">
+            {/* HORÁRIO */}
+            <div className="flex flex-col items-center gap-1">
+              <p className="text-sm font-semibold">Horário da aula:</p>
+              <p className="bg-[#F5F5F5] px-6 py-2 rounded-full text-sm">
                 {turma.horarioInicio}h → {turma.horarioFim}h
               </p>
             </div>

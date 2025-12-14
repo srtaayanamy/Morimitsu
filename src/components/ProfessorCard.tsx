@@ -45,7 +45,8 @@ export default function ProfessorCard({ professor, editMode }: ProfessorCardProp
           to={`/visualizar-aluno/${professor.studentId}`}
           className="flex flex-col text-left"
         >
-          <span className="text-lg font-semibold text-[#1E1E1E]">
+          <span className="text-sm md:text-lg font-semibold text-[#1E1E1E]">
+
             {professor.nome}
           </span>
         </Link>
@@ -64,7 +65,7 @@ export default function ProfessorCard({ professor, editMode }: ProfessorCardProp
         {!editMode && (
           <Link
             to={`/visualizar-aluno/${professor.studentId}`}
-            className="block md:hidden bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md"
+            className="block md:hidden bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-center text-sm font-medium shadow-md"
           >
             Acessar dados
           </Link>
