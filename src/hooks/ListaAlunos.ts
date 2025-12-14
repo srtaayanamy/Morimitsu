@@ -71,30 +71,26 @@ export async function listarAlunos(filters?:StudentParams) {
   }
 }
 
-export async function filtrarAniversariantes() {
+export async function filtrarAniversariantes(mes?: number) {
   const alunos = await listarAlunos();
-  //Verifica se o retorno de alunos é diferente do tipo aluno
-  if (typeof alunos === 'string') {
-    return;
-  } else if (alunos === undefined) {
+
+  if (typeof alunos === "string" || alunos === undefined) {
     return;
   }
-  //Declara vairável do tipo aluno que guarda os aniversariantes do mês
+
   const aniversariantes: Aluno[] = [];
 
-  //Estrutura de repetição que indentifica se o aluno faz aniversário no mês atual
-  for (const aluno of alunos) {
-    const DataNascimento = new Date(aluno.dataNascimento);
-    const DataAtual = new Date();
+  // se não vier mês, usa o mês atual (fallback)
+  const mesReferencia =
+    mes !== undefined ? mes : new Date().getMonth();
 
-    if (
-      DataNascimento.getMonth() === DataAtual.getMonth() &&
-      DataNascimento.getDate() >= DataAtual.getDate()
-    ) {
+  for (const aluno of alunos) {
+    const dataNascimento = new Date(aluno.dataNascimento);
+
+    if (dataNascimento.getMonth() === mesReferencia) {
       aniversariantes.push(aluno);
     }
   }
 
-  console.log("Aniversariantes: ", aniversariantes);
   return aniversariantes;
 }

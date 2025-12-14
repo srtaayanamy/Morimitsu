@@ -18,6 +18,7 @@ import FrequenciaTurma from "../pages/FrequenciaTurma";
 import InserirAlunosTurma from "../pages/InserirAlunosTurma";
 import RemoverAlunosTurma from "../pages/RemoverAlunosTurma";
 import VincularProfessoresTurma from "../pages/VincularProfessoresTurma";
+import ResultadoFiltros from "../pages/ResultadoFiltros";
 
 // telas de configuração
 import Perfil from "../pages/configuracoes/Perfil";
@@ -59,6 +60,7 @@ export default function AppRoutes() {
         path="/turmas/:id/vincular-professores"
         element={<VincularProfessoresTurma />}
       />
+      <Route path="/resultado-filtros" element={<ResultadoFiltros />} />
 
       {/* rotas pai/filho de configuração */}
       <Route path="/configuracoes" element={<Configuration />}>
