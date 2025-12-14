@@ -1,15 +1,15 @@
-import type { Aluno } from "./Aluno";
-import type { Professor } from "./User";
-import type { Turma } from "./Turma";
+import type { Student } from "./Student";
+import type { Coach } from "./User";
+import type { Class } from "./Class";
 
 export type Frequencie = {
     Date: string,
-    class: Turma,
+    class: Class,
     students: Partial<StudentFrequencie>[],
-    teacher: Partial<Professor>
+    coach: Partial<Coach>
 }
 
 export type StudentFrequencie = {
     idFrequencie?: string,
-    student: Partial<Aluno>
+    student: Partial<Student>
 }

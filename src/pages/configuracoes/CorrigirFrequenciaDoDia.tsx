@@ -1,10 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { listarAlunos } from "../../hooks/ListaAlunos";
+import { StudentList } from "../../hooks/StudentList";
 import type { Frequencie, StudentFrequencie } from "../../types/Frequencie";
-import type { StudentParams } from "../../types/Aluno";
-import { fazerFrequencia } from "../../utils/RealizarFrequencia";
-import { deleteFrequencie } from "../../utils/deletefrequencie";
+import type { StudentParams } from "../../types/Student";
+import { registerFrequencie } from "../../HTTP/Frequencie/registerFrequencie";
+import { deleteFrequencie } from "../../HTTP/Frequencie/deletefrequencie";
 
 export default function CorrigirFrequenciaDoDia() {
   const { state } = useLocation();
@@ -24,7 +24,7 @@ export default function CorrigirFrequenciaDoDia() {
 
       const filter: StudentParams = { classid: freq.class.id };
 
-      const result = await listarAlunos(filter);
+      const result = await StudentList(filter);
 
       if (typeof result === "string") {
         alert(result);
@@ -88,11 +88,10 @@ export default function CorrigirFrequenciaDoDia() {
 
     const idsFrequencies = marcadosComoAusentes.map(student => student.idFrequencie)
 
-    await fazerFrequencia(freq?.class.id, idStudentsPresentMarcados, freq?.Date);
+    await registerFrequencie(freq?.class.id, idStudentsPresentMarcados, freq?.Date);
 
-    for(const id in idsFrequencies){
-      await deleteFrequencie(id);
-    }
+    await deleteFrequencie(idsFrequencies);
+    
 
     console.log(idStudentsPresentMarcados, idsFrequencies);
     console.log(marcadosComoPresentes, marcadosComoAusentes);
@@ -104,7 +103,7 @@ export default function CorrigirFrequenciaDoDia() {
   return (
     <div className="p-4 text-gray-700 w-full">
       <h2 className="text-2xl font-semibold mb-6">
-        Corrigir frequência – Turma “{freq.class?.nome}” em{" "}
+        Corrigir frequência – Turma “{freq.class?.name}” em{" "}
         {new Date(freq.Date).toLocaleDateString("pt-BR")}:
       </h2>
 
@@ -123,11 +122,11 @@ export default function CorrigirFrequenciaDoDia() {
               alunos.map((aluno: any) => (
                 <tr key={aluno.student.id} className="border-b">
                   <td className="py-4 text-center">
-                    {aluno.student.nome}
+                    {aluno.student.personal.name}
                   </td>
 
                   <td className="py-4 text-center">
-                    {aluno.student.apelido || "—"}
+                    {aluno.student.personal.nickName || "—"}
                   </td>
 
                   <td className="py-4 px-4 text-center">

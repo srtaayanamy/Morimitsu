@@ -1,0 +1,51 @@
+import Cookies from "js-cookie";
+import api from "../../services/api";
+
+export async function deleteUser(id: string) {
+  try {
+    //Pega o token do usuário
+    const token = Cookies.get('token');
+
+    //Requisição
+    await api.delete("/user",
+      {
+        params:{
+          id: id
+        },
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    console.log("Usuário deletado com sucesso.");
+    return true;
+    
+  } catch (error: any) {
+    //Tratamento de erros
+    if (error.response) {
+
+      switch (error.response.status) {
+        case 404:
+          console.log("Usuário não encontrado.", error);
+          return "Usuário não encontrado.";
+        case 500:
+          console.log("Erro interno no servidor. Erro:", error);
+          return "Erro ao tentar deletar usuário. Tente novamente!";
+        default:
+          console.log("Erro desconhecido da API:", error.response.status);
+          return "Erro ao tentar deletar usuário. Tente novamente!";
+      }
+
+    } 
+    //Verifica se a requisição foi feita, mas não houve resposta
+    if (error.request) {
+      console.log("Servidor não respondeu:", error.request);
+      return "Verifique sua conexão.";
+    }
+
+    // Qualquer outro erro
+    console.log("Erro interno no servidor: ", error);
+    return "Erro ao tentar deletar do usuário. Tente novamente.";
+  }
+}

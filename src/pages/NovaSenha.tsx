@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginHeader from "../components/LoginHeader";
-import { mudarSenha } from "../utils/MudarSenha";
+import { editPassword } from "../HTTP/Auth/editPassword";
 import { ErrorMessage } from "../components/ErrorMessage";
 
 // Campo de senha reutilizável, agora com suporte a onChange
@@ -69,7 +69,7 @@ export default function NovaSenha() {
     }
 
     try {
-      const sucesso = await mudarSenha(novaSenha, codigo, codigoDigitado);
+      const sucesso = await editPassword(novaSenha, codigo, codigoDigitado);
 
       if (sucesso) {
         console.log("Senha alterada com sucesso!");

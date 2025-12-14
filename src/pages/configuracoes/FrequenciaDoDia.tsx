@@ -23,7 +23,7 @@ export default function FrequenciaDoDia() {
       {/* Cabeçalho com botão */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">
-          Presentes – “{freq.class?.nome}” em{" "}
+          Presentes – “{freq.class?.name}” em{" "}
           {new Date(freq.Date).toLocaleDateString("pt-BR")}:
         </h2>
 
@@ -49,10 +49,10 @@ export default function FrequenciaDoDia() {
               freq.students.map((aluno: any, i: number) => (
                 <tr key={i} className="border-b">
                   <td className="py-3 text-center">
-                    {aluno?.student.nome}
+                    {aluno?.student.personal.name}
 
                   </td>
-                  <td className="py-3 text-center">{aluno?.student.apelido}</td>
+                  <td className="py-3 text-center">{aluno?.student.personal.nickName}</td>
                 </tr>
               ))
             ) : (

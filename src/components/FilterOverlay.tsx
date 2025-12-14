@@ -1,7 +1,7 @@
 import { X, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { filtrarAniversariantes } from "../hooks/ListaAlunos";
-import { listarTurmas } from "../hooks/ListaTurmas";
+import { filtrarAniversariantes } from "../hooks/StudentList";
+import { ClassList } from "../hooks/ClassList";
 
 
 interface FilterOverlayProps {
@@ -24,7 +24,7 @@ export default function FilterOverlay({ isOpen, onClose, onApply }: FilterOverla
   }, [isOpen]);
 
   async function carregarListas() {
-    const t = await listarTurmas();
+    const t = await ClassList();
     const a = await filtrarAniversariantes();
 
     if (t && Array.isArray(t)) setTurmas(t);
@@ -78,7 +78,7 @@ export default function FilterOverlay({ isOpen, onClose, onApply }: FilterOverla
             >
               <option value="">Selecione</option>
               {turmas.map((t) => (
-                <option key={t.id} value={t.id}>{t.nome}</option>
+                <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
           </div>
@@ -95,7 +95,7 @@ export default function FilterOverlay({ isOpen, onClose, onApply }: FilterOverla
               <option  value="">Selecione</option>
               {aniversariantes.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.nome}
+                  {a.personal.name}
                 </option>
               ))}
             </select>

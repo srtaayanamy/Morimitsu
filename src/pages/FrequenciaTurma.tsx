@@ -4,11 +4,11 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-import { pegaDadosTurma } from "../utils/getDadosTurma";
-import { fazerFrequencia } from "../utils/RealizarFrequencia";
+import { getClass } from "../HTTP/Class/getClass";
+import { registerFrequencie } from "../HTTP/Frequencie/registerFrequencie";
 import ConfirmFrequenciaModal from "../components/ConfirmFrequenciaModal";
 import { Avatar } from "../components/Avatar";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { AgeCalculator } from "../utils/AgeCalculator";
 
 export default function FrequenciaTurma() {
   const { id } = useParams();
@@ -23,7 +23,7 @@ export default function FrequenciaTurma() {
     async function fetchTurma() {
       if (!id) return;
 
-      const result = await pegaDadosTurma(id);
+      const result = await getClass(id);
 
       if (typeof result === "string") {
         console.log(result);
@@ -33,12 +33,16 @@ export default function FrequenciaTurma() {
       setTurma(result);
 
       const alunos =
-        result.alunos?.map((a: any) => ({
+        result.students?.map((a: any) => ({
           id: a.id,
-          nome: a.nome,
-          apelido: a.apelido,
-          faixa: a.faixa,
-          grau: a.grau,
+          personal:{
+            name: a.personal.name,
+            nickName: a.personal.nickName
+          },
+          form:{
+            rank: a.form.rank,
+            rating: a.form.rating
+          }
         })) || [];
 
       setStudents(alunos);
@@ -63,7 +67,7 @@ export default function FrequenciaTurma() {
     const presentesIds = Object.keys(presentes).filter((id) => presentes[id]);
     const hoje = new Date().toISOString();
 
-    const result = await fazerFrequencia(id, presentesIds, hoje);
+    const result = await registerFrequencie(id, presentesIds, hoje);
 
     setLoading(false);
 
@@ -90,7 +94,7 @@ export default function FrequenciaTurma() {
         <PageTitle
           title={
             <span>
-              Frequência - <strong>{turma.nome}</strong>
+              Frequência - <strong>{turma.name}</strong>
             </span>
           }
         >
@@ -122,28 +126,28 @@ export default function FrequenciaTurma() {
             <div className="sm:col-span-3 w-full">
               <p className="text-sm font-medium">Professor responsável:</p>
               <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl text-center">
-                {turma.professores?.[0]?.nome || "-"}
+                {turma.coachs?.[0]?.personal.name || "-"}
               </p>
             </div>
 
             <div>
               <p className="text-sm font-medium">Total de alunos:</p>
               <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl">
-                {turma.numAlunos}
+                {turma.numStudents}
               </p>
             </div>
 
             <div>
               <p className="text-sm font-medium">Faixa etária:</p>
               <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl">
-                {turma.idadeMin} a {turma.idadeMax} anos
+                {turma.MinAge} a {turma.MaxAge} anos
               </p>
             </div>
 
             <div>
               <p className="text-sm font-medium">Horário da aula:</p>
               <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl">
-                {turma.horarioInicio}h → {turma.horarioFim}h
+                {turma.startTime}h → {turma.endTime}h
               </p>
             </div>
           </div>
@@ -162,8 +166,8 @@ export default function FrequenciaTurma() {
               >
                 <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                   <Avatar
-                    sexo={aluno.sexo}
-                    idade={calcularIdade(aluno.dataNascimento)}
+                    sexo={aluno.personal.gender}
+                    idade={AgeCalculator(aluno.personal.birthDate)}
                     size={48}
                     noWrapper={true}
                   />
@@ -171,10 +175,10 @@ export default function FrequenciaTurma() {
 
                 <div className="flex-1">
                   <p className="font-semibold text-[#1E1E1E] leading-tight">
-                    {aluno.nome}
+                    {aluno.personal.name}
                   </p>
                   <span className="text-sm text-gray-600">
-                    {aluno.apelido || "—"}
+                    {aluno.personal.nickName || "—"}
                   </span>
                 </div>
 
@@ -206,9 +210,9 @@ export default function FrequenciaTurma() {
               <tbody>
                 {students.map((aluno) => (
                   <tr key={aluno.id} className="bg-[#F5F5F5] rounded-xl">
-                    <td className="px-4 py-3 rounded-l-xl">{aluno.nome}</td>
+                    <td className="px-4 py-3 rounded-l-xl">{aluno.personal.name}</td>
 
-                    <td className="px-4 py-3">{aluno.apelido || "—"}</td>
+                    <td className="px-4 py-3">{aluno.personal.nickName || "—"}</td>
 
                     <td className="px-4 py-3 rounded-r-xl text-center">
                       <input
@@ -228,7 +232,7 @@ export default function FrequenciaTurma() {
 
       <ConfirmFrequenciaModal
         isOpen={modalOpen}
-        turmaNome={turma?.nome || ""}
+        turmaNome={turma?.name || ""}
         onClose={() => setModalOpen(false)}
         onConfirm={() => {
           setModalOpen(false);

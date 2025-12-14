@@ -1,8 +1,8 @@
-import type { Turma } from "./Turma"
+import type { Class } from "./Class"
 
 export type event = {
     id: string,
     title: string,
     event_date: string,
-    class: Partial<Turma>
+    class: Partial<Class>
 }

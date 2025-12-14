@@ -3,25 +3,26 @@ import { Plus, Loader2 } from "lucide-react";
 import Header from "../components/Header";
 import SectionCard from "../components/SectionCard";
 import { useEffect, useState } from "react";
-import { listarTurmas } from "../hooks/ListaTurmas";
-import type { Turma } from "../types/Turma";
+import { ClassList } from "../hooks/ClassList";
+import type { Class } from "../types/Class";
 import TurmaCard from "../components/TurmaCard";
 import BirthdayCard from "../components/BirthdayCard";
-import { filtrarAniversariantes } from "../hooks/ListaAlunos";
-import type { Aluno } from "../types/Aluno";
+import { filtrarAniversariantes } from "../hooks/StudentList";
+import type { Student } from "../types/Student";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
 import EventModal from "../components/EventModal";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import { eventList } from "../hooks/eventList";
-import { registerEvent } from "../utils/cadastrarEvento";
+import { registerEvent } from "../HTTP/Event/registerEvent";
+import Cookies from "js-cookie";
 
 
 export default function TelaInicial() {
   //Variáveis de estado
-  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [turmas, setTurmas] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorTurmas, setErrorTurmas] = useState<string | null>(null);
   const [, setErrorEvents] = useState<string | null>(null);
@@ -29,8 +30,8 @@ export default function TelaInicial() {
   const [errorAniversariantes, setErrorAniversariantes] = useState<
     string | null
   >(null);
-  const [aniversariantes, SetAniversariantes] = useState<Aluno[]>([]);
-  const role = localStorage.getItem("role");
+  const [aniversariantes, SetAniversariantes] = useState<Student[]>([]);
+  const role = Cookies.get("role");
   const [modalOpen, setModalOpen] = useState(false);
 
   const abrirModal = () => setModalOpen(true);
@@ -80,7 +81,7 @@ export default function TelaInicial() {
   useEffect(() => {
     const fetchTurmas = async () => {
       setLoading(true);
-      const result = await listarTurmas();
+      const result = await ClassList();
 
       if (result === false) {
         setErrorTurmas("Erro ao carregar turmas.");
@@ -160,7 +161,7 @@ export default function TelaInicial() {
                   <div key={turma.id} className="flex-shrink-0">
                     <TurmaCard
                       id={turma.id}
-                      nome={turma.nome}
+                      nome={turma.name}
                       imagem={turma.URLImage}
                     />
                   </div>
@@ -354,8 +355,8 @@ export default function TelaInicial() {
               aniversariantes.map((aluno) => (
                 <BirthdayCard
                   key={aluno.id}
-                  nome={aluno.nome}
-                  data={new Date(aluno.dataNascimento).toLocaleDateString(
+                  nome={aluno.personal.name ? aluno.personal.name: ''}
+                  data={new Date(aluno.personal.birthDate ? aluno.personal.birthDate: '').toLocaleDateString(
                     "pt-BR",
                     {
                       day: "2-digit",
@@ -363,8 +364,8 @@ export default function TelaInicial() {
                     }
                   )}
                   sexo={
-                    aluno.sexo === "male" || aluno.sexo === "female"
-                      ? aluno.sexo
+                    aluno.personal.gender === "male" || aluno.personal.gender === "female"
+                      ? aluno.personal.gender
                       : "male"
                   }
                 />

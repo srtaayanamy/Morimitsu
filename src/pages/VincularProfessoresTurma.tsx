@@ -2,12 +2,12 @@ import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { pegaDadosTurma } from "../utils/getDadosTurma";
-import { listarProfessores } from "../hooks/ListaProfessores";
-import type { Turma } from "../types/Turma";
-import type { Professor } from "../types/User";
+import { getClass } from "../HTTP/Class/getClass";
+import { CoachList } from "../hooks/CoachsList";
+import type { Class } from "../types/Class";
+import type { Coach } from "../types/User";
 import { ErrorMessage } from "../components/ErrorMessage";
-import { vincularProfessor } from "../utils/vincularProfessor";
+import { includeCoachInClass } from "../HTTP/Class/includeCoachInClass";
 import { Loader2 } from "lucide-react";
 import SuccessAlert from "../components/SuccessAlert";
 
@@ -15,9 +15,9 @@ export default function VincularProfessoresTurma() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [turma, setTurma] = useState<Turma | null>(null);
+  const [turma, setTurma] = useState<Class | null>(null);
   const [selecionados, setSelecionados] = useState<Record<string, boolean>>({});
-  const [professoresTotais, setProfessoresTotais] = useState<Professor[]>([]);
+  const [professoresTotais, setProfessoresTotais] = useState<Coach[]>([]);
   const [erro, setErro] = useState<string | boolean>("");
   const [loading, setLoading] = useState(true);
   const [mensagemSucesso, setMensagemSucesso] = useState("");
@@ -27,14 +27,14 @@ export default function VincularProfessoresTurma() {
     async function fetch() {
       if (!id) return;
 
-      const turmaDados = await pegaDadosTurma(id);
+      const turmaDados = await getClass(id);
       if (typeof turmaDados === "string") {
         setErro(turmaDados);
       } else {
         setTurma(turmaDados);
-        if(turmaDados.professores){
-          const professoresTurmaAtual = turmaDados.professores;
-          const lista = await listarProfessores();
+        if(turmaDados.coachs){
+          const professoresTurmaAtual = turmaDados.coachs;
+          const lista = await CoachList();
           if (typeof lista !== "string" && lista !== false) {
             const professores = lista.filter((teacher) => !professoresTurmaAtual.some(p => p.id === teacher.id))
             setProfessoresTotais(professores);
@@ -77,7 +77,7 @@ export default function VincularProfessoresTurma() {
     const errosDetalhados: string[] = [];
 
     for (const idProfessor of idsSelecionados) {
-      const resultado = await vincularProfessor( id, idProfessor);
+      const resultado = await includeCoachInClass( id, idProfessor);
 
       if (resultado === true) {
         sucessos++;
@@ -117,7 +117,7 @@ export default function VincularProfessoresTurma() {
         <PageTitle
           title={
             <span>
-              Vincular professores - <strong>{turma?.nome || "..."}</strong>:
+              Vincular professores - <strong>{turma?.name || "..."}</strong>:
             </span>
           }
         >
@@ -164,7 +164,7 @@ export default function VincularProfessoresTurma() {
                       key={prof.id}
                       className="bg-white shadow-sm rounded-xl hover:bg-gray-50"
                     >
-                      <td className="py-3 px-6 font-medium">{prof.nome}</td>
+                      <td className="py-3 px-6 font-medium">{prof.student.personal.name}</td>
                       <td className="py-3 px-6 text-center">
                         <input
                           type="checkbox"

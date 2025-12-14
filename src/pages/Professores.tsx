@@ -2,21 +2,21 @@ import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { useEffect, useState } from "react";
-import type { Professor } from "../types/User";
-import { listarProfessores } from "../hooks/ListaProfessores";
+import type { Coach } from "../types/User";
+import { CoachList } from "../hooks/CoachsList";
 import ProfessorCard from "../components/ProfessorCard";
 import { SquarePen } from "lucide-react";
 
 export default function Professores() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [Professores, setProfessores] = useState<Professor[]>([]);
+  const [Professores, setProfessores] = useState<Coach[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProfessores = async () => {
       setLoading(true);
-      const result = await listarProfessores();
+      const result = await CoachList();
 
       if (result === false) {
         setError("Erro ao carregar professores.");

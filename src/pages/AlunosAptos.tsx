@@ -2,14 +2,14 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
-import { listarAlunos } from "../hooks/ListaAlunos";
-import type { Aluno } from "../types/Aluno";
+import { StudentList } from "../hooks/StudentList";
+import type { Student } from "../types/Student";
 import BeltTag from "../components/BeltTag";
 import PageTitle from "../components/PageTitle";
 import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
 import CreateAcessModal from "../components/CreateAcessModal";
-import { pegaDadosAluno } from "../utils/getDadosAluno";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { getStudent } from "../HTTP/Student/getStudent";
+import { AgeCalculator } from "../utils/AgeCalculator";
 import { Avatar } from "../components/Avatar";
 
 const podePromover = (faixa: string): boolean => {
@@ -17,7 +17,7 @@ const podePromover = (faixa: string): boolean => {
 };
 
 export default function AlunosAptos() {
-  const [alunosAptos, setAlunosAptos] = useState<Aluno[]>([]);
+  const [alunosAptos, setAlunosAptos] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [alunoEmPromocao, setAlunoEmPromocao] = useState<{
@@ -29,14 +29,14 @@ export default function AlunosAptos() {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [acessoModalOpen, setAcessoModalOpen] = useState(false);
 
-  function VerificarAptidao(aluno: Aluno) {
-    return podePromover(aluno.faixa) && aluno.userID === null;
+  function VerificarAptidao(aluno: Student) {
+    return podePromover(aluno.form?.rank ? aluno.form?.rank: '') && aluno.form?.userID === null;
   }
 
   useEffect(() => {
     const fetchAlunos = async () => {
       setLoading(true);
-      const result = await listarAlunos();
+      const result = await StudentList();
 
       if (typeof result === "string") {
         setError("Erro ao carregar alunos.");
@@ -50,20 +50,20 @@ export default function AlunosAptos() {
     fetchAlunos();
   }, []);
 
-  const iniciarPromocao = async (aluno: Aluno) => {
+  const iniciarPromocao = async (aluno: Student) => {
     if (!aluno.id) return;
 
-    const dados = await pegaDadosAluno(aluno.id);
+    const dados = await getStudent(aluno.id);
 
-    if (!dados || typeof dados === "string" || !dados.email?.includes("@")) {
-      alert(`O aluno ${aluno.nome} não tem um e-mail válido cadastrado.`);
+    if (!dados || typeof dados === "string" || !dados.personal.email?.includes("@")) {
+      alert(`O aluno ${aluno.personal.name} não tem um e-mail válido cadastrado.`);
       return;
     }
 
     setAlunoEmPromocao({
       id: aluno.id,
-      nome: aluno.nome,
-      email: dados.email.trim(),
+      nome: aluno.personal.name ? aluno.personal.name: '',
+      email: dados.personal.email.trim(),
     });
 
     setConfirmModalOpen(true);
@@ -127,12 +127,12 @@ export default function AlunosAptos() {
                             to={`/visualizar-aluno/${aluno.id}`}
                             className="text-[#000000] hover:underline font-medium"
                           >
-                            {aluno.nome}
+                            {aluno.personal.name}
                           </Link>
                         </td>
-                        <td className="py-3 px-6">{aluno.apelido || "—"}</td>
+                        <td className="py-3 px-6">{aluno.personal.nickName || "—"}</td>
                         <td className="py-3 px-6 text-center">
-                          <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                          <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                         </td>
                         <td className="py-3 px-6">
                           <div className="flex justify-center gap-2">
@@ -165,8 +165,8 @@ export default function AlunosAptos() {
                     {/* Avatar */}
                     <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                       <Avatar
-                        sexo={a.sexo}
-                        idade={calcularIdade(a.dataNascimento)}
+                        sexo={a.personal.gender}
+                        idade={AgeCalculator(a.personal.birthDate ? a.personal.birthDate: '')}
                         size={48}
                         noWrapper={true}
                       />
@@ -178,19 +178,19 @@ export default function AlunosAptos() {
                         to={`/visualizar-aluno/${a.id}`}
                         className="font-semibold text-[#1E1E1E] block leading-tight"
                       >
-                        {a.nome}
+                        {a.personal.name}
                       </Link>
                       <span className="text-sm text-gray-600">
-                        {a.apelido || "—"}
+                        {a.personal.nickName || "—"}
                       </span>
                     </div>
 
                     {/* Faixa + botão */}
                     <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10">
                       <div className="bg-white p-3 rounded-2xl w-28 shadow-sm flex flex-col items-center justify-center">
-                        <BeltTag faixa={a.faixa} grau={a.grau} />
+                        <BeltTag faixa={a.form?.rank} grau={a.form?.rating} />
                         <p className="text-[0.7rem] font-semibold">
-                          Grau: {a.grau}
+                          Grau: {a.form?.rating}
                         </p>
                       </div>
 

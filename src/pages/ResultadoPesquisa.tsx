@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { listarAlunos } from "../hooks/ListaAlunos";
-import type { Aluno } from "../types/Aluno";
+import { StudentList } from "../hooks/StudentList";
+import type { Student } from "../types/Student";
 import Header from "../components/Header";
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { AgeCalculator } from "../utils/AgeCalculator";
 
 export default function ResultadoPesquisa() {
   const [searchParams] = useSearchParams();
   const nomeBuscado = searchParams.get("nome") || "";
 
-  const [resultados, setResultados] = useState<Aluno[]>([]);
+  const [resultados, setResultados] = useState<Student[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
     async function carregar() {
-      const todos = await listarAlunos();
+      const todos = await StudentList();
       if (typeof todos === "string") return;
 
-      const filtrados = todos.filter((a) =>
-        a.nome.toLowerCase().includes(nomeBuscado.toLowerCase())
+      const filtrados = todos.filter((a) => a.personal.name ?
+        a.personal.name.toLowerCase().includes(nomeBuscado.toLowerCase()) : ''
       );
 
       setResultados(filtrados);
@@ -87,14 +87,14 @@ export default function ResultadoPesquisa() {
                             to={`/visualizar-aluno/${aluno.id}`}
                             className="text-[#000000] hover:underline font-medium"
                           >
-                            {aluno.nome}
+                            {aluno.personal.name}
                           </Link>
                         </td>
 
-                        <td className="py-3 px-6">{aluno.apelido || "—"}</td>
+                        <td className="py-3 px-6">{aluno.personal.nickName || "—"}</td>
 
                         <td className="py-3 px-6 text-center">
-                          <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                          <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                         </td>
                       </tr>
                     ))}
@@ -112,25 +112,25 @@ export default function ResultadoPesquisa() {
                   >
                     {/* Avatar vermelho */}
                     <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
-                      <Avatar sexo={aluno.sexo} idade={calcularIdade(aluno.dataNascimento)} size={40} noWrapper />
+                      <Avatar sexo={aluno.personal.gender} idade={AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate : '')} size={40} noWrapper />
                     </div>
 
                     {/* Nome e apelido */}
                     <div className="flex-1">
                       <p className="font-semibold text-[#1E1E1E] text-[0.95rem] leading-tight">
-                        {aluno.nome}
+                        {aluno.personal.name}
                       </p>
                       <span className="text-xs text-gray-600">
-                        {aluno.apelido || "—"}
+                        {aluno.personal.nickName || "—"}
                       </span>
                     </div>
 
                     {/* Faixa */}
                     <div className="flex flex-col items-center justify-center px-1">
                       <div className="bg-white p-2 rounded-xl w-20 shadow-sm flex flex-col items-center justify-center">
-                        <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                        <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                         <p className="text-[0.6rem] font-semibold">
-                          Grau: {aluno.grau}
+                          Grau: {aluno.form?.rating}
                         </p>
                       </div>
                     </div>

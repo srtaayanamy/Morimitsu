@@ -1,4 +1,5 @@
 import { X, AlertCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface NotificationModalProps {
   isOpen: boolean;

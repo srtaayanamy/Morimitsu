@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import type { graduationRegister } from "../../types/Graduation";
-import { getRegistersGraduations } from "../../utils/registersGraduations";
+import { getRegistersGraduations } from "../../HTTP/Graduation/registersGraduations";
 
 export default function RegistrosGraduacao() {
 
   const [error, setError] = useState<string>();
-  const [registers, setRegisters] = useState<graduationRegister>();
+  const [registers, setRegisters] = useState<graduationRegister[]>([]);
 
   useEffect(() =>{
     const fetchRegistersGraduations = async () => {
       
       const result = await getRegistersGraduations();
 
+      if(typeof result === 'string'){
+        setError(result)
+        return;
+      }else{
+        setRegisters(result);
+        return;
+      }
     }
 
     fetchRegistersGraduations()

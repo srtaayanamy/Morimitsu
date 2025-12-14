@@ -1,5 +1,7 @@
 import api from "../services/api";
 import type { Frequencie } from "../types/Frequencie";
+import { formatData } from "../utils/formatTime";
+import Cookies from "js-cookie";
 
 export async function getFrequencies(date?:string) {
 
@@ -12,7 +14,7 @@ export async function getFrequencies(date?:string) {
         }
       
         //Pega o token do usuário
-        const token = localStorage.getItem('token')
+        const token = Cookies.get('token');
 
         if(!token){
             return "Token não encontrado. Faça login novamente.";
@@ -39,14 +41,21 @@ export async function getFrequencies(date?:string) {
                     Date: f.Date,
                     class:{
                         id: f.Class.id,
-                        nome: f.Class.name,
-                        idadeMax: f.Class.maxAge,
-                        idadeMin: f.Class.minAge
+                        name: f.Class.name,
+                        MaxAge: f.Class.maxAge,
+                        MinAge: f.Class.minAge
                     },
                     students: [],
-                    teacher: {
+                    coach: {
                         id: f.Coach.id,
-                        nome: f.Coach.name
+                        student: {
+                            id: '',
+                            personal: {
+                                name: f.Coach.name,
+                                email: f.Coach.email
+                            },
+                            
+                        }
                     }
                 };
             }
@@ -56,9 +65,11 @@ export async function getFrequencies(date?:string) {
                     idFrequencie: f.id,
                     student:{
                         id: f.Student.id,
-                        nome: f.Student.name,
-                        apelido: f.Student.nickname,
-                        faixa: f.StudentForm.Rank,
+                        personal:{
+                            name: f.Student.name,
+                            nickName: f.Student.nickname,
+                            birthDate: formatData(f.Student.birthDate)
+                        },
                         present: true
                     }
                 }

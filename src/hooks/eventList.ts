@@ -1,10 +1,11 @@
 import api from "../services/api";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
+import Cookies from "js-cookie";
 
 export async function eventList() {
     try {
 
-    const token = localStorage.getItem("token");
+    const token = Cookies.get('token');
 
     //Faz a requisição
     const response = await api.get("/events/all", {
@@ -20,7 +21,9 @@ export async function eventList() {
         id: item.id,
         title: item.title,
         event_date: item.event_date,
-        class: item.class_id
+        class: {
+          id: item.class_id
+        }
       };
     });
 

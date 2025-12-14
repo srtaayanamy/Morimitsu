@@ -2,21 +2,21 @@
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
-import { listarAlunos } from "../hooks/ListaAlunos";
-import type { Aluno } from "../types/Aluno";
+import { StudentList } from "../hooks/StudentList";
+import type { Student } from "../types/Student";
 import BeltTag from "../components/BeltTag";
 import ConfirmPromotionModal from "../components/ConfirmPromotionModal";
 import CreateAcessModal from "../components/CreateAcessModal";
 import { Avatar } from "../components/Avatar";
-import { calcularIdade } from "../utils/CalcularIdade";
-import { pegaDadosAluno } from "../utils/getDadosAluno";
+import { AgeCalculator } from "../utils/AgeCalculator";
+import { getStudent } from "../HTTP/Student/getStudent";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
 };
 
 export default function Alunos() {
-  const [alunos, setAlunos] = useState<Aluno[]>([]);
+  const [alunos, setAlunos] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +32,7 @@ export default function Alunos() {
   useEffect(() => {
     const fetchAlunos = async () => {
       setLoading(true);
-      const result = await listarAlunos();
+      const result = await StudentList();
 
       if (typeof result === "string") {
         setError("Erro ao carregar alunos.");
@@ -45,20 +45,20 @@ export default function Alunos() {
     fetchAlunos();
   }, []);
 
-  const iniciarPromocao = async (aluno: Aluno) => {
+  const iniciarPromocao = async (aluno: Student) => {
     if (!aluno.id) return;
 
-    const dados = await pegaDadosAluno(aluno.id);
+    const dados = await getStudent(aluno.id);
 
-    if (!dados || typeof dados === "string" || !dados.email?.includes("@")) {
-      alert(`O aluno ${aluno.nome} não tem um e-mail válido cadastrado.`);
+    if (!dados || typeof dados === "string" || !dados.personal.email?.includes("@")) {
+      alert(`O aluno ${aluno.personal.name} não tem um e-mail válido cadastrado.`);
       return;
     }
 
     setAlunoEmPromocao({
       id: aluno.id,
-      nome: aluno.nome,
-      email: dados.email.trim(),
+      nome: aluno.personal.name ? aluno.personal.name : '',
+      email: dados.personal.email.trim(),
     });
 
     setConfirmModalOpen(true);
@@ -107,8 +107,7 @@ export default function Alunos() {
                 {/* MOBILE */}
                 <div className="md:hidden space-y-3">
                   {alunos.map((aluno) => {
-                    const promover =
-                      podePromover(aluno.faixa) && aluno.userID === null;
+                    const promover = podePromover(aluno.form?.rank ? aluno.form?.rank: '') && aluno.form?.userID === null;
 
                     return (
                       <div
@@ -117,8 +116,8 @@ export default function Alunos() {
                       >
                         <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                           <Avatar
-                            sexo={aluno.sexo}
-                            idade={calcularIdade(aluno.dataNascimento)}
+                            sexo={aluno.personal.gender}
+                            idade={AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate: '')}
                             size={48}
                             noWrapper={true}
                           />
@@ -129,18 +128,18 @@ export default function Alunos() {
                             to={`/visualizar-aluno/${aluno.id}`}
                             className="font-semibold text-[#1E1E1E] block leading-tight"
                           >
-                            {aluno.nome}
+                            {aluno.personal.name}
                           </Link>
                           <span className="text-sm text-gray-600">
-                            {aluno.apelido || "—"}
+                            {aluno.personal.nickName || "—"}
                           </span>
                         </div>
 
                         <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10">
                           <div className="bg-white p-3 rounded-2xl w-28 shadow-sm flex flex-col items-center justify-center">
-                            <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                            <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                             <p className="text-[0.7rem] font-semibold">
-                              Grau: {aluno.grau}
+                              Grau: {aluno.form?.rating}
                             </p>
                           </div>
 
@@ -180,8 +179,7 @@ export default function Alunos() {
 
                     <tbody>
                       {alunos.map((aluno) => {
-                        const promover =
-                          podePromover(aluno.faixa) && aluno.userID === null;
+                        const promover = podePromover(aluno.form?.rank ? aluno.form?.rank: '') && aluno.form?.userID === null;
 
                         return (
                           <tr
@@ -193,16 +191,16 @@ export default function Alunos() {
                                 to={`/visualizar-aluno/${aluno.id}`}
                                 className="text-[#000000] hover:underline font-medium"
                               >
-                                {aluno.nome}
+                                {aluno.personal.name}
                               </Link>
                             </td>
 
                             <td className="py-3 px-6">
-                              {aluno.apelido || "—"}
+                              {aluno.personal.nickName || "—"}
                             </td>
 
                             <td className="py-3 px-6 text-center">
-                              <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                              <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                             </td>
 
                             <td className="py-3 px-6 rounded-r-xl">

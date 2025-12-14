@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import LoginHeader from "../components/LoginHeader";
 import { useState } from "react";
-import { EnviarEmail } from "../utils/EnviarEmail";
+import { SendEmail } from "../HTTP/Auth/sendEmail";
 import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function RecuperarSenha() {
@@ -13,7 +13,7 @@ export default function RecuperarSenha() {
   const navigate = useNavigate();
 
   async function handleEnviarEmail(){
-    const codigo = await EnviarEmail(email)
+    const codigo = await SendEmail(email)
   
     if(codigo !== null){
       console.log("Email enviado com sucesso")

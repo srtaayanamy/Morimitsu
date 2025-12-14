@@ -1,6 +1,6 @@
 import BeltTag from "../../components/BeltTag";
 import { configGraduantionsList } from "../../hooks/configurationsList";
-import { editConfigGraduation } from "../../utils/editConfigGraduation";
+import { editConfigGraduation } from "../../HTTP/Graduation/editConfigGraduation";
 import { faixasEGrausMaior16, faixasEGrausMenor16 } from "../../types/Rank";
 import { SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";

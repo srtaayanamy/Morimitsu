@@ -1,4 +1,4 @@
-import type { Aluno } from "./Aluno";
+import type { Student } from "./Student";
 
 export type Graduation ={
     id: string;
@@ -11,5 +11,5 @@ export type graduationRegister = {
     date: string,
     beforePromotion: string,
     afterPromotion: string,
-    student: Partial<Aluno>
+    student: Partial<Student>
 }

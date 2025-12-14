@@ -2,10 +2,11 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { motion, AnimatePresence } from "framer-motion";
+import Cookies from "js-cookie";
 
 export default function Configuracoes() {
   const location = useLocation();
-  const role = localStorage.getItem("role");
+  const role = Cookies.get("role");
 
   const baseMenu = [
     { label: "Perfil do usuário", path: "/configuracoes/perfil" },

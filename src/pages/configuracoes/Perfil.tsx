@@ -1,9 +1,9 @@
 import { SquarePen } from "lucide-react";
 import martialIcon from "../../assets/presets/martial-arts.png";
-import { useAuth } from "../../hooks/Autenticao";
+import { useAuth } from "../../hooks/Auth";
 import { useEffect, useState } from "react";
-import { pegaDadosUser } from "../../utils/getDadosUser";
-import { editaUser } from "../../utils/editarUser";
+import { getUser } from "../../HTTP/User/getUser";
+import { editUser } from "../../HTTP/User/editUser";
 import { ErrorMessage } from "../../components/ErrorMessage";
 
 export default function Perfil() {
@@ -19,7 +19,7 @@ export default function Perfil() {
   // Carrega dados do usuário
   useEffect(() => {
     const fetchUser = async () => {
-      const result = await pegaDadosUser();
+      const result = await getUser();
 
       if (typeof result === "string") {
         setError("Erro ao carregar dados do usuário.");
@@ -42,7 +42,7 @@ export default function Perfil() {
     setError(false);
     setSuccess(false);
 
-    const result = await editaUser(nome);
+    const result = await editUser(nome);
 
     if (result === true) {
       console.log("Edição feita com sucesso.");

@@ -2,23 +2,23 @@ import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { pegaDadosTurma } from "../utils/getDadosTurma";
-import { listarAlunos } from "../hooks/ListaAlunos";
-import type { Turma } from "../types/Turma";
-import type { Aluno } from "../types/Aluno";
+import { getClass } from "../HTTP/Class/getClass";
+import { StudentList } from "../hooks/StudentList";
+import type { Class } from "../types/Class";
+import type { Student } from "../types/Student";
 import BeltTag from "../components/BeltTag";
-import { enturmaAluno } from "../utils/enturmarAluno";
+import { includeStudentInClass } from "../HTTP/Student/includeStudentInClass";
 import SuccessAlert from "../components/SuccessAlert";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { Avatar } from "../components/Avatar";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { AgeCalculator } from "../utils/AgeCalculator";
 
 export default function InserirAlunosTurma() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [turma, setTurma] = useState<Turma | null>(null);
-  const [alunosTotais, setAlunosTotais] = useState<Aluno[]>([]);
+  const [turma, setTurma] = useState<Class | null>(null);
+  const [alunosTotais, setAlunosTotais] = useState<Student[]>([]);
   const [erro, setErro] = useState<string | boolean>("");
   const [loading, setLoading] = useState(true);
 
@@ -28,21 +28,21 @@ export default function InserirAlunosTurma() {
 
   // Filtra apenas alunos que AINDA não estão na turma
   const alunosDisponiveis = alunosTotais.filter(
-    (aluno) => !turma?.alunos?.some((a) => a.id === aluno.id)
+    (aluno) => !turma?.students?.some((a) => a.id === aluno.id)
   );
 
   useEffect(() => {
     async function fetch() {
       if (!id) return;
 
-      const turmaDados = await pegaDadosTurma(id);
+      const turmaDados = await getClass(id);
       if (typeof turmaDados === "string") {
         setErro(turmaDados);
       } else {
         setTurma(turmaDados);
       }
 
-      const lista = await listarAlunos();
+      const lista = await StudentList();
       if (typeof lista !== "string") {
         setAlunosTotais(lista || []);
       }
@@ -81,7 +81,7 @@ export default function InserirAlunosTurma() {
     const errosDetalhados: string[] = [];
 
     for (const idAluno of idsSelecionados) {
-      const resultado = await enturmaAluno(idAluno, id);
+      const resultado = await includeStudentInClass(idAluno, id);
 
       if (resultado === true) {
         sucessos++;
@@ -124,7 +124,7 @@ export default function InserirAlunosTurma() {
         <PageTitle
           title={
             <span>
-              Inserir alunos à turma <strong>{turma?.nome || "..."}</strong>:
+              Inserir alunos à turma <strong>{turma?.name || "..."}</strong>:
             </span>
           }
         >
@@ -180,11 +180,11 @@ export default function InserirAlunosTurma() {
                           className="bg-white shadow-sm rounded-xl hover:bg-gray-50"
                         >
                           <td className="py-3 px-6 font-medium">
-                            {aluno.nome}
+                            {aluno.personal.name}
                           </td>
-                          <td className="py-3 px-6">{aluno.apelido || "—"}</td>
+                          <td className="py-3 px-6">{aluno.personal.nickName || "—"}</td>
                           <td className="py-3 px-6 text-center">
-                            <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                            <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                           </td>
                           <td className="py-3 px-6 text-center">
                             <input
@@ -212,25 +212,25 @@ export default function InserirAlunosTurma() {
                     >
                       <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                         <Avatar
-                          sexo={aluno.sexo}
-                          idade={calcularIdade(aluno.dataNascimento)}
+                          sexo={aluno.personal.gender}
+                          idade={AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate : '')}
                           size={40}
                           noWrapper
                         />
                       </div>
 
                       <div className="flex-1">
-                        <p className="font-semibold text-sm">{aluno.nome}</p>
+                        <p className="font-semibold text-sm">{aluno.personal.name}</p>
                         <span className="text-xs text-gray-600">
-                          {aluno.apelido || "—"}
+                          {aluno.personal.nickName || "—"}
                         </span>
                       </div>
 
                       <div className="flex flex-col items-center">
                         <div className="bg-white p-2 rounded-xl w-20 shadow-sm flex flex-col items-center">
-                          <BeltTag faixa={aluno.faixa} grau={aluno.grau} />
+                          <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
                           <p className="text-[0.5rem] font-semibold pt-0.5">
-                            {aluno.grau}º
+                            {aluno.form?.rating}º
                           </p>
                         </div>
 
@@ -267,7 +267,7 @@ export default function InserirAlunosTurma() {
 
           {!loading && alunosDisponiveis.length === 0 && (
             <p className="text-center text-gray-500 py-8">
-              {turma?.alunos && turma.alunos.length > 0
+              {turma?.students && turma.students.length > 0
                 ? "Todos os alunos já estão nesta turma."
                 : "Nenhum aluno disponível para adicionar."}
             </p>

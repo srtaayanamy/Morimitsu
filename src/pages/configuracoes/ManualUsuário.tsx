@@ -1,9 +1,10 @@
 import Logo from "../../assets/Logo.png";
 import ManualADM from "../../assets/manuais/adm.pdf";
 import ManualProf from "../../assets/manuais/prof.pdf";
+import Cookies from "js-cookie";
 
 export default function ManualUsuario() {
-  const role = localStorage.getItem("role");
+  const role = Cookies.get("role");
 
   // Seleciona PDF baseado no role
   const linkManual = role === "ADMIN" ? ManualADM : ManualProf;

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { verificarLogin } from "../utils/VerficarLogin";
+import { LoginVerufy } from "../HTTP/Auth/LoginVerify";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { isLogedContext } from "../contexts/Auth";
 import SuccessAlert from "../components/SuccessAlert";
@@ -14,7 +14,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | boolean>("");
   const [mensagemSucesso, setMensagemSucesso] = useState(""); // só string agora
-  const { isLoged } = useContext(isLogedContext);
+  const { isLoged, setIsLoged } = useContext(isLogedContext);
 
   const navigate = useNavigate();
 
@@ -26,14 +26,15 @@ export default function Login() {
 
   //Função que redireciona o usuário se o email e senha estiverem corretos
   async function handleLogin(){
-    const result = await verificarLogin(email, senha)
+    const result = await LoginVerufy(email, senha)
 
     //Analisa o retorna da função e toma uma ação com base no retorno
     if(result === true){
       setErro(""); // limpa erro
       setMensagemSucesso("Login feito");
-      console.log("Login feito")
-      navigate('/inicio')
+      console.log("Login feito");
+      setIsLoged(true);
+      navigate('/inicio');
       return;
     } else {
       setMensagemSucesso(""); // limpa sucesso

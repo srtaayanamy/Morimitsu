@@ -3,25 +3,25 @@ import { SquarePen, Trash2 } from "lucide-react";
 import { Avatar } from "../components/Avatar";
 import { InfoField } from "../components/InfoField";
 import { ProgressBar } from "../components/ProgressBar";
-import type { Aluno } from "../types/Aluno";
-import { pegaDadosAluno } from "../utils/getDadosAluno";
+import type { Student, StudentForm, StudentPersonal } from "../types/Student";
+import { getStudent } from "../HTTP/Student/getStudent";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { editarAluno } from "../utils/editarAluno";
-import { editaUser } from "../utils/editarUser";
-import { deleteAluno } from "../utils/deletarAluno";
+import { editStudent } from "../HTTP/Student/editStudent";
+import { editUser } from "../HTTP/User/editUser";
+import { deleteAluno } from "../HTTP/Student/deleteStudent";
 import ConfirmActionModal from "../components/ConfirmActionModal";
 import SuccessAlert from "../components/SuccessAlert";
 import { useNavigate } from "react-router-dom";
-import { getFrequencieRequired } from "../utils/getFrequencieRequered";
+import { getFrequencieRequired } from "../HTTP/Frequencie/getFrequencieRequered";
 import {
   faixasEGrausMaior16,
   faixasEGrausMenor16,
   Ranking,
 } from "../types/Rank";
-import { deleteUser } from "../utils/deleteUser";
-import { calcularIdade } from "../utils/CalcularIdade";
-import { parseDateBRToISO } from "../utils/formatarHorario";
+import { deleteUser } from "../HTTP/User/deleteUser";
+import { AgeCalculator } from "../utils/AgeCalculator";
+import { parseDateBRToISO } from "../utils/formatTime";
 import { ErrorMessage } from "../components/ErrorMessage";
 
 function maskTelefone(value: string) {
@@ -63,8 +63,12 @@ export default function VisualizarAluno() {
   const [erro, setErro] = useState("");
   const [errorMenssage, setErrorMenssage] =  useState("");
   const [mensagemSucesso, setMensagemSucesso] = useState("");
-  const [aluno, setAluno] = useState<Aluno>();
-  const [alunoOriginal, setAlunoOriginal] = useState<Aluno>();
+  const [aluno, setAluno] = useState<Student>();
+  const [alunoEditado, setAlunoEditado] = useState<{
+    personal?: Partial<StudentPersonal>;
+    form?: Partial<StudentForm>;
+  }>({});
+  const [alunoOriginal, setAlunoOriginal] = useState<Student>();
   const [isEditing, setIsEditing] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -75,7 +79,7 @@ export default function VisualizarAluno() {
   useEffect(() => {
     async function fetchAluno() {
       if (!id) return;
-      const result = await pegaDadosAluno(id);
+      const result = await getStudent(id);
       if (typeof result === "string") {
         setErro(result);
       } else {
@@ -98,110 +102,68 @@ export default function VisualizarAluno() {
   }, [mensagemSucesso]);
 
   useEffect(() => {
-  async function fetchFrequencia() {
-    if (!aluno?.faixa) return;
+    async function fetchFrequencia() {
+      if (!aluno?.form?.rank) return;
 
-    const response = await getFrequencieRequired(aluno.faixa);
+      const response = await getFrequencieRequired(aluno.form.rank);
 
-    if (typeof response === "string") {
-      console.log("Erro ao carregar frequência necessária:", response);
+      if (typeof response === "string") {
+        console.log("Erro ao carregar frequência necessária:", response);
+        return;
+      }
+
+      const needed = response.needed_frequency ?? 0;
+      setFreqNecessaria(needed);
+      
+      if(!aluno.form.frequencie) return;
+
+      const percent =
+        needed > 0 ? (aluno.form.frequencie / needed) * 100 : 0;
+
+      setPercentualProgresso(percent);
+    }
+
+    fetchFrequencia();
+  }, [aluno?.form?.rank]);
+
+  function handleChange(section: "personal" | "form", field: keyof StudentPersonal | keyof StudentForm, value: any) {
+
+    setAlunoEditado((prev) => ({...prev, 
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }));
+  }
+
+  const handleSave = async () => {
+    if (!id || !aluno || !alunoOriginal) return;
+
+    if (!alunoEditado.personal && !alunoEditado.form) {
+      return;
+    }
+    let age = undefined;
+    if (alunoEditado.personal?.birthDate) {
+      console.log(alunoEditado);
+      const date = parseDateBRToISO(alunoEditado.personal.birthDate);
+      age = date ? AgeCalculator(date) : 0;
+    }
+
+    const faixa = alunoEditado.form?.rank;
+
+    if ((age && age < 16 && faixasEGrausMaior16.some((f) => f.faixa === faixa)) || (age && age >= 16 && faixasEGrausMenor16.some((f) => f.faixa === faixa))) {
+      setErrorMenssage("Idade incompatível com a faixa.");
       return;
     }
 
-    const needed = response.needed_frequency ?? 0;
-    setFreqNecessaria(needed);
-
-    const percent =
-      needed > 0 ? (aluno.frequencia / needed) * 100 : 0;
-
-    setPercentualProgresso(percent);
-  }
-
-  fetchFrequencia();
-}, [aluno?.faixa]);
-
-
-  const handleChange = (field: keyof Aluno, value: string | number) => {
-    if (!aluno) return;
-
-    let novoValor: string | number = value;
-
-    if (field === "telefone") {
-      novoValor = maskTelefone(String(value));
+    if (aluno.form?.userID && alunoEditado.personal?.name) {
+      await editUser(alunoEditado.personal.name, aluno.form.userID);
     }
 
-    if (field === "telefoneResponsavel") {
-      novoValor = maskTelefone(String(value));
-    }
-
-    if (field === "CPF") {
-      novoValor = maskCPF(String(value));
-    }
-
-    if (field === "dataNascimento") {
-      novoValor = maskDate(String(value));
-    }
-
-    setAluno({ ...aluno, [field]: novoValor });
-  };
-
-  const handleSave = async () => {
-    if (!id || !aluno) return;
-
-    const edit: Partial<Record<keyof Aluno, Aluno[keyof Aluno]>> = {};
-
-    for (const key in aluno) {
-      const campoKey = key as keyof Aluno;
-      if (!alunoOriginal) return;
-
-      if (aluno[campoKey] !== alunoOriginal[campoKey]) {
-        edit[campoKey] = aluno[campoKey];
-      }
-    }
-
-    if (Object.keys(edit).length === 0) return;
-    console.log(aluno.userID)
-
-    if (aluno.userID && typeof edit.nome === "string") {
-      console.log(aluno.userID)
-      editaUser(edit.nome, aluno.userID);
-    }
-
-    if(edit.dataNascimento && edit.dataNascimento !== '' && typeof edit.dataNascimento === "string"){
-      const FormatedDate = parseDateBRToISO(edit.dataNascimento);
-      const age = FormatedDate !== null ? calcularIdade(FormatedDate): 0;
-      
-      console.log(age);
-      if((age <16 && faixasEGrausMaior16.find(item => item.faixa === aluno.faixa)) || (age >16 && faixasEGrausMenor16.find(item => item.faixa === aluno.faixa)) ){
-        setErrorMenssage('A idade não corresponde a faixa. Por favor insira uma data de nascimento ou faixa correspondente.')
-        return;
-      } 
-    }
-    console.log(edit);
-
-    const dadosPersonal = {
-      name: edit.nome,
-      nickname: edit.apelido,
-      gender: edit.sexo,
-      birthDate: edit.dataNascimento,
-      contact: edit.telefone,
-      CPF: edit.CPF,
-      email: edit.email,
-      parentName: edit.Responsavel,
-      parentsContact: edit.telefoneResponsavel,
-    };
-
-    const dadosForm = {
-      rank: edit.faixa,
-      rating: edit.grau ? Number(edit.grau) : undefined,
-      comments: edit.observacao,
-      presence: edit.frequencia ? Number(edit.frequencia) : undefined,
-    };
-
-    const result = await editarAluno(id, dadosPersonal, dadosForm);
+    const result = await editStudent(id, alunoEditado.personal, alunoEditado.form);
 
     if (result === true) {
-      setErrorMenssage('');
+      setErrorMenssage("");
       setMensagemSucesso("Alterações salvas com sucesso!");
       setAlunoOriginal(aluno);
       setIsEditing(false);
@@ -218,8 +180,8 @@ export default function VisualizarAluno() {
   const handleDelete = async () => {
     if (!id) return;
 
-    if(aluno?.userID !== undefined){
-      const response = await deleteUser(aluno.userID);
+    if(aluno?.form?.userID !== undefined){
+      const response = await deleteUser(aluno?.form?.userID);
       if(typeof response === 'string'){
         setErro(response);
         return;
@@ -263,22 +225,22 @@ export default function VisualizarAluno() {
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
           {!isEditing ? (
             <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
-              {aluno.nome} {aluno.apelido ? `(${aluno.apelido})` : ""}
+              {aluno.personal.name} {aluno.personal.nickName ? `(${aluno.personal.nickName})` : ""}
             </h1>
           ) : (
             <div className="flex flex-col md:flex-row items-center gap-3 w-full">
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-lg w-full md:w-1/2"
-                value={aluno.nome}
-                onChange={(e) => handleChange("nome", e.target.value)}
+                value={aluno.personal.name}
+                onChange={(e) => handleChange("personal", "name", e.target.value)}
               />
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-lg w-full md:w-1/3"
                 placeholder="Apelido"
-                value={aluno.apelido || ""}
-                onChange={(e) => handleChange("apelido", e.target.value)}
+                value={aluno.personal.nickName || ""}
+                onChange={(e) => handleChange("personal","nickName", e.target.value)}
               />
             </div>
           )}
@@ -338,7 +300,7 @@ export default function VisualizarAluno() {
         {/* CONTEÚDO */}
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-8">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <Avatar sexo={aluno.sexo} idade={aluno.idade} />
+            <Avatar sexo={aluno.personal.gender} idade={aluno.personal.age} />
             <div className="flex-1 space-y-4 w-full">
               <div>
                 <p className="font-semibold text-sm md:text-base mb-1">
@@ -348,17 +310,17 @@ export default function VisualizarAluno() {
                 {!isEditing ? (
                   <InfoField
                     label=""
-                    value={`${aluno.faixa || ""} / ${aluno.grau || ""}`}
+                    value={`${aluno.form?.rank || ""} / ${aluno.form?.rating || ""}`}
                     editable={false}
                   />
                 ) : (
                   <div className="flex w-full gap-3 justify-center">
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
-                      value={aluno.faixa}
-                      onChange={(e) => handleChange("faixa", e.target.value)}
+                      value={alunoEditado.form?.rank ?? aluno.form?.rank}
+                      onChange={(e) => handleChange("form","rank", e.target.value)}
                     >
-                      {((aluno.idade ?? 0) >= 16
+                      {((aluno.personal.age ?? 0) >= 16
                         ? faixasEGrausMaior16
                         : faixasEGrausMenor16
                       ).map((item, index) => (
@@ -370,10 +332,10 @@ export default function VisualizarAluno() {
 
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
-                      value={(aluno.grau ?? 0) > 0 ? aluno.grau : "Nenhum"}
-                      onChange={(e) => handleChange("grau", e.target.value)}
+                      value={((alunoEditado.form?.rating ?? 0) > 0 ? alunoEditado.form?.rating : "Nenhum") ?? ((aluno.form?.rating ?? 0) > 0 ? aluno.form?.rating : "Nenhum")}
+                      onChange={(e) => handleChange('form',"rating", Number(e.target.value))}
                     >
-                      {Ranking[aluno.faixa].map((g) => (
+                      {Ranking[aluno.form?.rank ? aluno.form?.rank: ''].map((g) => (
                         <option key={g} value={g > 0 ? g : "Nenhum"}>
                           {g > 0 ? g : "Nenhum"}
                         </option>
@@ -391,11 +353,11 @@ export default function VisualizarAluno() {
                     </div>
 
                     <p className="text-sm text-right mt-1 text-[#1E1E1E]">
-                      {aluno.frequencia} treinos
+                      {aluno.form?.frequencie} treinos
                     </p>
 
                     <p className="text-sm text-right mt-1">
-                      {aluno.frequencia} / {freqNecessaria} treinos (
+                      {aluno.form?.frequencie} / {freqNecessaria} treinos (
                       {Math.round(percentualProgresso)}%)
                     </p>
                   </>
@@ -406,9 +368,9 @@ export default function VisualizarAluno() {
                       min={0}
                       max={100}
                       className="w-24 border border-gray-300 rounded-lg p-2 text-center"
-                      value={aluno.frequencia ?? 0}
+                      value={(alunoEditado.form?.frequencie) ?? (aluno.form?.frequencie ?? 0)}
                       onChange={(e) =>
-                        handleChange("frequencia", e.target.value)
+                        handleChange('form',"frequencie", e.target.value)
                       }
                     />
                     <span className="font-medium"></span>
@@ -421,30 +383,30 @@ export default function VisualizarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <InfoField
               label="Data de Nascimento:"
-              value={aluno.dataNascimento || ""}
+              value={(alunoEditado.personal?.birthDate) ??(aluno.personal.birthDate || "")}
               editable={isEditing}
-              onChange={(val) => handleChange("dataNascimento", val)}
+              onChange={(val) => handleChange('personal',"birthDate", maskDate(val))}
             />
 
             <InfoField
               label="Telefone:"
-              value={aluno.telefone || ""}
+              value={(alunoEditado.personal?.contact) ?? (aluno.personal.contact || "")}
               editable={isEditing}
-              onChange={(val) => handleChange("telefone", val)}
+              onChange={(val) => handleChange("personal","contact", maskTelefone(val))}
             />
 
             <InfoField
               label="CPF:"
-              value={aluno.CPF || ""}
+              value={(alunoEditado.personal?.CPF) ?? (aluno.personal.CPF || "")}
               editable={isEditing}
-              onChange={(val) => handleChange("CPF", val)}
+              onChange={(val) => handleChange("personal","CPF", maskCPF(val))}
             />
 
             <InfoField
               label="Matrícula (opcional):"
-              value={aluno.matricula || ""}
+              value={(alunoEditado.form?.enrollment) ?? (aluno.form?.enrollment || "")}
               editable={isEditing}
-              onChange={(val) => handleChange("matricula", val)}
+              onChange={(val) => handleChange("form","enrollment", val)}
             />
 
             <div className="md:col-span-2">
@@ -454,15 +416,15 @@ export default function VisualizarAluno() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
                 <InfoField
                   label=""
-                  value={aluno.Responsavel || ""}
+                  value={(alunoEditado.personal?.parent) ?? (aluno.personal.parent || "")}
                   editable={isEditing}
-                  onChange={(val) => handleChange("Responsavel", val)}
+                  onChange={(val) => handleChange('personal',"parent", val)}
                 />
                 <InfoField
                   label=""
-                  value={aluno.telefoneResponsavel || ""}
+                  value={(alunoEditado.personal?.parentContact) ?? (aluno.personal.parentContact || "")}
                   editable={isEditing}
-                  onChange={(val) => handleChange("telefoneResponsavel", val)}
+                  onChange={(val) => handleChange('personal',"parentContact", maskTelefone(val))}
                 />
               </div>
             </div>
@@ -476,9 +438,9 @@ export default function VisualizarAluno() {
                 <details className="group rounded-xl">
                   <summary className="flex justify-between items-center cursor-pointer px-6 py-4 select-none font-medium text-[#1E1E1E] list-none">
                     <span>
-                      {aluno.turmas && aluno.turmas.length > 0
-                        ? `${aluno.turmas.length} turma${
-                            aluno.turmas.length > 1 ? "s" : ""
+                      {aluno.form?.classes && aluno.form?.classes.length > 0
+                        ? `${aluno.form?.classes.length} turma${
+                            aluno.form?.classes.length > 1 ? "s" : ""
                           }`
                         : "Nenhuma turma cadastrada"}
                     </span>
@@ -497,14 +459,14 @@ export default function VisualizarAluno() {
                     </svg>
                   </summary>
 
-                  {aluno.turmas && aluno.turmas.length > 0 && (
+                  {aluno.form?.classes && aluno.form?.classes.length > 0 && (
                     <ul className="px-8 pb-4 space-y-2 text-[#1E1E1E]">
-                      {aluno.turmas.map((turma, index) => (
+                      {aluno.form?.classes.map((turma, index) => (
                         <li
                           key={index}
                           className="bg-[#EFEFEF] font-medium rounded-lg px-2 py-2 shadow-[#F1F1F1]"
                         >
-                          {typeof turma === "string" ? turma : turma.nome}
+                          {typeof turma === "string" ? turma : turma.name}
                         </li>
                       ))}
                     </ul>
@@ -515,18 +477,18 @@ export default function VisualizarAluno() {
 
             <InfoField
               label="E-mail:"
-              value={aluno.email || ""}
+              value={(alunoEditado.personal?.email) ?? (aluno.personal.email || "")}
               editable={isEditing}
-              onChange={(val) => handleChange("email", val)}
+              onChange={(val) => handleChange('personal',"email", val)}
             />
           </div>
 
           <InfoField
             label="Observações do aluno:"
-            value={aluno.observacao || ""}
+            value={(alunoEditado.form?.comments) ?? (aluno.form?.comments || "")}
             editable={isEditing}
             multiline
-            onChange={(val) => handleChange("observacao", val)}
+            onChange={(val) => handleChange('form',"comments", val)}
           />
         </div>
 
@@ -561,7 +523,7 @@ export default function VisualizarAluno() {
       <ConfirmActionModal
         isOpen={deleteModalOpen}
         title="Tem certeza que deseja apagar o aluno"
-        highlightedText={aluno?.nome}
+        highlightedText={aluno?.personal.name}
         confirmText="Sim, apagar."
         cancelText="Cancelar"
         onClose={() => setDeleteModalOpen(false)}

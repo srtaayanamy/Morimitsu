@@ -1,7 +1,7 @@
 // components/CreateAcessModal.tsx
 import { useState, useEffect } from "react";
-import { promoverAluno } from "../utils/cadastrarProfessor";
-import { pegaDadosAluno } from "../utils/getDadosAluno";
+import { StudentPromote } from "../HTTP/User/registerCoach";
+import { getStudent } from "../HTTP/Student/getStudent";
 import { ErrorMessage } from "../components/ErrorMessage";
 
 interface CreateAcessModalProps {
@@ -50,13 +50,13 @@ export default function CreateAcessModal({
     setCarregando(true);
     setEmail("");
 
-    pegaDadosAluno(alunoId).then((resultado) => {
+    getStudent(alunoId).then((resultado) => {
       if (!isMounted) return;
 
       if (typeof resultado === "string") {
         setErro(resultado);
       } else {
-        const emailDoAluno = resultado.email?.trim();
+        const emailDoAluno = resultado.personal.email?.trim();
         if (emailDoAluno && emailDoAluno.includes("@")) {
           setEmail(emailDoAluno);
         } else {
@@ -85,7 +85,7 @@ export default function CreateAcessModal({
     }
 
     setLoading(true);
-    const resultado = await promoverAluno(senha, alunoId); // sem trim!
+    const resultado = await StudentPromote(senha, alunoId); // sem trim!
     setLoading(false);
 
     if (resultado === true) {

@@ -2,10 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
-import { type Turma } from "../types/Turma";
-import { type Aluno } from "../types/Aluno";
-import { cadastrarAluno } from "../utils/CadastrarAluno";
-import { FiltrarTurmaPorIdade } from "../hooks/ListaTurmas";
+import { type Class } from "../types/Class";
+import { type Student } from "../types/Student";
+import { registerStudent } from "../HTTP/Student/registerStudent";
+import { FiltrarTurmaPorIdade } from "../hooks/ClassList";
 import {
   faixasEGrausMaior16,
   faixasEGrausMenor16,
@@ -13,7 +13,7 @@ import {
 } from "../types/Rank";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { AgeCalculator } from "../utils/AgeCalculator";
 
 export default function RegistrarAluno() {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export default function RegistrarAluno() {
   const [contato, setContato] = useState<string>("");
   const [matricula, setMatricula] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [turmas, setTurmas] = useState<Class[]>([]);
   const [turmasVinculadas, setTurmasVinculadas] = useState<string[]>([]);
   const [turmaSelecionada, setTurmaSelecionada] = useState<string>("");
   const [observacao, setoObservacao] = useState<string>("");
@@ -55,7 +55,7 @@ export default function RegistrarAluno() {
 
   useEffect(() => {
     if (!dataNascimento) return;
-    const idade = calcularIdade(dataNascimento);
+    const idade = AgeCalculator(dataNascimento);
     setAge(idade);
   }, [dataNascimento]);
 
@@ -135,25 +135,31 @@ export default function RegistrarAluno() {
 
     const rankFormated = faixa.replace("/", "_");
 
-    const novoAluno: Aluno = {
-      nome,
-      apelido,
-      dataNascimento,
-      telefone,
-      sexo,
-      CPF,
-      faixa: rankFormated,
-      grau,
-      frequencia,
-      Responsavel: responsavel,
-      telefoneResponsavel: contato,
-      matricula,
-      email,
-      observacao,
-      turmas: turmasVinculadas,
+    const novoAluno: Student = {
+      personal:{
+        name: nome,
+        nickName: apelido,
+        birthDate: dataNascimento,
+        contact: telefone,
+        gender:sexo,
+        CPF,
+        parent: responsavel,
+        parentContact: contato,       
+        email,
+        
+      },
+      form:{
+        rank: rankFormated,
+        rating: grau,
+        frequencie: frequencia,
+        enrollment:matricula,
+        comments:observacao,
+        classes: turmasVinculadas,
+      }
+      
     };
     console.log(novoAluno);
-    const result = await cadastrarAluno(novoAluno);
+    const result = await registerStudent(novoAluno);
 
     if (result === true) {
       navigate("/alunos");
@@ -261,6 +267,7 @@ export default function RegistrarAluno() {
                 className={inputBase}
                 value={formatarCPF(CPF)}
                 onChange={handleCPFChange}
+                pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}"
               />
             </div>
 
@@ -365,7 +372,7 @@ export default function RegistrarAluno() {
 
                   {turmas.map((turma) => (
                     <option key={turma.id} value={turma.id}>
-                      {turma.nome}
+                      {turma.name}
                     </option>
                   ))}
                 </select>

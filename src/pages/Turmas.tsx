@@ -2,20 +2,21 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import TurmaItem from "../components/TurmaItem";
-import { listarTurmas } from "../hooks/ListaTurmas";
-import { type Turma } from "../types/Turma";
+import { ClassList } from "../hooks/ClassList";
+import { type Class } from "../types/Class";
 import PageTitle from "../components/PageTitle";
+import Cookies from "js-cookie";
 
 export default function Turmas() {
-  const [turmas, setTurmas] = useState<Turma[]>([]);
+  const [turmas, setTurmas] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const role = localStorage.getItem("role");
+  const role = Cookies.get("role");
 
   useEffect(() => {
     const fetchTurmas = async () => {
       setLoading(true);
-      const result = await listarTurmas();
+      const result = await ClassList();
 
       if (result === false) {
         setError("Erro ao carregar turmas.");
@@ -59,11 +60,11 @@ export default function Turmas() {
             ) : (
               turmas.map((turma) => (
                 <TurmaItem
-                  key={turma.id || turma.nome}
+                  key={turma.id || turma.name}
                   id={turma.id}
-                  nome={turma.nome}
-                  idadeMin={turma.idadeMin}
-                  idadeMax={turma.idadeMax}
+                  nome={turma.name}
+                  idadeMin={turma.MinAge}
+                  idadeMax={turma.MaxAge}
                   imagem={turma.URLImage}
                 />
               ))

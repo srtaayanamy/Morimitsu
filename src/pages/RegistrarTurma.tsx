@@ -4,11 +4,11 @@ import { Plus, Clock, Pen } from "lucide-react";
 import Header from "../components/Header";
 import ImageOverlay from "../components/ImageOverlay";
 import ClockOverlay from "../components/ClockOverlay";
-import { cadastrarTurma } from "../utils/CadastrarTurma";
+import { registerClass } from "../HTTP/Class/registerClass";
 import { ErrorMessage } from "../components/ErrorMessage";
 import PageTitle from "../components/PageTitle";
-import type { Professor } from "../types/User";
-import { listarProfessores } from "../hooks/ListaProfessores";
+import type { Coach } from "../types/User";
+import { CoachList } from "../hooks/CoachsList";
 
 export default function RegistrarTurma() {
   // Estados de exibição de overlays
@@ -25,7 +25,7 @@ export default function RegistrarTurma() {
   const [nome, setNome] = useState("");
   const [coachsVinculados, setCoachsVinculados] = useState<string[]>([]);
   const [coachSelecionado, setCoachSelecionado] = useState<string>("");
-  const [coachs, setCoachs] = useState<Professor[]>([]);
+  const [coachs, setCoachs] = useState<Coach[]>([]);
   const [idadeMin, setIdadeMin] = useState(0);
   const [idadeMax, setIdadeMax] = useState(120);
   const [error, setErro] = useState<string | boolean>("");
@@ -43,7 +43,7 @@ export default function RegistrarTurma() {
   //UseEffet para executar função de listarTurmas seja executada retornando a lista de professores
   useEffect(() => {
     const fetchProfessores = async () => {
-      const result = await listarProfessores();
+      const result = await CoachList();
 
       if (typeof result === "string") {
         return;
@@ -73,7 +73,7 @@ export default function RegistrarTurma() {
 
   //Função para registrar turma
   async function RegisterTurma() {
-    const result = await cadastrarTurma(
+    const result = await registerClass(
       nome,
       idadeMin,
       idadeMax,
@@ -213,7 +213,7 @@ export default function RegistrarTurma() {
                   {/*Lista os professores*/}
                   {coachs.map((coach) => (
                     <option key={coach.id} value={coach.id}>
-                      {coach.nome}
+                      {coach.student.personal.name}
                     </option>
                   ))}
                 </select>

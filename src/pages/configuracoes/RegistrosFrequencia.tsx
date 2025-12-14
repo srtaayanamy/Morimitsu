@@ -87,8 +87,8 @@ export default function RegistrosFrequencia() {
                     >
                       {new Date(freq.Date).toLocaleDateString("pt-BR")}
                     </td>
-                    <td className="py-3 px-2 text-center font-medium">{freq.class.nome}</td>
-                    <td className="py-3 px-2 text-center font-medium">{freq.teacher.nome}</td>
+                    <td className="py-3 px-2 text-center font-medium">{freq.class.name}</td>
+                    <td className="py-3 px-2 text-center font-medium">{freq.coach.student?.personal.name}</td>
                   </tr>
                 ))
               )}

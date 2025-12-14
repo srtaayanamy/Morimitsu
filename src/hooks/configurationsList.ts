@@ -1,11 +1,12 @@
 import api from "../services/api";
 import type {Graduation} from "../types/Graduation";
+import Cookies from "js-cookie";
 
 export async function configGraduantionsList(){
 
     try{
 
-        const token = localStorage.getItem('token');
+        const token = Cookies.get('token');
 
         const response = await api.get('/config',{
             headers:{

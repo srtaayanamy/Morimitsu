@@ -2,28 +2,30 @@ import Header from "../components/Header";
 import { Pen, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
-import { pegaDadosTurma } from "../utils/getDadosTurma";
-import { editaTurma } from "../utils/editarTurma";
-import { deleteTurma } from "../utils/deletarTurma";
+import { getClass } from "../HTTP/Class/getClass";
+import { editClass } from "../HTTP/Class/editClass";
+import { deleteClass } from "../HTTP/Class/deleteClass";
 
-import type { Turma } from "../types/Turma";
+import type { Class } from "../types/Class";
 
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
 import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
 
 import ImageOverlay from "../components/ImageOverlay";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { AgeCalculator } from "../utils/AgeCalculator";
 import { ErrorMessage } from "../components/ErrorMessage";
 
 export default function VisualizarTurma() {
   const { id } = useParams();
   const [erro, setErro] = useState("");
-  const [turma, setTurma] = useState<Turma>();
-  const [turmaOriginal, setTurmaOriginal] = useState<Turma>();
+  const [turma, setTurma] = useState<Class>();
+  const [ClassEdited, setClassEdited] = useState<Partial<Class>>({});
+  const [turmaOriginal, setTurmaOriginal] = useState<Class>();
   const [isEditing, setIsEditing] = useState(false);
-  const role = localStorage.getItem("role");
+  const role = Cookies.get("role");
 
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
@@ -34,7 +36,7 @@ export default function VisualizarTurma() {
   useEffect(() => {
     async function fetchTurma() {
       if (!id) return;
-      const result = await pegaDadosTurma(id);
+      const result = await getClass(id);
 
       if (typeof result === "string") {
         setErro(result);
@@ -52,42 +54,51 @@ export default function VisualizarTurma() {
     fetchTurma();
   }, [id]);
 
-  const handleChange = (field: keyof Turma, value: any) => {
+  const handleChange = <K extends keyof Class>(field: K, value: Class[K]) => {
     if (!turma) return;
-    setTurma({ ...turma, [field]: value });
+
+    // Atualiza a UI
+    setTurma((prev) =>
+      prev ? { ...prev, [field]: value } : prev
+    );
+
+    // Salva somente o que foi editado
+    setClassEdited((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleCancel = () => {
     setTurma(turmaOriginal);
+    setClassEdited({});
     setIsEditing(false);
   };
 
   const handleSave = async () => {
     if (!id || !turma) return;
-    const edit: Partial<Record<keyof Turma, Turma[keyof Turma]>> = {};
-
-    for (const key in turma) {
-      const campoKey = key as keyof Turma;
-
-      if (!turmaOriginal) return;
-
-      if (turma[campoKey] !== turmaOriginal[campoKey]) {
-        edit[campoKey] = turma[campoKey];
-      }
+    
+    if (Object.keys(ClassEdited).length === 0) {
+      return;
     }
 
-    if (Object.keys(edit).length === 0) return;
+    let coachIds: undefined | string[] = undefined;
+
+    if(ClassEdited.coachs){
+      coachIds = ClassEdited.coachs.map((item) => item.id);
+    }
 
     const dadosAtualizados = {
-      name: edit.nome,
-      minAge: edit.idadeMin !== undefined ? Number(edit.idadeMin) : undefined,
-      maxAge: edit.idadeMax !== undefined ? Number(edit.idadeMax) : undefined,
-      startTime: edit.horarioInicio,
-      endTime: edit.horarioFim,
-      iconURL: edit.URLImage,
+      name: ClassEdited.name,
+      minAge: ClassEdited.MinAge !== undefined ? Number(ClassEdited.MinAge) : undefined,
+      maxAge: ClassEdited.MaxAge !== undefined ? Number(ClassEdited.MaxAge) : undefined,
+      startTime: ClassEdited.startTime,
+      endTime: ClassEdited.endTime,
+      iconURL: ClassEdited.URLImage,
+      coachIds: coachIds
     };
 
-    const result = await editaTurma(id, dadosAtualizados);
+    const result = await editClass(id, dadosAtualizados);
 
     if (result === true) {
       alert("Turma atualizada com sucesso!");
@@ -101,7 +112,7 @@ export default function VisualizarTurma() {
   async function handleConfirmDelete() {
     if (!id) return;
 
-    const result = await deleteTurma(id);
+    const result = await deleteClass(id);
     if (result === true) navigate("/turmas");
     else alert(result);
 
@@ -126,13 +137,13 @@ export default function VisualizarTurma() {
         {/* Cabeçalho */}
         <div className="bg-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
           {!isEditing ? (
-            <h1 className="text-3xl font-semibold">{turma.nome}</h1>
+            <h1 className="text-3xl font-semibold">{turma.name}</h1>
           ) : (
             <input
               type="text"
               className="border border-gray-200 p-2 rounded-md w-full md:w-1/2"
-              value={turma.nome}
-              onChange={(e) => handleChange("nome", e.target.value)}
+              value={ClassEdited.name ?? turma.name}
+              onChange={(e) => handleChange("name", e.target.value)}
             />
           )}
 
@@ -202,9 +213,9 @@ export default function VisualizarTurma() {
               <details className="group rounded-xl">
                 <summary className="flex justify-between items-center cursor-pointer px-5 py-3 select-none font-mono text-[#1E1E1E] list-none">
                   <span>
-                    {turma.professores && turma.professores.length > 0
-                      ? `${turma.professores.length} professor${
-                          turma.professores.length > 1 ? "es" : ""
+                    {turma.coachs && turma.coachs.length > 0
+                      ? `${turma.coachs.length} professor${
+                          turma.coachs.length > 1 ? "es" : ""
                         }`
                       : "Nenhum professor vinculado"}
                   </span>
@@ -224,14 +235,14 @@ export default function VisualizarTurma() {
                   </svg>
                 </summary>
 
-                {turma.professores && turma.professores.length > 0 && (
+                {turma.coachs && turma.coachs.length > 0 && (
                   <ul className="px-8 pb-4 space-y-2 text-[#1E1E1E]">
-                    {turma.professores.map((prof, index) => (
+                    {turma.coachs.map((prof, index) => (
                       <li
                         key={index}
                         className="bg-[#F5F5F5] font-mono rounded-lg px-3 py-2 shadow-[#F1F1F1]"
                       >
-                        {typeof prof === "string" ? prof : prof.nome}
+                        {typeof prof === "string" ? prof : prof.student.personal.name}
                       </li>
                     ))}
                   </ul>
@@ -244,7 +255,7 @@ export default function VisualizarTurma() {
             <div className="flex-1">
               <p className="text-xs md:text-sm font-medium">Total de alunos:</p>
               <p className="bg-[#F5F5F5] mt-1 p-2 md:p-3 rounded-xl mx-auto w-32 md:w-40 text-sm md:text-base">
-                {turma.numAlunos}
+                {turma.numStudents}
               </p>
             </div>
 
@@ -253,21 +264,21 @@ export default function VisualizarTurma() {
 
               {!isEditing ? (
                 <p className="bg-[#F5F5F5] mt-1 p-2 md:p-3 rounded-xl mx-auto w-32 md:w-40 text-sm md:text-base">
-                  {turma.idadeMin} a {turma.idadeMax} anos
+                  {turma.MinAge} a {turma.MaxAge} anos
                 </p>
               ) : (
                 <div className="flex justify-center gap-2 mt-1">
                   <input
                     type="number"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
-                    value={turma.idadeMin}
-                    onChange={(e) => handleChange("idadeMin", e.target.value)}
+                    value={ClassEdited.MaxAge ?? turma.MinAge}
+                    onChange={(e) => handleChange("MinAge", typeof e.target.value === 'string' ? Number(e.target.value) : e.target.value)}
                   />
                   <input
                     type="number"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
-                    value={turma.idadeMax}
-                    onChange={(e) => handleChange("idadeMax", e.target.value)}
+                    value={ClassEdited.MaxAge ?? turma.MaxAge}
+                    onChange={(e) => handleChange("MaxAge", typeof e.target.value === 'string' ? Number(e.target.value) : e.target.value)}
                   />
                 </div>
               )}
@@ -278,24 +289,24 @@ export default function VisualizarTurma() {
 
               {!isEditing ? (
                 <p className="bg-[#F5F5F5] mt-1 p-2 md:p-3 rounded-xl mx-auto w-32 md:w-40 text-sm md:text-base">
-                  {turma.horarioInicio} → {turma.horarioFim}
+                  {turma.startTime} → {turma.endTime}
                 </p>
               ) : (
                 <div className="flex justify-center gap-2 mt-1">
                   <input
                     type="time"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
-                    value={turma.horarioInicio}
+                    value={ClassEdited.startTime ?? turma.startTime}
                     onChange={(e) =>
-                      handleChange("horarioInicio", e.target.value)
+                      handleChange("startTime", e.target.value)
                     }
                   />
 
                   <input
                     type="time"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
-                    value={turma.horarioFim}
-                    onChange={(e) => handleChange("horarioFim", e.target.value)}
+                    value={ClassEdited.endTime ?? turma.endTime}
+                    onChange={(e) => handleChange("endTime", e.target.value)}
                   />
                 </div>
               )}
@@ -382,16 +393,16 @@ export default function VisualizarTurma() {
               </thead>
 
               <tbody>
-                {turma.alunos?.map((a) => (
+                {turma.students?.map((a) => (
                   <tr
                     key={a.id}
                     onClick={() => navigate(`/visualizar-aluno/${a.id}`)}
                     className="bg-[#F5F5F5] rounded-xl hover:bg-gray-100 cursor-pointer"
                   >
-                    <td className="p-3 rounded-l-xl">{a.nome}</td>
-                    <td className="p-3">{a.apelido}</td>
+                    <td className="p-3 rounded-l-xl">{a.personal.name}</td>
+                    <td className="p-3">{a.personal.nickName}</td>
                     <td className="py-3 px-6 text-center">
-                      <BeltTag faixa={a.faixa} grau={a.grau} />
+                      <BeltTag faixa={a.form?.rank} grau={a.form?.rating} />
                     </td>
                   </tr>
                 ))}
@@ -401,7 +412,7 @@ export default function VisualizarTurma() {
 
           {/* MOBILE */}
           <div className="md:hidden space-y-2 mt-4">
-            {turma.alunos?.map((a) => (
+            {turma.students?.map((a) => (
               <Link
                 key={a.id}
                 to={`/visualizar-aluno/${a.id}`}
@@ -409,8 +420,8 @@ export default function VisualizarTurma() {
               >
                 <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                   <Avatar
-                    sexo={a.sexo}
-                    idade={calcularIdade(a.dataNascimento)}
+                    sexo={a.personal.gender}
+                    idade={AgeCalculator(a.personal.birthDate ? a.personal.birthDate: '')}
                     size={40}
                     noWrapper
                   />
@@ -418,18 +429,18 @@ export default function VisualizarTurma() {
 
                 <div className="flex-1">
                   <p className="font-semibold text-[#1E1E1E] text-[0.95rem] leading-tight">
-                    {a.nome}
+                    {a.personal.name}
                   </p>
                   <span className="text-xs text-gray-600">
-                    {a.apelido || "—"}
+                    {a.personal.nickName || "—"}
                   </span>
                 </div>
 
                 <div className="flex flex-col items-center justify-center px-1">
                   <div className="bg-white p-2 rounded-xl w-20 shadow-sm flex flex-col items-center justify-center">
-                    <BeltTag faixa={a.faixa} grau={a.grau} />
+                    <BeltTag faixa={a.form?.rank} grau={a.form?.rating} />
                     <p className="text-[0.6rem] font-semibold">
-                      Grau: {a.grau}
+                      Grau: {a.form?.rank}
                     </p>
                   </div>
                 </div>
@@ -440,7 +451,7 @@ export default function VisualizarTurma() {
 
         <ConfirmDeleteClassModal
           isOpen={isDeleteOpen}
-          turmaNome={turma.nome}
+          turmaNome={turma.name}
           onClose={() => setIsDeleteOpen(false)}
           onConfirm={handleConfirmDelete}
         />

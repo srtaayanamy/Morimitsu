@@ -2,21 +2,21 @@ import Header from "../components/Header";
 import PageTitle from "../components/PageTitle";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { pegaDadosTurma } from "../utils/getDadosTurma";
-import { removeAlunoDaTurma } from "../utils/removerAlunoDaTurma";
-import type { Turma } from "../types/Turma";
-import type { Aluno } from "../types/Aluno";
+import { getClass } from "../HTTP/Class/getClass";
+import { removeStudentInClass } from "../HTTP/Student/removeStudentInClass";
+import type { Class } from "../types/Class";
+import type { Student } from "../types/Student";
 import SuccessAlert from "../components/SuccessAlert";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { Avatar } from "../components/Avatar";
-import { calcularIdade } from "../utils/CalcularIdade";
+import { AgeCalculator } from "../utils/AgeCalculator";
 
 export default function RemoverAlunosTurma() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [turma, setTurma] = useState<Turma>();
-  const [alunos, setAlunos] = useState<Aluno[]>([]);
+  const [turma, setTurma] = useState<Class>();
+  const [alunos, setAlunos] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | boolean>("");
 
@@ -28,13 +28,13 @@ export default function RemoverAlunosTurma() {
     async function fetchData() {
       if (!id) return;
 
-      const dados = await pegaDadosTurma(id);
+      const dados = await getClass(id);
 
       if (typeof dados === "string") {
         setErro(dados);
       } else {
         setTurma(dados);
-        setAlunos(dados.alunos || []);
+        setAlunos(dados.students || []);
       }
 
       setLoading(false);
@@ -66,12 +66,11 @@ export default function RemoverAlunosTurma() {
     let erros = 0;
 
     for (const idAluno of ids) {
-      const result = await removeAlunoDaTurma(idAluno, id);
+      const result = await removeStudentInClass(idAluno, id);
 
       // Se houver um erro diferente da mensagem padrão, conta como erro
       if (
-        typeof result === "string" &&
-        result !== "Aluno removido com sucesso."
+        typeof result === "string"
       ) {
         erros++;
       }
@@ -101,7 +100,7 @@ export default function RemoverAlunosTurma() {
         <PageTitle
           title={
             <span>
-              Remover alunos da turma <strong>{turma?.nome}</strong>
+              Remover alunos da turma <strong>{turma?.name}</strong>
             </span>
           }
         >
@@ -155,8 +154,8 @@ export default function RemoverAlunosTurma() {
                         key={idStr}
                         className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
                       >
-                        <td className="py-3 px-6 font-medium">{aluno.nome}</td>
-                        <td className="py-3 px-6">{aluno.apelido || "—"}</td>
+                        <td className="py-3 px-6 font-medium">{aluno.personal.name}</td>
+                        <td className="py-3 px-6">{aluno.personal.nickName || "—"}</td>
 
                         <td className="py-3 px-6 text-center">
                           <input
@@ -186,17 +185,17 @@ export default function RemoverAlunosTurma() {
                   >
                     <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                       <Avatar
-                        sexo={aluno.sexo}
-                        idade={calcularIdade(aluno.dataNascimento)}
+                        sexo={aluno.personal.gender}
+                        idade={AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate : '')}
                         size={40}
                         noWrapper
                       />
                     </div>
 
                     <div className="flex-1">
-                      <p className="font-semibold text-sm">{aluno.nome}</p>
+                      <p className="font-semibold text-sm">{aluno.personal.name}</p>
                       <span className="text-xs text-gray-600">
-                        {aluno.apelido || "—"}
+                        {aluno.personal.name || "—"}
                       </span>
                     </div>
 

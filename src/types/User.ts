@@ -1,23 +1,11 @@
+import type { Class } from "./Class";
+import type { Student } from "./Student";
+
 //Interface de aluno
-export type Professor = {
+export type Coach = {
     id: string;
-    studentId: string;
-    nome: string;
-    apelido?: string;
-    email:string;
-    senha: string;
-    dataNascimento: string;
-    telefone: string;
-    sexo: string;
-    CPF: string;
-    faixa: string;
-    grau?: number;
-    frequencia: number;
-    Responsavel?: string;
-    telefoneResponsavel?: string;
-    matricula?: string; 
-    observacao?: string;
-    turmas?: string[];
+    ResponsibleClasses?: Class[];
+    student: Student;
 }
 
 export type notification = {

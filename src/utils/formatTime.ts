@@ -1,0 +1,39 @@
+export function formatTime(time:string){
+    
+    //Verifica se horário é padrão que retorna da API
+    if (time === '1970-01-01T00:00:00.000Z') return '00:00';
+
+    const beforeTime = new Date(time);
+    
+    const formatedTime = beforeTime.toLocaleString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    return formatedTime;
+};
+
+
+//Transforma uma data, organizada conforme o metodo brasileiro, em um formato ISO string
+export function parseDateBRToISO(dateBR: string): string | null {
+  const [day, month, year] = dateBR.split("/");
+
+  if (!day || !month || !year) return null;
+
+  const iso = `${year}-${month}-${day}`;
+  const date = new Date(iso);
+
+  return isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+//Transforma data ISO string para o formato da data brasileira
+export function formatData(dataISO: string) {
+  if (!dataISO) return "Não informada";
+  const data = new Date(dataISO);
+  return data.toLocaleDateString("pt-BR");
+}
+
+export function parseBRDate(dateStr: string) {
+    const [dia, mes, ano] = dateStr.split("/");
+    return `${ano}-${mes}-${dia}`; // yyyy-mm-dd
+}

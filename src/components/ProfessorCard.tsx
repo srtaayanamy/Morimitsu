@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import type { Professor } from "../types/User";
+import type { Coach } from "../types/User";
 import martialArts from "../assets/presets/martial-arts.png";
 import { Trash2 } from "lucide-react";
-import { deleteUser } from "../utils/deleteUser";
+import { deleteUser } from "../HTTP/User/deleteUser";
 
 interface ProfessorCardProps {
-  professor: Professor;
+  professor: Coach;
   editMode?: boolean;
 }
 
@@ -13,7 +13,7 @@ export default function ProfessorCard({ professor, editMode }: ProfessorCardProp
   
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
-      `Deseja realmente excluir o professor ${professor.nome}?`
+      `Deseja realmente excluir o professor ${professor.student.personal.name}?`
     );
     if (!confirmDelete) return;
 
@@ -32,7 +32,7 @@ export default function ProfessorCard({ professor, editMode }: ProfessorCardProp
 
       {/* Avatar */}
       <Link
-        to={`/visualizar-aluno/${professor.studentId}`}
+        to={`/visualizar-aluno/${professor.student.id}`}
         className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center shrink-0"
       >
         <img src={martialArts} alt="avatar" className="w-18 h-18" />
@@ -42,11 +42,11 @@ export default function ProfessorCard({ professor, editMode }: ProfessorCardProp
       <div className="flex flex-1 items-center justify-between">
 
         <Link
-          to={`/visualizar-aluno/${professor.studentId}`}
+          to={`/visualizar-aluno/${professor.student.id}`}
           className="flex flex-col text-left"
         >
           <span className="text-lg font-semibold text-[#1E1E1E]">
-            {professor.nome}
+            {professor.student.personal.name}
           </span>
         </Link>
 
@@ -63,7 +63,7 @@ export default function ProfessorCard({ professor, editMode }: ProfessorCardProp
         {/* BOTÃO MOBILE NORMAL */}
         {!editMode && (
           <Link
-            to={`/visualizar-aluno/${professor.studentId}`}
+            to={`/visualizar-aluno/${professor.student.id}`}
             className="block md:hidden bg-[#1E1E1E] text-white px-4 py-2 rounded-xl text-sm font-medium shadow-md"
           >
             Acessar dados

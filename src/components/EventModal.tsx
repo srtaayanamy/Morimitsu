@@ -4,7 +4,7 @@ type EventModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: { nome: string; data: string; turma: string }) => void;
-  turmas: { id: string; nome: string }[];
+  turmas: { id: string; name: string }[];
 };
 
 export default function EventModal({
@@ -67,7 +67,7 @@ export default function EventModal({
           <option value="">Selecione</option>
           {turmas?.map((t) => (
             <option key={t.id} value={t.id}>
-              {t.nome}
+              {t.name}
             </option>
           ))}
         </select>

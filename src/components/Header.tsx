@@ -1,19 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Bell, Search, Menu, X, Filter, Settings } from "lucide-react";
 import Logo from "../assets/Logo.png";
 import NotificationModal from "./NotificationModal";
 import type { notification } from "../types/User";
 import FilterOverlay from "./FilterOverlay";
+import { userNotifications } from "../HTTP/User/notifications";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [notifications] = useState<notification[] | string>("");
+  const [notifications, setNotifications] = useState<notification[] | string>("");
   const role = localStorage.getItem("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
 
+  useEffect(() =>{
+    const fetchNotifications =  async () => {
+      const result = await userNotifications();
+
+      if(typeof userNotifications !== 'string'){
+        setNotifications(result);
+      }
+    }
+
+    fetchNotifications()
+  }, [])
   // controla o dropdown de busca no mobile
   const [showMobileSearch, setShowMobileSearch] = useState(false);
 
