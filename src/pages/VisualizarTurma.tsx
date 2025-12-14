@@ -2,20 +2,27 @@ import Header from "../components/Header";
 import { Pen, SquarePen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-
 import { pegaDadosTurma } from "../utils/getDadosTurma";
 import { editaTurma } from "../utils/editarTurma";
 import { deleteTurma } from "../utils/deletarTurma";
-
 import type { Turma } from "../types/Turma";
-
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
 import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
-
 import ImageOverlay from "../components/ImageOverlay";
 import { calcularIdade } from "../utils/CalcularIdade";
 import { ErrorMessage } from "../components/ErrorMessage";
+
+import cap1 from "../assets/presets/capaturma1.png";
+import cap2 from "../assets/presets/capaturma2.png";
+import cap3 from "../assets/presets/capaturma3.png";
+import cap4 from "../assets/presets/capaturma4.png";
+import cap5 from "../assets/presets/capaturma5.png";
+import cap6 from "../assets/presets/capaturma6.png";
+import cap7 from "../assets/presets/capaturma7.png";
+import cap8 from "../assets/presets/capaturma8.png";
+
+const capasTurma = [cap1, cap2, cap3, cap4, cap5, cap6, cap7, cap8];
 
 export default function VisualizarTurma() {
   const { id } = useParams();
@@ -462,13 +469,11 @@ export default function VisualizarTurma() {
 
         {isOverlayOpen && (
           <ImageOverlay
+            images={capasTurma}
             selectedImage={selectedImage}
             setSelectedImage={(index) => {
               setSelectedImage(index);
-              handleChange(
-                "URLImage",
-                `/src/assets/presets/capaturma${index + 1}.png`
-              );
+              handleChange("URLImage", capasTurma[index]);
             }}
             onClose={() => setIsOverlayOpen(false)}
           />
