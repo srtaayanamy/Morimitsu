@@ -305,6 +305,7 @@ export default function RegistrarTurma() {
       {/* Overlays */}
       {showImageOverlay && (
         <ImageOverlay
+          images={capasTurma}
           selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
           onClose={() => setShowImageOverlay(false)}
