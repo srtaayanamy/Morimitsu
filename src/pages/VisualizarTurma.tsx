@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-import { Pen, SquarePen } from "lucide-react";
+import { Pen, SquarePen, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 
@@ -229,9 +229,24 @@ export default function VisualizarTurma() {
                     {turma.professores.map((prof, index) => (
                       <li
                         key={index}
-                        className="bg-[#F5F5F5] font-mono rounded-lg px-3 py-2 shadow-[#F1F1F1]"
+                        className="bg-[#F5F5F5] font-mono rounded-lg px-3 py-2 shadow-[#F1F1F1]
+             flex items-center justify-between"
                       >
-                        {typeof prof === "string" ? prof : prof.nome}
+                        <span>
+                          {typeof prof === "string" ? prof : prof.nome}
+                        </span>
+
+                        {isEditing && (
+                          <button
+                            className="text-black-600 hover:text-black-800 cursor-pointer"
+                            title="Remover professor da turma"
+                            onClick={() => {
+                              // ação de remoção será ligada depois
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </li>
                     ))}
                   </ul>
