@@ -33,6 +33,7 @@ export default function TelaInicial() {
 
   const abrirModal = () => setModalOpen(true);
   const fecharModal = () => setModalOpen(false);
+  const [editandoCalendario, setEditandoCalendario] = useState(false);
 
   const salvarEvento = async (data: {
     nome: string;
@@ -271,17 +272,44 @@ export default function TelaInicial() {
             <h2 className="text-lg sm:text-xl text-[#1E1E1E] font-semibold mb-3">
               Calendário
             </h2>
-            <div className="flex flex-row gap-2 sm:gap-3 items-center">
-              <SquarePen className="w-7 h-7 sm:w-9 sm:h-9 text-[#1E1E1E]" />
 
-              <button
-                onClick={abrirModal}
-                className="bg-black cursor-pointer text-white rounded-md px-3 py-1.5 text-sm sm:text-md sm:px-4 sm:py-2 hover:bg-gray-800 transition flex items-center gap-2"
-              >
-                Criar novo evento
-              </button>
-            </div>
+            {/* AÇÕES */}
+            {!editandoCalendario ? (
+              <div className="flex flex-row gap-2 sm:gap-3 items-center">
+                <button
+                  onClick={() => setEditandoCalendario(true)}
+                  className="flex items-center gap-2 text-[#1E1E1E] hover:opacity-70 transition"
+                >
+                  <SquarePen className="w-7 h-7 sm:w-9 sm:h-9 cursor-pointer" />
+                  <span className="hidden sm:inline font-medium"></span>
+                </button>
+
+                <button
+                  onClick={abrirModal}
+                  className="bg-black cursor-pointer text-white rounded-md px-3 py-1.5 text-sm sm:text-md sm:px-4 sm:py-2 hover:bg-gray-800 transition flex items-center gap-2"
+                >
+                  Criar novo evento
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2 sm:gap-3">
+                <button
+                  onClick={() => setEditandoCalendario(false)}
+                  className="bg-[#7F1A17] text-white rounded-md px-3 py-1.5 sm:px-4 sm:py-2 text-sm hover:opacity-90 transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={() => setEditandoCalendario(false)}
+                  className="bg-black text-white rounded-md px-3 py-1.5 sm:px-4 sm:py-2 text-sm hover:bg-gray-800 transition cursor-pointer"
+                >
+                  Salvar alterações
+                </button>
+              </div>
+            )}
           </div>
+
           {/* conteúdo do calendário */}
           <Calendario events={events} />
         </SectionCard>

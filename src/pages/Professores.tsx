@@ -41,10 +41,20 @@ export default function Professores() {
         <PageTitle title="Professores:">
           {/* DESKTOP */}
           <div className="hidden md:flex flex-row items-center p-2 gap-3">
-            <SquarePen
-              className="w-9 h-9 text-[#1E1E1E] cursor-pointer"
-              onClick={() => setEditMode(!editMode)}
-            />
+            {!editMode ? (
+              <SquarePen
+                className="w-9 h-9 text-[#1E1E1E] cursor-pointer"
+                onClick={() => setEditMode(true)}
+              />
+            ) : (
+              <button
+                onClick={() => setEditMode(false)}
+                className="px-4 py-2 rounded-xl bg-[#7F1A17] text-white text-sm font-medium hover:opacity-90 transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+            )}
+
             <Link to="/alunos-aptos">
               <button
                 type="button"
@@ -58,10 +68,19 @@ export default function Professores() {
 
         {/* MOBILE */}
         <div className="flex md:hidden flex-row items-center justify-end gap-2 mt-1">
-          <SquarePen
-            className="w-6 h-6 text-[#1E1E1E] cursor-pointer"
-            onClick={() => setEditMode(!editMode)}
-          />
+          {!editMode ? (
+            <SquarePen
+              className="w-6 h-6 text-[#1E1E1E] cursor-pointer"
+              onClick={() => setEditMode(true)}
+            />
+          ) : (
+            <button
+              onClick={() => setEditMode(false)}
+              className="px-3 py-1.5 rounded-lg bg-[#7F1A17] text-white text-xs font-medium hover:opacity-90 transition"
+            >
+              Cancelar
+            </button>
+          )}
 
           <Link to="/alunos-aptos">
             <button

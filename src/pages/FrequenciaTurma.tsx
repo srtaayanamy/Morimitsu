@@ -164,6 +164,11 @@ export default function FrequenciaTurma() {
 
           {/* MOBILE — CARDS IGUAIS À TELA DE ALUNOS */}
           <div className="md:hidden space-y-3">
+            <div className="flex justify-end pr-2">
+              <span className="text-sm text-gray-600 font-medium">
+                Está presente
+              </span>
+            </div>
             {students.map((aluno) => (
               <div
                 key={aluno.id}
