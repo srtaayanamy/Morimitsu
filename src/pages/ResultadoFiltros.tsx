@@ -10,9 +10,10 @@ import { AgeCalculator } from "../utils/AgeCalculator";
 export default function ResultadoFiltros() {
   const [searchParams] = useSearchParams();
 
-  const turma = searchParams.get("turma");
-  const mes = searchParams.get("mes"); // 0–11
-  const faixa = searchParams.get("faixa");
+  const classid = searchParams.get("classid");
+  const mes = searchParams.get("mes");
+  const minAge = searchParams.get("minAge");
+  const maxAge = searchParams.get("maxAge");
 
   const [resultados, setResultados] = useState<Student[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -24,22 +25,35 @@ export default function ResultadoFiltros() {
 
       let filtrados = alunos;
 
-      // NAO FUNCIONA AINDA
-      if (turma) {
-        
-      }
-
-      // filtro por mês de aniversário
-      if (mes !== null) {
+      // FILTRAR POR TURMA
+      if (classid) {
         filtrados = filtrados.filter((a) => {
-          const data = new Date(a.personal.birthDate ? a.personal.birthDate: '');
-          return data.getMonth() === Number(mes);
+          console.log("Aluno:", a.personal.name);
+          console.log("Classes:", a.form?.classes);
+          console.log("ClassID filtro:", classid);
+
+          return true;
         });
       }
 
-      // filtro por faixa
-      if (faixa) {
-        filtrados = filtrados.filter((a) => a.form?.rank === faixa);
+      // FILTRO POR MÊS
+      if (mes !== null && mes !== "") {
+        filtrados = filtrados.filter((a) => {
+          if (!a.personal.birthDate) return false;
+          return new Date(a.personal.birthDate).getMonth() === Number(mes);
+        });
+      }
+
+      // FILTRO POR FAIXA ETÁRIA
+      if (minAge !== null || maxAge !== null) {
+        filtrados = filtrados.filter((a) => {
+          const idade = AgeCalculator(a.personal.birthDate ?? "");
+
+          if (minAge && idade < Number(minAge)) return false;
+          if (maxAge && idade > Number(maxAge)) return false;
+
+          return true;
+        });
       }
 
       setResultados(filtrados);
@@ -47,7 +61,7 @@ export default function ResultadoFiltros() {
     }
 
     carregar();
-  }, [turma, mes, faixa]);
+  }, [classid, mes, minAge, maxAge]);
 
   if (carregando) {
     return (
@@ -111,7 +125,10 @@ export default function ResultadoFiltros() {
                         </td>
 
                         <td className="py-3 px-6 text-center">
-                          <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
+                          <BeltTag
+                            faixa={aluno.form?.rank}
+                            grau={aluno.form?.rating}
+                          />
                         </td>
                       </tr>
                     ))}
@@ -130,7 +147,11 @@ export default function ResultadoFiltros() {
                     <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center">
                       <Avatar
                         sexo={aluno.personal.gender}
-                        idade={AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate : '')}
+                        idade={AgeCalculator(
+                          aluno.personal.birthDate
+                            ? aluno.personal.birthDate
+                            : ""
+                        )}
                         size={40}
                         noWrapper
                       />
@@ -146,7 +167,10 @@ export default function ResultadoFiltros() {
                     </div>
 
                     <div className="bg-white p-2 rounded-xl w-20 shadow-sm flex flex-col items-center">
-                      <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
+                      <BeltTag
+                        faixa={aluno.form?.rank}
+                        grau={aluno.form?.rating}
+                      />
                       <p className="text-[0.6rem] font-semibold">
                         Grau: {aluno.form?.rating}
                       </p>
