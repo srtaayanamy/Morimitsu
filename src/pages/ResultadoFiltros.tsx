@@ -28,11 +28,16 @@ export default function ResultadoFiltros() {
       // FILTRAR POR TURMA
       if (classid) {
         filtrados = filtrados.filter((a) => {
-          console.log("Aluno:", a.personal.name);
-          console.log("Classes:", a.form?.classes);
-          console.log("ClassID filtro:", classid);
+          const classes = a.form?.classes;
+          if (!classes) return false;
 
-          return true;
+          // classes como string[]
+          if (typeof classes[0] === "string") {
+            return (classes as string[]).includes(classid);
+          }
+
+          // classes como Class[]
+          return (classes as any[]).some((c) => c.id === classid);
         });
       }
 
