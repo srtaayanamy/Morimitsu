@@ -1,10 +1,12 @@
 interface ImageOverlayProps {
+  images: string[];
   selectedImage: number | null;
   setSelectedImage: (index: number) => void;
   onClose: () => void;
 }
 
 export default function ImageOverlay({
+  images,
   selectedImage,
   setSelectedImage,
   onClose,
@@ -17,7 +19,7 @@ export default function ImageOverlay({
         </h2>
 
         <div className="grid grid-cols-4 gap-3 justify-items-center mb-6">
-          {[...Array(8)].map((_, index) => (
+          {images.map((img, index) => (
             <button
               key={index}
               onClick={() => setSelectedImage(index)}
@@ -28,7 +30,7 @@ export default function ImageOverlay({
               }`}
             >
               <img
-                src={`/src/assets/presets/capaturma${index + 1}.png`}
+                src={img}
                 alt={`Imagem ${index + 1}`}
                 className="w-full h-full object-cover"
               />

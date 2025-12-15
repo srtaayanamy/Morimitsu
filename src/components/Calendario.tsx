@@ -12,7 +12,7 @@ import {
   isToday,
   addMonths,
   subMonths,
-  isSameDay
+  isSameDay,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import SectionCard from "../components/SectionCard";
@@ -44,7 +44,6 @@ export default function Calendario({ events = [] }: Props) {
   return (
     <SectionCard>
       <div className="flex flex-col h-auto lg:flex-row justify-between pr-3">
-
         {/* Lista lateral */}
         <div className="space-y-4 min-w-[260px]">
           <h3 className="text-md font-semibold text-red-800">
@@ -58,18 +57,32 @@ export default function Calendario({ events = [] }: Props) {
           )}
 
           {monthEvents.length > 0 && (
-            <div className="space-y-2">
-              {monthEvents.map((e) => (
-                <div
-                  key={e.id}
-                  className="p-2 bg-white shadow rounded border border-gray-200"
-                >
-                  <p className="font-semibold">{e.title}</p>
-                  <p className="text-sm text-gray-600">
-                    {format(new Date(e.event_date), "dd/MM/yyyy")}
-                  </p>
-                </div>
-              ))}
+            <div className="space-y-4">
+              {monthEvents.map((e) => {
+                const date = new Date(e.event_date);
+
+                return (
+                  <div key={e.id} className="flex items-center gap-3">
+                    {/* Dia */}
+                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
+                      {format(date, "d")}
+                    </div>
+
+                    {/* Texto */}
+                    <div className="text-sm">
+                      <p className="font-medium text-gray-900">
+                        {e.title}
+                        {e.class?.name && (
+                          <span className="text-gray-600">
+                            {" "}
+                            ({e.class.name})
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -136,7 +149,6 @@ export default function Calendario({ events = [] }: Props) {
                   {dayEvents.length > 0 && (
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full"></div>
                   )}
-
                 </div>
               );
             })}

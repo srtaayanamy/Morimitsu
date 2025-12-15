@@ -108,20 +108,21 @@ export default function FrequenciaTurma() {
         </PageTitle>
 
         {/* CARD PRINCIPAL */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-10">
-          <div>
+        <div className="bg-white p-4 md:p-8 rounded-2xl shadow-sm flex flex-col items-center gap-6">
+          {/* IMAGEM */}
+          <div className="flex justify-center">
             {turma.URLImage ? (
               <img
                 src={turma.URLImage}
-                className="w-36 h-36 rounded-full object-cover"
+                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover"
               />
             ) : (
-              <div className="w-36 h-36 bg-gray-200 rounded-full flex items-center justify-center">
+              <div className="w-28 h-28 md:w-36 md:h-36 bg-gray-200 rounded-full flex items-center justify-center text-sm">
                 Foto
               </div>
             )}
           </div>
-
+          
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="sm:col-span-3 w-full">
               <p className="text-sm font-medium">Professor responsável:</p>
@@ -159,6 +160,11 @@ export default function FrequenciaTurma() {
 
           {/* MOBILE — CARDS IGUAIS À TELA DE ALUNOS */}
           <div className="md:hidden space-y-3">
+            <div className="flex justify-end pr-2">
+              <span className="text-sm text-gray-600 font-medium">
+                Está presente
+              </span>
+            </div>
             {students.map((aluno) => (
               <div
                 key={aluno.id}

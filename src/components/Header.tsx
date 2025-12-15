@@ -40,7 +40,8 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-[#8B0000] text-white flex items-center justify-between px-6 py-3 shadow-md relative">
+    <header className="bg-[#8B0000] text-white flex items-center justify-between px-4 sm:px-6 py-3 shadow-md relative">
+
       {/* LOGO E NOME */}
       <Link to="/inicio" className="cursor-pointer">
         <div className="flex items-center gap-3">

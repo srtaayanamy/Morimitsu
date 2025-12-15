@@ -76,7 +76,7 @@ export async function StudentList(filters?:StudentParams) {
   }
 }
 
-export async function filtrarAniversariantes() {
+export async function filtrarAniversariantes(mes?: number) {
   const students = await StudentList();
   //Verifica se o retorno de alunos é diferente do tipo aluno
   if (typeof students === 'string') {
@@ -85,18 +85,14 @@ export async function filtrarAniversariantes() {
   //Declara vairável do tipo aluno que guarda os aniversariantes do mês
   const birthdayPeople: Student[] = [];
 
-  //Estrutura de repetição que indentifica se o aluno faz aniversário no mês atual
-  for (const student of students) {
-    if(student.personal.birthDate){
-      const birthDate = new Date(student.personal.birthDate);
-      const CurrentDate = new Date();
+  const mesReferencia =
+    mes !== undefined ? mes : new Date().getMonth();
 
-      if (
-        birthDate.getMonth() === CurrentDate.getMonth() &&
-        birthDate.getDate() >= CurrentDate.getDate()
-      ) {
-        birthdayPeople.push(student);
-      }
+  for (const aluno of students) {
+    const dataNascimento = new Date(aluno.personal.birthDate ? aluno.personal.birthDate: '');
+
+    if (dataNascimento.getMonth() === mesReferencia) {
+      birthdayPeople.push(aluno);
     }
   }
 

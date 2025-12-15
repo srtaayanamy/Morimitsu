@@ -10,6 +10,26 @@ import PageTitle from "../components/PageTitle";
 import type { Coach } from "../types/User";
 import { CoachList } from "../hooks/CoachsList";
 
+import capaturma1 from "../assets/presets/capaturma1.png";
+import capaturma2 from "../assets/presets/capaturma2.png";
+import capaturma3 from "../assets/presets/capaturma3.png";
+import capaturma4 from "../assets/presets/capaturma4.png";
+import capaturma5 from "../assets/presets/capaturma5.png";
+import capaturma6 from "../assets/presets/capaturma6.png";
+import capaturma7 from "../assets/presets/capaturma7.png";
+import capaturma8 from "../assets/presets/capaturma8.png";
+
+const capasTurma = [
+  capaturma1,
+  capaturma2,
+  capaturma3,
+  capaturma4,
+  capaturma5,
+  capaturma6,
+  capaturma7,
+  capaturma8,
+];
+
 export default function RegistrarTurma() {
   // Estados de exibição de overlays
   const [showImageOverlay, setShowImageOverlay] = useState(false);
@@ -21,7 +41,7 @@ export default function RegistrarTurma() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [inicio, setInicio] = useState("00:00h");
   const [fim, setFim] = useState("00:00h");
-  const [imagem, setImagem] = useState("/src/assets/presets/capaturma8.png");
+  const [imagem, setImagem] = useState<string>(capasTurma[7]);
   const [nome, setNome] = useState("");
   const [coachsVinculados, setCoachsVinculados] = useState<string[]>([]);
   const [coachSelecionado, setCoachSelecionado] = useState<string>("");
@@ -36,7 +56,7 @@ export default function RegistrarTurma() {
   //Guarda a imagem selecionada
   useEffect(() => {
     if (selectedImage !== null) {
-      setImagem(`/src/assets/presets/capaturma${selectedImage + 1}.png`);
+      setImagem(capasTurma[selectedImage]);
     }
   }, [selectedImage]);
 
@@ -159,19 +179,15 @@ export default function RegistrarTurma() {
               className="relative w-24 h-24 md:w-36 md:h-36 bg-[#E8E8E8] rounded-full flex items-center justify-center border border-[#D9D9D9] hover:bg-[#dcdcdc] transition overflow-hidden"
             >
               {/* Imagem atual */}
-              {selectedImage !== null ? (
-                <img
-                  src={`/src/assets/presets/capaturma${selectedImage + 1}.png`}
-                  alt="Capa da turma"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <img
-                  src={`/src/assets/presets/capaturma8.png`}
-                  alt="Capa da turma"
-                  className="w-full h-full object-cover"
-                />
-              )}
+              <img
+                src={
+                  selectedImage !== null
+                    ? capasTurma[selectedImage]
+                    : capasTurma[7]
+                }
+                alt="Capa da turma"
+                className="w-full h-full object-cover"
+              />
 
               <div className="absolute bottom-3.5 right-4.5 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full flex items-center justify-center shadow-md">
                 <Pen size={16} />
@@ -289,6 +305,7 @@ export default function RegistrarTurma() {
       {/* Overlays */}
       {showImageOverlay && (
         <ImageOverlay
+          images={capasTurma}
           selectedImage={selectedImage}
           setSelectedImage={setSelectedImage}
           onClose={() => setShowImageOverlay(false)}
