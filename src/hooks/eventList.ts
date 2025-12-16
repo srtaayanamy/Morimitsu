@@ -1,7 +1,6 @@
 import api from "../services/api";
-import type { event } from "../types/Event";
+import type { event } from "../types/event";
 import Cookies from "js-cookie";
-import { formatData } from "../utils/formatTime";
 
 export async function eventList() {
     try {
@@ -20,7 +19,7 @@ export async function eventList() {
       return {
         id: item.id,
         title: item.title,
-        event_date: formatData(item.event_date),
+        event_date: item.event_date,
         class: {
           id: item.class_id,
           name: item.classname
