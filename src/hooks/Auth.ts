@@ -9,8 +9,8 @@ export function useAuth() {
   const navigate= useNavigate();
 
   function logout() {
-    Cookies.remove("token");
-    Cookies.remove('role');
+    Cookies.remove("token", { path: "/" });
+    Cookies.remove('role', { path: "/" });
     setIsLoged(false);
     navigate('/')
   }

@@ -29,7 +29,7 @@ export async function getRegistersGraduations() {
             }
         })
         
-        console.log('Dados retornados com sucesso.');
+        console.log('Dados retornados com sucesso: ', registers);
         return registers;
 
     } catch(error: any){

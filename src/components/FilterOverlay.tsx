@@ -100,7 +100,7 @@ export default function FilterOverlay({
               {turmas.map((t) => (
 
                 <option key={t.id} value={t.id}>
-                  {t.nome}
+                  {t.name}
                 </option>
               ))}
             </select>

@@ -7,7 +7,6 @@ export async function userNotifications() {
     try{
         //Pega o token do usuário
         const token = Cookies.get('token');
-        console.log(token);
 
         //Requisição
         const response= await api.get('/user/notifications', 
@@ -18,7 +17,6 @@ export async function userNotifications() {
             }
         )
 
-        console.log(response.data.body)
         const FormatedNotifications : notification[] = response.data.body.map((notify: any) =>{
 
             const FormatedDate = formatData(notify.date);

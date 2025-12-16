@@ -30,18 +30,14 @@ export async function LoginVerufy(email: string, senha:string){
         const response = await api.post("/user/login", {Email: email, Password: senha })
         
         const decodedToken = jwtDecode<token>(response.data.userId);
-        console.log(decodedToken);
-
-        const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-        
 
         Cookies.set("token", response.data.userId, {
-            expires: expiresAt,
+            expires: 1,
             path: "/",
         });
 
         Cookies.set("role", decodedToken.role, {
-            expires: expiresAt,
+            expires: 1,
             path: "/",
         });
         
