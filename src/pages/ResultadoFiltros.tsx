@@ -26,15 +26,25 @@ export default function ResultadoFiltros() {
         minAge: minAge ? Number(minAge): undefined,
         maxAge: maxAge ? Number(maxAge): undefined,
       } 
-      console.log(filtro);
+
       const alunos = await StudentList(filtro);
       if (typeof alunos === "string"){
         console.log(alunos)
         return;
-      } else{
-        console.log(alunos)
-        setResultados(alunos);
+      } 
+
+      let filtrados = alunos;
+      // FILTRO POR MÊS
+      if (mes !== null && mes !== "") {
+        filtrados = filtrados.filter((a) => {
+          if (!a.personal.birthDate) return false;
+          return new Date(a.personal.birthDate).getMonth() === Number(mes);
+        });
       }
+      
+      console.log(filtrados);
+      setResultados(filtrados);
+      
       setCarregando(false);
     }
 
