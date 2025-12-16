@@ -5,6 +5,7 @@ export async function editClass(classId: string, data: any) {
         if (!data || Object.keys(data).length === 0) {
             return "Nenhum dado para atualizar.";
         }
+        
 
         // Filtra campos vazios
         const dataFiltred = Object.fromEntries(

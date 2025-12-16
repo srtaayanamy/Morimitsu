@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 import api from "../../services/api";
-import { formatTime } from "../../utils/formatTime";
 import { isDateValid } from "../../utils/Validations";
 
 export async function editEvent(event:any) {
@@ -8,7 +7,7 @@ export async function editEvent(event:any) {
         if(event.event_date && !isDateValid(event.event_date)){
             return 'Impossivel editar a data para uma anterior a atual.';
         }
-
+        console.log(event)
         const eventFormated: any = {};
         
         for (const key in event) {
@@ -17,12 +16,14 @@ export async function editEvent(event:any) {
                 if(key === 'event_date'){
                     const formatedValue = new Date(value).toISOString();
                     eventFormated[key] = formatedValue;
+                    
                 } else{
                     eventFormated[key] = value;
                 }
             }
         };
 
+        console.log(eventFormated)
         //Pega o toke do usuário
         const token = Cookies.get('token');
 
