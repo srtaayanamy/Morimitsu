@@ -16,7 +16,6 @@ export async function eventList() {
 
     //Armezena os eventos
     const events: event[] = response.data.events.map((item: any) => {
-      
       return {
         id: item.id,
         title: item.title,

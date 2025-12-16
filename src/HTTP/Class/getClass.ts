@@ -23,6 +23,7 @@ export async function getClass(id: string) {
       })
     );
     console.log(coachs)
+    console.log("Estudantes: ", response.data.students)
 
     //Guarda a lista de alunos retornados pela API
     const students: Student[] = response.data.students.map((student: any) => ({
@@ -38,7 +39,7 @@ export async function getClass(id: string) {
         rating: student.form.Rating
       }
     }));
-    console.log(students)
+    console.log("Estudantes: ", students)
 
     const StudentsNum = students.length;
 

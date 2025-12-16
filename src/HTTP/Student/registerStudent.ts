@@ -22,7 +22,7 @@ export async function registerStudent(student: Student) {
         if(emailValidate(student.personal.email ? student.personal.email: '')===false){
             return 'Formato de email inválido.';
         } else if(validateCPF(student.personal.CPF ? student.personal.CPF : '') === false){
-            return 'Formato de email inválido.'
+            return 'Formato de CPF inválido.'
         }else if(AgeCalculator(student.personal.birthDate ? student.personal.birthDate : '') > 120){
             return 'O aluno não pode ter mais de 120 anos.'
         }

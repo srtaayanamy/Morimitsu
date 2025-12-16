@@ -6,6 +6,6 @@ export function emailValidate(email: string): boolean {
 
 export function validateCPF(CPF: string): boolean{
   // Expressão regular para validar formato de CPF
-  const CPFRegex = /^[0-9]{2}\.[0-9]{3}\.[0-9]{4}-[0-9]{2}$/;
+  const CPFRegex = /^\d{11}$/;
   return CPFRegex.test(CPF);
 }

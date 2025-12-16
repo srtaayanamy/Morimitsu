@@ -12,7 +12,7 @@ import type { Student } from "../types/Student";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
 import EventModal from "../components/EventModal";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import { eventList } from "../hooks/eventList";
 import { registerEvent } from "../HTTP/Event/registerEvent";
 import Cookies from "js-cookie";

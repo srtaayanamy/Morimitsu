@@ -160,7 +160,27 @@ export default function VisualizarAluno() {
       await editUser(alunoEditado.personal.name, aluno.form.userID);
     }
 
-    const result = await editStudent(id, alunoEditado.personal, alunoEditado.form);
+    const editForm = {
+      rank: alunoEditado.form?.rank,
+      rating: alunoEditado.form?.rating,
+      presence: alunoEditado.form?.frequencie,
+      comments: alunoEditado.form?.comments
+    }
+
+    const editPersonal= { 
+      name: alunoEditado.personal?.name,
+      email: alunoEditado.personal?.email,
+      CPF: alunoEditado.personal?.CPF,
+      contact: alunoEditado.personal?.contact,
+      birthDate: alunoEditado.personal?.birthDate,
+      nickname: alunoEditado.personal?.nickName,
+      gender: alunoEditado.personal?.gender,
+      parentsContact: alunoEditado.personal?.parentContact,
+      parentName: alunoEditado.personal?.parent
+    
+    }
+
+    const result = await editStudent(id, editPersonal, editForm);
 
     if (result === true) {
       setErrorMenssage("");
@@ -370,7 +390,7 @@ export default function VisualizarAluno() {
                       className="w-24 border border-gray-300 rounded-lg p-2 text-center"
                       value={(alunoEditado.form?.frequencie) ?? (aluno.form?.frequencie ?? 0)}
                       onChange={(e) =>
-                        handleChange('form',"frequencie", e.target.value)
+                        handleChange('form',"frequencie", Number(e.target.value))
                       }
                     />
                     <span className="font-medium"></span>
