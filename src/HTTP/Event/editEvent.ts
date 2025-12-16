@@ -1,17 +1,21 @@
 import Cookies from "js-cookie";
 import api from "../../services/api";
 import { formatTime } from "../../utils/formatTime";
+import { isDateValid } from "../../utils/Validations";
 
 export async function editEvent(event:any) {
     try{
+        if(event.event_date && !isDateValid(event.event_date)){
+            return 'Impossivel editar a data para uma anterior a atual.';
+        }
+
         const eventFormated: any = {};
         
         for (const key in event) {
             const value = event[key];
             if (value !== "" && value !== null && value !== undefined) {
                 if(key === 'event_date'){
-                    const FormatedDate = formatTime(value)
-                    const formatedValue = new Date(FormatedDate).toISOString();
+                    const formatedValue = new Date(value).toISOString();
                     eventFormated[key] = formatedValue;
                 } else{
                     eventFormated[key] = value;
@@ -31,7 +35,7 @@ export async function editEvent(event:any) {
             }
         );
         
-        console.log('Evento cadastrado com sucesso.')
+        console.log('Evento editado com sucesso.')
         return true;
     } catch (error: any) {
         if (error.response) {

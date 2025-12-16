@@ -50,7 +50,6 @@ export default function FrequenciaDoDia() {
                 <tr key={i} className="border-b">
                   <td className="py-3 text-center">
                     {aluno?.student.personal.name}
-
                   </td>
                   <td className="py-3 text-center">{aluno?.student.personal.nickName}</td>
                 </tr>

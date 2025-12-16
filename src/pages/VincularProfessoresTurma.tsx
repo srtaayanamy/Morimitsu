@@ -72,40 +72,15 @@ export default function VincularProfessoresTurma() {
     setMensagemSucesso("");
     setLoading(true);
 
-    let sucessos = 0;
-    let erros = 0;
-    const errosDetalhados: string[] = [];
-
-    for (const idProfessor of idsSelecionados) {
-      const resultado = await includeCoachInClass( id, idProfessor);
-
-      if (resultado === true) {
-        sucessos++;
-      } else {
-        erros++;
-        if (typeof resultado === "string") {
-          errosDetalhados.push(resultado);
-        }
-      }
-    }
-
+    const resultado = await includeCoachInClass( id, idsSelecionados);
     setLoading(false);
 
-    if (erros === 0) {
-      // Tudo certo mostra sucesso e volta para tela anterior
-      setMensagemSucesso(
-        `Todos os ${sucessos} aluno(s) foram adicionados com sucesso!`
-      );
+    if (resultado === true) {
+      setMensagemSucesso("Todos os professor(s) foram adicionados com sucesso!");
       setTimeout(() => navigate(-1), 300);
     } else {
-      setMensagemSucesso(
-        sucessos > 0 ? `${sucessos} aluno(s) adicionado(s).` : ""
-      );
-      setMensagemErro(
-        `${erros} aluno(s) não foram adicionados: ${errosDetalhados
-          .slice(0, 3)
-          .join(" | ")}`
-      );
+      setMensagemErro(resultado);
+      return;
     }
   }
 

@@ -2,12 +2,12 @@ import api from "../../services/api";
 import Cookies from "js-cookie";
 
 
-export async function includeCoachInClass(classId: string, coachId: string) {
+export async function includeCoachInClass(classId: string, coachIds: string[]) {
     try{
-        console.log("Id da turma: ",classId,"\nId do professor: ", coachId)
+        console.log("Id da turma: ",classId,"\nId do professor: ", coachIds)
 
         const token = Cookies.get('token');
-        await api.post(`/class/${classId}/assign-coach/${coachId}`,{},
+        await api.post(`/class/${classId}/assign-coach`,{coachIds: coachIds},
             {
                 headers:{
                     Authorization: `Bearer ${token}`

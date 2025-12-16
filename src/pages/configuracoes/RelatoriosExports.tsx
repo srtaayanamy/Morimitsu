@@ -52,12 +52,12 @@ export default function RelatoriosExports() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mt-4">
           <div className="bg-[#F1F1F1] p-4 rounded-xl text-center shadow-sm">
             <p className="font-semibold text-gray-800">Total de alunos</p>
-            <span className="text-gray-600 text-lg font-medium">{relatorio.totalClasses}</span>
+            <span className="text-gray-600 text-lg font-medium">{relatorio.totalStudents}</span>
           </div>
 
           <div className="bg-[#F1F1F1] p-4 rounded-xl text-center shadow-sm">
             <p className="font-semibold text-gray-800">Total de turmas</p>
-            <span className="text-gray-600 text-lg font-medium">{relatorio.totalStudents}</span>
+            <span className="text-gray-600 text-lg font-medium">{relatorio.totalClasses}</span>
           </div>
 
           <div className="bg-[#F1F1F1] p-4 rounded-xl text-center shadow-sm">
