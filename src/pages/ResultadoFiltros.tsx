@@ -22,7 +22,9 @@ export default function ResultadoFiltros() {
     async function carregar() {
       console.log(classe)
       const filtro : StudentParams ={
-        class: classe ? classe: undefined
+        class: classe ? classe: undefined,
+        minAge: minAge ? Number(minAge): undefined,
+        maxAge: maxAge ? Number(maxAge): undefined,
       } 
       console.log(filtro);
       const alunos = await StudentList(filtro);
@@ -33,49 +35,6 @@ export default function ResultadoFiltros() {
         console.log(alunos)
         setResultados(alunos);
       }
-
-      
-      /*
-      let filtrados = alunos;
-
-      // FILTRAR POR TURMA
-      if (classe) {
-        filtrados = filtrados.filter((a) => {
-          const classes = a.form?.classes;
-          if (!classes) return false;
-
-          // classes como string[]
-          if (typeof classes[0] === "string") {
-            return (classes as string[]).includes(classe);
-          }
-
-          // classes como Class[]
-          return (classes as any[]).some((c) => c.id === classe);
-        });
-      }
-
-      // FILTRO POR MÊS
-      if (mes !== null && mes !== "") {
-        filtrados = filtrados.filter((a) => {
-          if (!a.personal.birthDate) return false;
-          return new Date(a.personal.birthDate).getMonth() === Number(mes);
-        });
-      }
-
-      // FILTRO POR FAIXA ETÁRIA
-      if (minAge !== null || maxAge !== null) {
-        filtrados = filtrados.filter((a) => {
-          const idade = AgeCalculator(a.personal.birthDate ?? "");
-
-          if (minAge && idade < Number(minAge)) return false;
-          if (maxAge && idade > Number(maxAge)) return false;
-
-          return true;
-        });
-      }
-
-      setResultados(filtrados); 
-      */
       setCarregando(false);
     }
 
