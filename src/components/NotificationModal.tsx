@@ -1,5 +1,4 @@
 import { X, AlertCircle } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface NotificationModalProps {
   isOpen: boolean;
@@ -19,53 +18,78 @@ export default function NotificationModal({
 
   return (
     <>
-      {/* Fundo escuro */}
+      {/* FUNDO */}
       <div
-        className="fixed inset-0 bg-black/30 backdrop-blur-none z-40"
+        className="fixed inset-0 bg-black/40 z-40"
         onClick={onClose}
-      ></div>
+      />
 
-      {/* Modal */}
+      {/* MODAL */}
       <div
-        className="fixed top-20 right-6 w-[90%] max-w-[420px] 
-        bg-white rounded-2xl shadow-xl z-50 p-6"
+        className="fixed top-20 right-4 w-[92%] max-w-[420px]
+        bg-white rounded-2xl shadow-2xl z-50 p-5"
       >
-        <h2 className="text-xl text-black font-semibold mb-4">Notificações:</h2>
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">
+            Notificações
+          </h2>
+          <button onClick={onClose}>
+            <X className="w-5 h-5 text-gray-500 hover:text-black" />
+          </button>
+        </div>
 
-        <div className="flex flex-col gap-3">
-          {/* String de "sem notificações" */}
-          {isEmptyString && <p className="text-gray-700">{notifications}</p>}
+        {/* CONTEÚDO */}
+        <div className="flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
+          {/* SEM NOTIFICAÇÕES */}
+          {isEmptyString && (
+            <p className="text-sm text-gray-600 text-center py-6">
+              {notifications}
+            </p>
+          )}
 
-          {/* Lista */}
+          {/* LISTA */}
           {isList &&
             notifications.map((notify: any, index: number) => (
               <div
                 key={index}
-                className="flex items-center gap-3 bg-gray-100 px-4 py-3 rounded-xl"
+                className={`flex gap-3 p-4 rounded-xl border
+                ${
+                  !notify.read
+                    ? "bg-red-50 border-red-200"
+                    : "bg-gray-50 border-gray-200"
+                }`}
               >
-                <AlertCircle className="text-black w-5 h-5" />
-                <div>
-                  <p className="text-sm font-medium text-black">
+                <AlertCircle
+                  className={`w-5 h-5 mt-1
+                  ${
+                    !notify.read ? "text-red-600" : "text-gray-500"
+                  }`}
+                />
+
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-800">
                     {notify.category}
                   </p>
-                  <p className="text-xs text-gray-700">{notify.description}</p>
-                  <p className="text-[10px] text-gray-500">{notify.date}</p>
+
+                  <p className="text-xs text-gray-600 mt-1">
+                    {notify.description}
+                  </p>
+
+                  <p className="text-[11px] text-gray-400 mt-2">
+                    {notify.date}
+                  </p>
                 </div>
               </div>
             ))}
 
-          {/* Caso ainda esteja undefined (bem rápido antes de carregar) */}
+          {/* CARREGANDO */}
           {!isEmptyString && !isList && (
-            <p className="text-gray-700">Carregando...</p>
+            <p className="text-sm text-gray-500 text-center py-4">
+              Carregando...
+            </p>
           )}
         </div>
-
-        <button
-          className="absolute top-4 right-4 text-gray-700 hover:text-black"
-          onClick={onClose}
-        >
-          <X className="w-6 h-6 cursor-pointer" />
-        </button>
       </div>
     </>
   );

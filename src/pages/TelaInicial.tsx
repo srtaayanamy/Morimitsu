@@ -212,7 +212,7 @@ export default function TelaInicial() {
               turma: "Turma Mista",
               faixaAtual: "PRETA",
               grauAtual: 6,
-              proximaFaixa: "CORAL",
+              proximaFaixa: "VERMELHA",
               proximoGrau: 7,
             },
           ];

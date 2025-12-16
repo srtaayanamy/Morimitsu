@@ -11,6 +11,7 @@ import CreateAcessModal from "../components/CreateAcessModal";
 import { getStudent } from "../HTTP/Student/getStudent";
 import { AgeCalculator } from "../utils/AgeCalculator";
 import { Avatar } from "../components/Avatar";
+import SuccessAlert from "../components/SuccessAlert";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -28,9 +29,13 @@ export default function AlunosAptos() {
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [acessoModalOpen, setAcessoModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   function VerificarAptidao(aluno: Student) {
-    return podePromover(aluno.form?.rank ? aluno.form?.rank: '') && aluno.form?.userID === null;
+    return (
+      podePromover(aluno.form?.rank ? aluno.form?.rank : "") &&
+      aluno.form?.userID === null
+    );
   }
 
   useEffect(() => {
@@ -55,14 +60,20 @@ export default function AlunosAptos() {
 
     const dados = await getStudent(aluno.id);
 
-    if (!dados || typeof dados === "string" || !dados.personal.email?.includes("@")) {
-      alert(`O aluno ${aluno.personal.name} não tem um e-mail válido cadastrado.`);
+    if (
+      !dados ||
+      typeof dados === "string" ||
+      !dados.personal.email?.includes("@")
+    ) {
+      alert(
+        `O aluno ${aluno.personal.name} não tem um e-mail válido cadastrado.`
+      );
       return;
     }
 
     setAlunoEmPromocao({
       id: aluno.id,
-      nome: aluno.personal.name ? aluno.personal.name: '',
+      nome: aluno.personal.name ? aluno.personal.name : "",
       email: dados.personal.email.trim(),
     });
 
@@ -86,6 +97,7 @@ export default function AlunosAptos() {
 
       <main className="flex-1 p-4 md:p-8 space-y-5">
         <PageTitle title="Elegíveis a professor:" />
+        {successMessage && <SuccessAlert message={successMessage} />}
 
         {loading && <p className="text-center">Carregando alunos...</p>}
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -130,9 +142,14 @@ export default function AlunosAptos() {
                             {aluno.personal.name}
                           </Link>
                         </td>
-                        <td className="py-3 px-6">{aluno.personal.nickName || "—"}</td>
+                        <td className="py-3 px-6">
+                          {aluno.personal.nickName || "—"}
+                        </td>
                         <td className="py-3 px-6 text-center">
-                          <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
+                          <BeltTag
+                            faixa={aluno.form?.rank}
+                            grau={aluno.form?.rating}
+                          />
                         </td>
                         <td className="py-3 px-6">
                           <div className="flex justify-center gap-2">
@@ -166,7 +183,9 @@ export default function AlunosAptos() {
                     <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                       <Avatar
                         sexo={a.personal.gender}
-                        idade={AgeCalculator(a.personal.birthDate ? a.personal.birthDate: '')}
+                        idade={AgeCalculator(
+                          a.personal.birthDate ? a.personal.birthDate : ""
+                        )}
                         size={48}
                         noWrapper={true}
                       />
@@ -226,8 +245,11 @@ export default function AlunosAptos() {
         alunoEmail={alunoEmPromocao?.email}
         onClose={fecharFluxo}
         onSuccess={() => {
-          alert("Professor criado com sucesso!");
+          setSuccessMessage("Professor criado com sucesso!");
           fecharFluxo();
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
         }}
       />
     </div>

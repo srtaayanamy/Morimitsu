@@ -10,6 +10,7 @@ import CreateAcessModal from "../components/CreateAcessModal";
 import { Avatar } from "../components/Avatar";
 import { AgeCalculator } from "../utils/AgeCalculator";
 import { getStudent } from "../HTTP/Student/getStudent";
+import SuccessAlert from "../components/SuccessAlert";
 
 const podePromover = (faixa: string): boolean => {
   return ["ROXA", "MARROM", "PRETA", "VERMELHA"].includes(faixa);
@@ -28,6 +29,7 @@ export default function Alunos() {
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [acessoModalOpen, setAcessoModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAlunos = async () => {
@@ -50,14 +52,20 @@ export default function Alunos() {
 
     const dados = await getStudent(aluno.id);
 
-    if (!dados || typeof dados === "string" || !dados.personal.email?.includes("@")) {
-      alert(`O aluno ${aluno.personal.name} não tem um e-mail válido cadastrado.`);
+    if (
+      !dados ||
+      typeof dados === "string" ||
+      !dados.personal.email?.includes("@")
+    ) {
+      alert(
+        `O aluno ${aluno.personal.name} não tem um e-mail válido cadastrado.`
+      );
       return;
     }
 
     setAlunoEmPromocao({
       id: aluno.id,
-      nome: aluno.personal.name ? aluno.personal.name : '',
+      nome: aluno.personal.name ? aluno.personal.name : "",
       email: dados.personal.email.trim(),
     });
 
@@ -94,6 +102,7 @@ export default function Alunos() {
             </button>
           </Link>
         </div>
+        {successMessage && <SuccessAlert message={successMessage} />}
 
         {loading && <p>Carregando alunos...</p>}
         {error && <p className="text-red-500">{error}</p>}
@@ -107,7 +116,9 @@ export default function Alunos() {
                 {/* MOBILE */}
                 <div className="md:hidden space-y-3">
                   {alunos.map((aluno) => {
-                    const promover = podePromover(aluno.form?.rank ? aluno.form?.rank: '') && aluno.form?.userID === null;
+                    const promover =
+                      podePromover(aluno.form?.rank ? aluno.form?.rank : "") &&
+                      aluno.form?.userID === null;
 
                     return (
                       <div
@@ -117,7 +128,11 @@ export default function Alunos() {
                         <div className="w-20 h-20 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                           <Avatar
                             sexo={aluno.personal.gender}
-                            idade={AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate: '')}
+                            idade={AgeCalculator(
+                              aluno.personal.birthDate
+                                ? aluno.personal.birthDate
+                                : ""
+                            )}
                             size={48}
                             noWrapper={true}
                           />
@@ -137,7 +152,10 @@ export default function Alunos() {
 
                         <div className="flex flex-col items-center justify-center gap-2 p-1 rounded-2xl h-10">
                           <div className="bg-white p-3 rounded-2xl w-28 shadow-sm flex flex-col items-center justify-center">
-                            <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
+                            <BeltTag
+                              faixa={aluno.form?.rank}
+                              grau={aluno.form?.rating}
+                            />
                             <p className="text-[0.7rem] font-semibold">
                               Grau: {aluno.form?.rating}
                             </p>
@@ -179,7 +197,10 @@ export default function Alunos() {
 
                     <tbody>
                       {alunos.map((aluno) => {
-                        const promover = podePromover(aluno.form?.rank ? aluno.form?.rank: '') && aluno.form?.userID === null;
+                        const promover =
+                          podePromover(
+                            aluno.form?.rank ? aluno.form?.rank : ""
+                          ) && aluno.form?.userID === null;
 
                         return (
                           <tr
@@ -200,7 +221,10 @@ export default function Alunos() {
                             </td>
 
                             <td className="py-3 px-6 text-center">
-                              <BeltTag faixa={aluno.form?.rank} grau={aluno.form?.rating} />
+                              <BeltTag
+                                faixa={aluno.form?.rank}
+                                grau={aluno.form?.rating}
+                              />
                             </td>
 
                             <td className="py-3 px-6 rounded-r-xl">
@@ -246,8 +270,11 @@ export default function Alunos() {
         alunoEmail={alunoEmPromocao?.email}
         onClose={fecharFluxo}
         onSuccess={() => {
-          alert("Professor criado com sucesso!");
+          setSuccessMessage("Professor criado com sucesso!");
           fecharFluxo();
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
         }}
       />
     </div>

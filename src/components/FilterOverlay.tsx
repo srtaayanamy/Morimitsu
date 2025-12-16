@@ -1,55 +1,47 @@
-import { X, ChevronDown } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-
-import { filtrarAniversariantes } from "../hooks/StudentList";
 import { ClassList } from "../hooks/ClassList";
 import { useNavigate } from "react-router-dom";
+import type { StudentParams } from "../types/Student";
 
 interface FilterOverlayProps {
   isOpen: boolean;
   onClose: () => void;
-  onApply?: () => void;
 }
 
-export default function FilterOverlay({
-  isOpen,
-  onClose,
-  onApply,
-}: FilterOverlayProps) {
+export default function FilterOverlay({ isOpen, onClose }: FilterOverlayProps) {
   const [turmas, setTurmas] = useState<any[]>([]);
-  const [, setAniversariantes] = useState<any[]>([]);
 
   const [selectedTurma, setSelectedTurma] = useState("");
   const [selectedMonth, setSelectedMonth] = useState<number | "">("");
+  const [minAge, setMinAge] = useState<number | "">("");
+  const [maxAge, setMaxAge] = useState<number | "">("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isOpen) {
-      carregarListas();
-    }
-  }, [isOpen, selectedMonth]);
+    if (isOpen) carregarListas();
+  }, [isOpen]);
 
   async function carregarListas() {
-
     const t = await ClassList();
-    const a = await filtrarAniversariantes(
-      selectedMonth === "" ? undefined : selectedMonth
-    );
-
     if (t && Array.isArray(t)) setTurmas(t);
-    if (a && Array.isArray(a)) setAniversariantes(a);
   }
 
   function aplicarFiltros() {
+    const filtros: StudentParams & { mes?: number } = {};
+
+    if (selectedTurma) filtros.classid = selectedTurma;
+    if (selectedMonth !== "") filtros.mes = selectedMonth;
+    if (minAge !== "") filtros.minAge = minAge;
+    if (maxAge !== "") filtros.maxAge = maxAge;
+
     const params = new URLSearchParams();
-
-    if (selectedTurma) {
-      params.append("turma", selectedTurma);
-    }
-
-    if (selectedMonth !== "") {
-      params.append("mes", selectedMonth.toString());
-    }
+    Object.entries(filtros).forEach(([key, value]) => {
+      if (value !== undefined) {
+        params.append(key, String(value));
+      }
+    });
 
     navigate(`/resultado-filtros?${params.toString()}`);
     onClose();
@@ -78,14 +70,6 @@ export default function FilterOverlay({
 
         {/* Inputs */}
         <div className="flex flex-col gap-3 mb-6">
-          {/* Faixa e grau */}
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-black">Faixa e grau:</span>
-            <button className="w-36 bg-gray-100 px-3 py-2 rounded-lg flex items-center justify-between">
-              <span className="text-gray-500">Selecione</span>
-              <ChevronDown className="w-4 h-4 text-black" />
-            </button>
-          </div>
 
           {/* TURMA */}
           <div className="flex items-center justify-between">
@@ -98,7 +82,6 @@ export default function FilterOverlay({
             >
               <option value="">Selecione</option>
               {turmas.map((t) => (
-
                 <option key={t.id} value={t.id}>
                   {t.name}
                 </option>
@@ -106,8 +89,7 @@ export default function FilterOverlay({
             </select>
           </div>
 
-          {/* ANIVERSARIANTES */}
-          {/* MÊS DOS ANIVERSARIANTES */}
+          {/* MÊS */}
           <div className="flex items-center justify-between">
             <span className="font-medium text-black">Mês:</span>
 
@@ -145,12 +127,20 @@ export default function FilterOverlay({
                 type="number"
                 min={0}
                 placeholder="min"
+                value={minAge}
+                onChange={(e) =>
+                  setMinAge(e.target.value === "" ? "" : Number(e.target.value))
+                }
                 className="w-20 bg-gray-100 px-2 py-2 rounded-lg text-sm outline-none text-black"
               />
               <input
                 type="number"
                 min={0}
                 placeholder="max"
+                value={maxAge}
+                onChange={(e) =>
+                  setMaxAge(e.target.value === "" ? "" : Number(e.target.value))
+                }
                 className="w-20 bg-gray-100 px-2 py-2 rounded-lg text-sm outline-none text-black"
               />
             </div>
