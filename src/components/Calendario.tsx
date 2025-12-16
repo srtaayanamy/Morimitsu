@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import {
   format,

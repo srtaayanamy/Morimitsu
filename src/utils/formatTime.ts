@@ -29,8 +29,9 @@ export function parseDateBRToISO(dateBR: string): string | null {
 //Transforma data ISO string para o formato da data brasileira
 export function formatData(dataISO: string) {
   if (!dataISO) return "Não informada";
-  const data = new Date(dataISO);
-  return data.toLocaleDateString("pt-BR");
+
+  const [ano, mes, dia] = dataISO.split("T")[0].split("-");
+  return `${dia}/${mes}/${ano}`;
 }
 
 export function parseBRDate(dateStr: string) {

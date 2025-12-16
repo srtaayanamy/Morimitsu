@@ -19,7 +19,8 @@ export async function getStudent(id: string) {
 
     //Pega a frequencia requirida para a graduação na faixa do aluno
     let rank = response.data.data.student.form.Rank;
-    let required_frequencie = await getFrequencieRequired(rank);
+    const age = response.data.data.student.personal.age;
+    let required_frequencie = await getFrequencieRequired(rank, age);
 
     rank = rank.replace('_', '/')
 

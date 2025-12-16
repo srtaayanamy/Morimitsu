@@ -1,12 +1,13 @@
 import Cookies from "js-cookie";
 import api from "../../services/api";
 
-export async function getFrequencieRequired(rank: string){
+export async function getFrequencieRequired(rank: string, age: number){
     try{
-        
-        //Veifica se a faixa é coloria e se for formata para o aceitavel do backend
-        if(rank.includes('/')){
-            rank = rank.replace('/', '_')
+
+        if(12< age &&  age < 16){
+            rank = 'JUVENIL'
+        } else if(age <=12){
+            rank = 'KIDS'
         }
 
         //Pega o token do usuário
@@ -20,8 +21,7 @@ export async function getFrequencieRequired(rank: string){
                 }
             }
         );
-
-        console.log(response.data.config);
+        
         return response.data.config;
     }   
     catch(error: any){

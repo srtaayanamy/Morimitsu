@@ -106,7 +106,7 @@ export default function VisualizarAluno() {
     async function fetchFrequencia() {
       if (!aluno?.form?.rank) return;
 
-      const response = await getFrequencieRequired(aluno.form.rank);
+      const response = await getFrequencieRequired(aluno.form.rank, AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate: ''));
 
       if (typeof response === "string") {
         console.log("Erro ao carregar frequência necessária:", response);
