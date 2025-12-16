@@ -21,7 +21,8 @@ export async function eventList() {
         title: item.title,
         event_date: item.event_date,
         class: {
-          id: item.class_id
+          id: item.class_id,
+          name: item.classname
         }
       };
     });

@@ -6,6 +6,7 @@ import { LoginVerufy } from "../HTTP/Auth/LoginVerify";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { isLogedContext } from "../contexts/Auth";
 import SuccessAlert from "../components/SuccessAlert";
+import Cookies from "js-cookie";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,9 +20,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoged) {
+    const token = Cookies.get('token');
+    if(token){
+      setIsLoged(true);
       navigate("/inicio");
-    }
+    };
   }, []);
 
   //Função que redireciona o usuário se o email e senha estiverem corretos
