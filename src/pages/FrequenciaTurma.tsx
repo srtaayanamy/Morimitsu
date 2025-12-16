@@ -127,7 +127,8 @@ export default function FrequenciaTurma() {
             <div className="sm:col-span-3 w-full">
               <p className="text-sm font-medium">Professor responsável:</p>
               <p className="bg-[#F5F5F5] p-3 mt-1 rounded-xl text-center">
-                {turma.coachs?.[0]?.personal.name || "-"}
+                {turma.coachs?.[0]?.student?.personal?.name || "-"}
+
               </p>
             </div>
 
