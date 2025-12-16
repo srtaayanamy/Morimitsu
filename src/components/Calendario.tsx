@@ -42,7 +42,6 @@ export default function Calendario({
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
   const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-  // Filtra somente eventos do mês sendo exibido
   const monthEvents = events.filter((e) => {
     const d = new Date(e.event_date);
     return (
@@ -225,7 +224,6 @@ export default function Calendario({
               const isCurrentMonth = isSameMonth(day, currentDate);
               const isCurrentDay = isToday(day);
 
-              // Verifica se existe evento nesse dia
               const dayEvents = monthEvents.filter((ev) =>
                 isSameDay(new Date(ev.event_date), day)
               );
@@ -241,16 +239,14 @@ export default function Calendario({
                     {format(day, "d")}
                   </span>
 
-                  {/* Marcador de HOJE */}
                   {isCurrentDay && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#337bf79e]"></div>
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#337bf79e]" />
                     </div>
                   )}
 
-                  {/* Marcador de EVENTO */}
                   {dayEvents.length > 0 && (
-                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full"></div>
+                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-600 rounded-full" />
                   )}
                 </div>
               );

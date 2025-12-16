@@ -16,6 +16,9 @@ import ConfirmDeleteClassModal from "../components/ConfirmDeleteClassModal";
 import ImageOverlay from "../components/ImageOverlay";
 import { AgeCalculator } from "../utils/AgeCalculator";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { removeCoachInClass } from "../HTTP/Class/removeCoachInClass";
+import SuccessAlert from "../components/SuccessAlert";
+import ConfirmActionModal from "../components/ConfirmActionModal";
 
 import cap1 from "../assets/presets/capaturma1.png";
 import cap2 from "../assets/presets/capaturma2.png";
@@ -31,6 +34,7 @@ const capasTurma = [cap1, cap2, cap3, cap4, cap5, cap6, cap7, cap8];
 export default function VisualizarTurma() {
   const { id } = useParams();
   const [erro, setErro] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [turma, setTurma] = useState<Class>();
   const [ClassEdited, setClassEdited] = useState<Partial<Class>>({});
   const [turmaOriginal, setTurmaOriginal] = useState<Class>();
@@ -42,6 +46,11 @@ export default function VisualizarTurma() {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const navigate = useNavigate();
+  const [isRemoveCoachOpen, setIsRemoveCoachOpen] = useState(false);
+  const [coachToRemove, setCoachToRemove] = useState<{
+    id: string;
+    name?: string;
+  } | null>(null);
 
   useEffect(() => {
     async function fetchTurma() {
@@ -68,9 +77,7 @@ export default function VisualizarTurma() {
     if (!turma) return;
 
     // Atualiza a UI
-    setTurma((prev) =>
-      prev ? { ...prev, [field]: value } : prev
-    );
+    setTurma((prev) => (prev ? { ...prev, [field]: value } : prev));
 
     // Salva somente o que foi editado
     setClassEdited((prev) => ({
@@ -87,31 +94,38 @@ export default function VisualizarTurma() {
 
   const handleSave = async () => {
     if (!id || !turma) return;
-    
+
     if (Object.keys(ClassEdited).length === 0) {
       return;
     }
 
     let coachIds: undefined | string[] = undefined;
 
-    if(ClassEdited.coachs){
+    if (ClassEdited.coachs) {
       coachIds = ClassEdited.coachs.map((item) => item.id);
     }
 
     const dadosAtualizados = {
       name: ClassEdited.name,
-      minAge: ClassEdited.MinAge !== undefined ? Number(ClassEdited.MinAge) : undefined,
-      maxAge: ClassEdited.MaxAge !== undefined ? Number(ClassEdited.MaxAge) : undefined,
+      minAge:
+        ClassEdited.MinAge !== undefined
+          ? Number(ClassEdited.MinAge)
+          : undefined,
+      maxAge:
+        ClassEdited.MaxAge !== undefined
+          ? Number(ClassEdited.MaxAge)
+          : undefined,
       startTime: ClassEdited.startTime,
       endTime: ClassEdited.endTime,
       iconURL: ClassEdited.URLImage,
-      coachIds: coachIds
+      coachIds: coachIds,
     };
 
     const result = await editClass(id, dadosAtualizados);
 
     if (result === true) {
-      alert("Turma atualizada com sucesso!");
+      setSuccessMessage("Turma atualizada com sucesso!");
+      setErro("");
       setTurmaOriginal(turma);
       setIsEditing(false);
     } else {
@@ -123,8 +137,11 @@ export default function VisualizarTurma() {
     if (!id) return;
 
     const result = await deleteClass(id);
-    if (result === true) navigate("/turmas");
-    else alert(result);
+    if (result === true) {
+      navigate("/turmas");
+    } else {
+      setErro(result);
+    }
 
     setIsDeleteOpen(false);
   }
@@ -137,12 +154,39 @@ export default function VisualizarTurma() {
     );
   }
 
+  async function handleConfirmRemoveCoach() {
+    if (!id || !turma || !coachToRemove) return;
+
+    const result = await removeCoachInClass(id, [coachToRemove.id] as any);
+
+    if (result === true) {
+      const updatedCoachs = turma.coachs?.filter(
+        (coach: any) => coach.id !== coachToRemove.id
+      );
+
+      setTurma((prev) => (prev ? { ...prev, coachs: updatedCoachs } : prev));
+
+      setClassEdited((prev) => ({
+        ...prev,
+        coachs: updatedCoachs,
+      }));
+      setSuccessMessage("Professor removido da turma com sucesso!");
+      setErro("");
+    } else {
+      setErro(result);
+    }
+
+    setIsRemoveCoachOpen(false);
+    setCoachToRemove(null);
+  }
+
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#1E1E1E]">
       <Header />
 
       <main className="p-6 md:p-8 space-y-6">
         <ErrorMessage message={erro} />
+        <SuccessAlert message={successMessage} />
 
         {/* Cabeçalho */}
         <div className="bg-white p-6 rounded-2xl shadow-sm flex justify-between items-center">
@@ -159,7 +203,11 @@ export default function VisualizarTurma() {
 
           {!isEditing ? (
             <button
-              onClick={() => setIsEditing(true)}
+              onClick={() => {
+                setIsEditing(true);
+                setSuccessMessage("");
+                setErro("");
+              }}
               className="hover:opacity-80 cursor-pointer"
             >
               <SquarePen className="w-8 h-8" />
@@ -254,7 +302,9 @@ export default function VisualizarTurma() {
              flex items-center justify-between"
                       >
                         <span>
-                          {typeof prof === "string" ? prof : prof.student.personal.name}
+                          {typeof prof === "string"
+                            ? prof
+                            : prof.student.personal.name}
                         </span>
 
                         {isEditing && (
@@ -262,7 +312,14 @@ export default function VisualizarTurma() {
                             className="text-black-600 hover:text-black-800 cursor-pointer"
                             title="Remover professor da turma"
                             onClick={() => {
-                              // ação de remoção será ligada depois
+                              setCoachToRemove({
+                                id: prof.id,
+                                name:
+                                  typeof prof === "string"
+                                    ? prof
+                                    : prof.student.personal.name,
+                              });
+                              setIsRemoveCoachOpen(true);
                             }}
                           >
                             <Trash2 size={16} />
@@ -297,13 +354,27 @@ export default function VisualizarTurma() {
                     type="number"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
                     value={ClassEdited.MaxAge ?? turma.MinAge}
-                    onChange={(e) => handleChange("MinAge", typeof e.target.value === 'string' ? Number(e.target.value) : e.target.value)}
+                    onChange={(e) =>
+                      handleChange(
+                        "MinAge",
+                        typeof e.target.value === "string"
+                          ? Number(e.target.value)
+                          : e.target.value
+                      )
+                    }
                   />
                   <input
                     type="number"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
                     value={ClassEdited.MaxAge ?? turma.MaxAge}
-                    onChange={(e) => handleChange("MaxAge", typeof e.target.value === 'string' ? Number(e.target.value) : e.target.value)}
+                    onChange={(e) =>
+                      handleChange(
+                        "MaxAge",
+                        typeof e.target.value === "string"
+                          ? Number(e.target.value)
+                          : e.target.value
+                      )
+                    }
                   />
                 </div>
               )}
@@ -322,9 +393,7 @@ export default function VisualizarTurma() {
                     type="time"
                     className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
                     value={ClassEdited.startTime ?? turma.startTime}
-                    onChange={(e) =>
-                      handleChange("startTime", e.target.value)
-                    }
+                    onChange={(e) => handleChange("startTime", e.target.value)}
                   />
 
                   <input
@@ -446,7 +515,9 @@ export default function VisualizarTurma() {
                 <div className="w-14 h-14 rounded-lg bg-[#7F1A17] flex items-center justify-center overflow-hidden">
                   <Avatar
                     sexo={a.personal.gender}
-                    idade={AgeCalculator(a.personal.birthDate ? a.personal.birthDate: '')}
+                    idade={AgeCalculator(
+                      a.personal.birthDate ? a.personal.birthDate : ""
+                    )}
                     size={40}
                     noWrapper
                   />
@@ -492,6 +563,18 @@ export default function VisualizarTurma() {
             onClose={() => setIsOverlayOpen(false)}
           />
         )}
+        <ConfirmActionModal
+          isOpen={isRemoveCoachOpen}
+          title="Deseja remover o professor"
+          highlightedText={coachToRemove?.name}
+          confirmText="Sim, remover"
+          cancelText="Cancelar"
+          onClose={() => {
+            setIsRemoveCoachOpen(false);
+            setCoachToRemove(null);
+          }}
+          onConfirm={handleConfirmRemoveCoach}
+        />
       </main>
     </div>
   );
