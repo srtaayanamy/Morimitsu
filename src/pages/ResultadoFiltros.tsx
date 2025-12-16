@@ -20,26 +20,15 @@ export default function ResultadoFiltros() {
 
   useEffect(() => {
     async function carregar() {
-      const alunos = await StudentList();
+      const alunos = await StudentList({
+        classid: classid ?? undefined,
+        minAge: minAge ? Number(minAge) : undefined,
+        maxAge: maxAge ? Number(maxAge) : undefined,
+      });
+
       if (typeof alunos === "string") return;
 
       let filtrados = alunos;
-
-      // FILTRAR POR TURMA
-      if (classid) {
-        filtrados = filtrados.filter((a) => {
-          const classes = a.form?.classes;
-          if (!classes) return false;
-
-          // classes como string[]
-          if (typeof classes[0] === "string") {
-            return (classes as string[]).includes(classid);
-          }
-
-          // classes como Class[]
-          return (classes as any[]).some((c) => c.id === classid);
-        });
-      }
 
       // FILTRO POR MÊS
       if (mes !== null && mes !== "") {

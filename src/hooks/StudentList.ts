@@ -8,8 +8,9 @@ export async function StudentList(filters?:StudentParams) {
     const params: any = {};
 
     for (const key in filters) {
+      const value = filters[key as keyof StudentParams];
       if (key !== "" && key !== null && key !== undefined) {
-        params[key] = key;
+        params[key] = value;
       }
     };
 
