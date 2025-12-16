@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { StudentList } from "../hooks/StudentList";
-import type { Student } from "../types/Student";
+import type { Student, StudentParams } from "../types/Student";
 import Header from "../components/Header";
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
@@ -10,7 +10,7 @@ import { AgeCalculator } from "../utils/AgeCalculator";
 export default function ResultadoFiltros() {
   const [searchParams] = useSearchParams();
 
-  const classid = searchParams.get("classid");
+  const classe = searchParams.get("class");
   const mes = searchParams.get("mes");
   const minAge = searchParams.get("minAge");
   const maxAge = searchParams.get("maxAge");
@@ -20,24 +20,37 @@ export default function ResultadoFiltros() {
 
   useEffect(() => {
     async function carregar() {
-      const alunos = await StudentList();
-      if (typeof alunos === "string") return;
+      console.log(classe)
+      const filtro : StudentParams ={
+        class: classe ? classe: undefined
+      } 
+      console.log(filtro);
+      const alunos = await StudentList(filtro);
+      if (typeof alunos === "string"){
+        console.log(alunos)
+        return;
+      } else{
+        console.log(alunos)
+        setResultados(alunos);
+      }
 
+      
+      /*
       let filtrados = alunos;
 
       // FILTRAR POR TURMA
-      if (classid) {
+      if (classe) {
         filtrados = filtrados.filter((a) => {
           const classes = a.form?.classes;
           if (!classes) return false;
 
           // classes como string[]
           if (typeof classes[0] === "string") {
-            return (classes as string[]).includes(classid);
+            return (classes as string[]).includes(classe);
           }
 
           // classes como Class[]
-          return (classes as any[]).some((c) => c.id === classid);
+          return (classes as any[]).some((c) => c.id === classe);
         });
       }
 
@@ -61,12 +74,13 @@ export default function ResultadoFiltros() {
         });
       }
 
-      setResultados(filtrados);
+      setResultados(filtrados); 
+      */
       setCarregando(false);
     }
 
     carregar();
-  }, [classid, mes, minAge, maxAge]);
+  }, [classe, mes, minAge, maxAge]);
 
   if (carregando) {
     return (

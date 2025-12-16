@@ -31,7 +31,7 @@ export default function FilterOverlay({ isOpen, onClose }: FilterOverlayProps) {
   function aplicarFiltros() {
     const filtros: StudentParams & { mes?: number } = {};
 
-    if (selectedTurma) filtros.classid = selectedTurma;
+    if (selectedTurma) filtros.class = selectedTurma;
     if (selectedMonth !== "") filtros.mes = selectedMonth;
     if (minAge !== "") filtros.minAge = minAge;
     if (maxAge !== "") filtros.maxAge = maxAge;
