@@ -10,9 +10,9 @@ import { userNotifications } from "../HTTP/User/notifications";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<
-    notification[] | string
-  >("");
+  const [notifications, setNotifications] = useState<notification[] | string>(
+    ""
+  );
   const role = localStorage.getItem("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -70,10 +70,10 @@ export default function Header() {
       {/* ÍCONES FIXOS (MOBILE) */}
       <div className="flex items-center gap-5 md:hidden">
         <button
-          className="hover:text-gray-200 transition relative cursor-pointer"
+          className="hover:text-gray-200 transition relative"
           onClick={openNotifications}
         >
-          <Bell className="w-6 h-6 " />
+          <Bell className="w-6 h-6" />
 
           {hasUnread && (
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-[#8B0000]" />
