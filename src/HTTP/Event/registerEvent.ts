@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import api from "../../services/api";
+import { isDateValid } from "../../utils/Validations";
 
 export async function registerEvent(title:string, date: string, classId: string) {
     try{
@@ -10,6 +11,8 @@ export async function registerEvent(title:string, date: string, classId: string)
             return 'Informe a data do evento.'
         } else if(!classId){
             return 'Informe a turma na qual ocorrerá o evento.'
+        } else if(!isDateValid(date)){
+            return 'Impossivel cadastrar um evento com data anterior a atual.'
         }
 
         //Formata a data

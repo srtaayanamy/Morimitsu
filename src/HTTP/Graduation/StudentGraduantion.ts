@@ -6,9 +6,10 @@ export async function GraduationStudent(studentId: string) {
     try{
         //Pega o token do usuário
         const token = Cookies.get('token');
+        console.log(token)
 
         //Requisição
-        await api.patch(`/student/promote/rank`, 
+        const response = await api.patch(`/student/promote/rank`, {},
             {
                 params:{
                     studentId: studentId
@@ -20,8 +21,9 @@ export async function GraduationStudent(studentId: string) {
         );
 
         //Verifica se a requisição foi um sucesso
+        console.log(response.data.data)
         console.log('Aluno graduado com sucesso.')
-        return true;
+        return response.data.data;
     }   
     catch(error: any){
         //Tratamento de erros

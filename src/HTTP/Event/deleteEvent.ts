@@ -1,8 +1,17 @@
 import api from "../../services/api";
+import Cookies from "js-cookie";
 
 export async function deleteEvent(id:string) {
     try{
-        await api.delete(`/events/${id}`);
+        const token = Cookies.get('token')
+
+        await api.delete(`/events/${id}`,
+            {
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
         //Veriica se a requisição foi um succeso
         
         console.log('Evento deletado com sucesso');

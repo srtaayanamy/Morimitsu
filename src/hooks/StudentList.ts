@@ -6,13 +6,15 @@ export async function StudentList(filters?:StudentParams) {
   try {
 
     const params: any = {};
-
     for (const key in filters) {
-      const value = filters[key as keyof StudentParams];
-      if (key !== "" && key !== null && key !== undefined) {
-        params[key] = value;
+      const typedKey = key as keyof StudentParams;
+      const value = filters[typedKey];
+
+      if (value !== null && value !== undefined && value !== "") {
+        params[typedKey] = value;
       }
-    };
+    } 
+    
 
     const token = Cookies.get('token');
 

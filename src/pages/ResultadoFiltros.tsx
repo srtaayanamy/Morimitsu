@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { StudentList } from "../hooks/StudentList";
-import type { Student } from "../types/Student";
+import type { Student, StudentParams } from "../types/Student";
 import Header from "../components/Header";
 import BeltTag from "../components/BeltTag";
 import { Avatar } from "../components/Avatar";
@@ -10,7 +10,7 @@ import { AgeCalculator } from "../utils/AgeCalculator";
 export default function ResultadoFiltros() {
   const [searchParams] = useSearchParams();
 
-  const classid = searchParams.get("classid");
+  const classe = searchParams.get("class");
   const mes = searchParams.get("mes");
   const minAge = searchParams.get("minAge");
   const maxAge = searchParams.get("maxAge");
@@ -20,16 +20,20 @@ export default function ResultadoFiltros() {
 
   useEffect(() => {
     async function carregar() {
-      const alunos = await StudentList({
-        classid: classid ?? undefined,
-        minAge: minAge ? Number(minAge) : undefined,
-        maxAge: maxAge ? Number(maxAge) : undefined,
-      });
+      console.log(classe)
+      const filtro : StudentParams ={
+        class: classe ? classe: undefined,
+        minAge: minAge ? Number(minAge): undefined,
+        maxAge: maxAge ? Number(maxAge): undefined,
+      } 
 
-      if (typeof alunos === "string") return;
+      const alunos = await StudentList(filtro);
+      if (typeof alunos === "string"){
+        console.log(alunos)
+        return;
+      } 
 
       let filtrados = alunos;
-
       // FILTRO POR MÊS
       if (mes !== null && mes !== "") {
         filtrados = filtrados.filter((a) => {
@@ -37,25 +41,15 @@ export default function ResultadoFiltros() {
           return new Date(a.personal.birthDate).getMonth() === Number(mes);
         });
       }
-
-      // FILTRO POR FAIXA ETÁRIA
-      if (minAge !== null || maxAge !== null) {
-        filtrados = filtrados.filter((a) => {
-          const idade = AgeCalculator(a.personal.birthDate ?? "");
-
-          if (minAge && idade < Number(minAge)) return false;
-          if (maxAge && idade > Number(maxAge)) return false;
-
-          return true;
-        });
-      }
-
+      
+      console.log(filtrados);
       setResultados(filtrados);
+      
       setCarregando(false);
     }
 
     carregar();
-  }, [classid, mes, minAge, maxAge]);
+  }, [classe, mes, minAge, maxAge]);
 
   if (carregando) {
     return (

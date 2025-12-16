@@ -3,6 +3,8 @@ import { Plus, Loader2 } from "lucide-react";
 import Header from "../components/Header";
 import SectionCard from "../components/SectionCard";
 import { useEffect, useState } from "react";
+import SuccessAlert from "../components/SuccessAlert";
+import { ErrorMessage } from "../components/ErrorMessage";
 import { ClassList } from "../hooks/ClassList";
 import type { Class } from "../types/Class";
 import TurmaCard from "../components/TurmaCard";
@@ -12,12 +14,12 @@ import type { Student } from "../types/Student";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
 import EventModal from "../components/EventModal";
-import type { event } from "../types/Event";
+import type { event } from "../types/event";
 import { eventList } from "../hooks/eventList";
 import { registerEvent } from "../HTTP/Event/registerEvent";
 import Cookies from "js-cookie";
 import GraduandosSection from "../components/GraduandosSection";
-
+import { deleteEvent } from "../HTTP/Event/deleteEvent";
 
 export default function TelaInicial() {
   //Variáveis de estado
@@ -36,18 +38,22 @@ export default function TelaInicial() {
   const abrirModal = () => setModalOpen(true);
   const fecharModal = () => setModalOpen(false);
   const [editandoCalendario, setEditandoCalendario] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | boolean>(false);
 
   const salvarEvento = async (data: {
     nome: string;
     data: string;
     turma: string;
   }) => {
+    setErrorMsg(false);
+    setSuccessMsg("");
     const { nome, data: dateValue, turma } = data;
 
     const result = await registerEvent(nome, dateValue, turma);
 
     if (result === true) {
-      console.log("Evento criado com sucesso!");
+      setSuccessMsg("Evento criado com sucesso!");
 
       // Atualizar lista de eventos após salvar
       const updated = await eventList();
@@ -57,9 +63,34 @@ export default function TelaInicial() {
 
       fecharModal();
     } else {
-      alert(result); // mostra erro retornado pela API
+      setErrorMsg(result);
     }
   };
+
+  const deletarEvento = async (eventId: string) => {
+  const result = await deleteEvent(eventId);
+
+  if (result === true) {
+    setSuccessMsg("Evento removido com sucesso!");
+
+    const updated = await eventList();
+    if (typeof updated !== "string") {
+      setEvents(updated);
+    }
+  } else {
+    setErrorMsg(result);
+  }
+};
+
+useEffect(() => {
+  if (!errorMsg) return;
+
+  const timer = setTimeout(() => {
+    setErrorMsg(false);
+  }, 4000); 
+
+  return () => clearTimeout(timer);
+}, [errorMsg]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -250,16 +281,16 @@ export default function TelaInicial() {
               aniversariantes.map((aluno) => (
                 <BirthdayCard
                   key={aluno.id}
-                  nome={aluno.personal.name ? aluno.personal.name: ''}
-                  data={new Date(aluno.personal.birthDate ? aluno.personal.birthDate: '').toLocaleDateString(
-                    "pt-BR",
-                    {
-                      day: "2-digit",
-                      month: "2-digit",
-                    }
-                  )}
+                  nome={aluno.personal.name ? aluno.personal.name : ""}
+                  data={new Date(
+                    aluno.personal.birthDate ? aluno.personal.birthDate : ""
+                  ).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                  })}
                   sexo={
-                    aluno.personal.gender === "male" || aluno.personal.gender === "female"
+                    aluno.personal.gender === "male" ||
+                    aluno.personal.gender === "female"
                       ? aluno.personal.gender
                       : "male"
                   }
@@ -311,9 +342,15 @@ export default function TelaInicial() {
               </div>
             )}
           </div>
+          {successMsg && <SuccessAlert message={successMsg} />}
+          <ErrorMessage message={errorMsg} />
 
           {/* conteúdo do calendário */}
-          <Calendario events={events} />
+          <Calendario
+            events={events}
+            editando={editandoCalendario}
+            onDeleteEvent={deletarEvento}
+          />
         </SectionCard>
       </main>
       <EventModal

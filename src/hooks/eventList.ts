@@ -1,5 +1,5 @@
 import api from "../services/api";
-import type { event } from "../types/Event";
+import type { event } from "../types/event";
 import Cookies from "js-cookie";
 
 export async function eventList() {
@@ -21,7 +21,8 @@ export async function eventList() {
         title: item.title,
         event_date: item.event_date,
         class: {
-          id: item.class_id
+          id: item.class_id,
+          name: item.classname
         }
       };
     });

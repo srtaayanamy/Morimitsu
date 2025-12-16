@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { event } from "../types/Event";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { event } from "../types/event";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import {
   format,
   startOfMonth,
@@ -16,14 +16,24 @@ import {
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import SectionCard from "../components/SectionCard";
+import { useEffect } from "react";
+import { editEvent } from "../HTTP/Event/editEvent";
 
 type Props = {
   events?: event[];
+  editando?: boolean;
+  onDeleteEvent?: (eventId: string) => void;
 };
 
-export default function Calendario({ events = [] }: Props) {
+export default function Calendario({
+  events = [],
+  editando = false,
+  onDeleteEvent,
+}: Props) {
+  const [eventosEditados, setEventosEditados] = useState<Record<string, any>>(
+    {}
+  );
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
@@ -40,12 +50,32 @@ export default function Calendario({ events = [] }: Props) {
     );
   });
 
+  const updateEvento = (id: string, field: string, value: any) => {
+    setEventosEditados((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    if (!editando) {
+      Object.entries(eventosEditados).forEach(([id, data]) => {
+        editEvent({ id, ...data });
+      });
+
+      setEventosEditados({});
+    }
+  }, [editando]);
+
   return (
     <SectionCard>
-      <div className="flex flex-col h-auto lg:flex-row justify-between pr-3">
+      <div className="flex flex-col h-auto lg:flex-row justify-between pr-0 lg:pr-3 gap-6">
         {/* Lista lateral */}
-        <div className="space-y-4 min-w-[260px]">
-          <h3 className="text-md font-semibold text-red-800">
+        <div className="space-y-4 sm:min-w-[260px]">
+          <h3 className="text-md font-bold text-red-900">
             Eventos/datas importantes:
           </h3>
 
@@ -59,26 +89,97 @@ export default function Calendario({ events = [] }: Props) {
             <div className="space-y-4">
               {monthEvents.map((e) => {
                 const date = new Date(e.event_date);
-
-                const classLabel = e.class?.name;
+                const edited = eventosEditados[e.id] || {};
 
                 return (
-                  <div key={e.id} className="flex items-center gap-3">
-                    {/* Dia */}
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
-                      {format(date, "d")}
+                  <div
+                    key={e.id}
+                    className="md:flex flex-col md:w-100 items-start justify-between gap-4 rounded-lg border border-gray-200 bg-white p-2 hover:shadow-sm transition"
+                  >
+                    <div className="flex flex-col gap-3 w-full">
+                      {/* DIA date picker */}
+                      {editando ? (
+                        <input
+                          type="date"
+                          value={
+                            edited.event_date
+                              ? edited.event_date.slice(0, 10)
+                              : format(date, "yyyy-MM-dd")
+                          }
+                          onChange={(ev) =>
+                            updateEvento(e.id, "event_date", ev.target.value)
+                          }
+                          className="rounded-md w-65 md:w-full border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-red-900 focus:ring-1 focus:ring-red-200 outline-none"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-sm font-semibold text-gray-700">
+                          {format(date, "d")}
+                        </div>
+                      )}
+
+                      {/* TEXTO */}
+                      <div className="flex flex-col gap-3 text-sm w-full">
+                        {/* Nome */}
+                        {editando ? (
+                          <input
+                            type="text"
+                            defaultValue={e.title}
+                            onChange={(ev) =>
+                              updateEvento(e.id, "title", ev.target.value)
+                            }
+                            className="w-65 md:w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 focus:border-red-900 focus:ring-1 focus:ring-red-200 outline-none"
+                            placeholder="Nome do evento"
+                          />
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {e.title}
+                            {e.class?.name && (
+                              <span className="text-gray-600">
+                                {" "}
+                                ({e.class.name})
+                              </span>
+                            )}
+                          </p>
+                        )}
+
+                        {/* Turma */}
+                        {editando && (
+                          <select
+                            defaultValue={e.class?.id}
+                            onChange={(ev) =>
+                              updateEvento(e.id, "class_id", ev.target.value)
+                            }
+                            className="rounded-md border w-65 md:w-full border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-red-900 focus:ring-1 focus:ring-red-200 outline-none"
+                          >
+                            <option value="">Selecione a turma</option>
+                            {events
+                              ?.map((ev) => ev.class)
+                              .filter(
+                                (cls, index, self) =>
+                                  cls &&
+                                  self.findIndex((c) => c?.id === cls.id) ===
+                                    index
+                              )
+                              .map((cls) => (
+                                <option key={cls!.id} value={cls!.id}>
+                                  {cls!.name}
+                                </option>
+                              ))}
+                          </select>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Texto */}
-                    <div className="text-sm">
-                      <p className="font-medium text-gray-900">
-                        {e.title}
-                      </p>
-
-                      {classLabel && (
-                        <p className="text-gray-600 text-xs">
-                          ({classLabel})
-                        </p>
+                    {/* DELETE */}
+                    <div className="flex w-full justify-end pt-2">
+                      {editando && (
+                        <button
+                          onClick={() => onDeleteEvent?.(e.id)}
+                          className="mt-1 text-gray-400 hover:text-red-700 transition cursor-pointer"
+                          title="Excluir evento"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       )}
                     </div>
                   </div>

@@ -23,6 +23,7 @@ import { deleteUser } from "../HTTP/User/deleteUser";
 import { AgeCalculator } from "../utils/AgeCalculator";
 import { parseDateBRToISO } from "../utils/formatTime";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { GraduationStudent } from "../HTTP/Graduation/StudentGraduantion";
 
 function maskTelefone(value: string) {
   value = value.replace(/\D/g, "");
@@ -270,7 +271,7 @@ export default function VisualizarAluno() {
               {/* BOTÃO PARA GRADUAR */}
               {aptoAGraduar && (
                 <button
-                  onClick={() => alert("Abrir modal ou página de graduação")}
+                  onClick={() => id ? GraduationStudent(id) : setErrorMenssage('Aluno não encontrado')}
                   className="bg-black text-white text-xs md:text-sm px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium hover:opacity-80 transition  whitespace-nowrap"
                 >
                   Graduar aluno
@@ -352,8 +353,17 @@ export default function VisualizarAluno() {
 
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
-                      value={((alunoEditado.form?.rating ?? 0) > 0 ? alunoEditado.form?.rating : "Nenhum") ?? ((aluno.form?.rating ?? 0) > 0 ? aluno.form?.rating : "Nenhum")}
-                      onChange={(e) => handleChange('form',"rating", Number(e.target.value))}
+                      value=
+                      {
+                        alunoEditado.form?.rating !== undefined ? 
+                        alunoEditado.form.rating === 0
+                        ? "Nenhum"
+                        : String(alunoEditado.form.rating)
+                        : aluno.form?.rating && aluno.form.rating > 0
+                        ? String(aluno.form.rating)
+                        : "Nenhum" 
+                      }
+                      onChange={(e) => handleChange('form',"rating", e.target.value === 'Nenhum' ? 0 : Number(e.target.value))}
                     >
                       {Ranking[aluno.form?.rank ? aluno.form?.rank: ''].map((g) => (
                         <option key={g} value={g > 0 ? g : "Nenhum"}>
