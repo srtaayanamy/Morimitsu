@@ -62,7 +62,7 @@ function maskDate(value: string) {
 export default function VisualizarAluno() {
   const { id } = useParams<{ id: string }>();
   const [erro, setErro] = useState("");
-  const [errorMenssage, setErrorMenssage] =  useState("");
+  const [errorMenssage, setErrorMenssage] = useState("");
   const [mensagemSucesso, setMensagemSucesso] = useState("");
   const [aluno, setAluno] = useState<Student>();
   const [alunoEditado, setAlunoEditado] = useState<{
@@ -91,7 +91,6 @@ export default function VisualizarAluno() {
     fetchAluno();
   }, [id]);
 
-
   useEffect(() => {
     if (!mensagemSucesso) return;
 
@@ -106,7 +105,10 @@ export default function VisualizarAluno() {
     async function fetchFrequencia() {
       if (!aluno?.form?.rank) return;
 
-      const response = await getFrequencieRequired(aluno.form.rank, AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate: ''));
+      const response = await getFrequencieRequired(
+        aluno.form.rank,
+        AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate : "")
+      );
 
       if (typeof response === "string") {
         console.log("Erro ao carregar frequência necessária:", response);
@@ -115,11 +117,10 @@ export default function VisualizarAluno() {
 
       const needed = response.needed_frequency ?? 0;
       setFreqNecessaria(needed);
-      
-      if(!aluno.form.frequencie) return;
 
-      const percent =
-        needed > 0 ? (aluno.form.frequencie / needed) * 100 : 0;
+      if (!aluno.form.frequencie) return;
+
+      const percent = needed > 0 ? (aluno.form.frequencie / needed) * 100 : 0;
 
       setPercentualProgresso(percent);
     }
@@ -127,15 +128,44 @@ export default function VisualizarAluno() {
     fetchFrequencia();
   }, [aluno?.form?.rank]);
 
-  function handleChange(section: "personal" | "form", field: keyof StudentPersonal | keyof StudentForm, value: any) {
-
-    setAlunoEditado((prev) => ({...prev, 
+  function handleChange(
+    section: "personal" | "form",
+    field: keyof StudentPersonal | keyof StudentForm,
+    value: any
+  ) {
+    setAlunoEditado((prev) => ({
+      ...prev,
       [section]: {
         ...prev[section],
         [field]: value,
       },
     }));
   }
+
+  const handleGraduation = async () => {
+    if (!id) {
+      setErrorMenssage("Aluno não encontrado");
+      return;
+    }
+
+    const result = await GraduationStudent(id);
+
+    if (result === true) {
+      setErrorMenssage("");
+      setMensagemSucesso("Aluno graduado com sucesso!");
+
+      // (opcional) atualizar aluno na tela
+      const updated = await getStudent(id);
+      if (typeof updated !== "string") {
+        setAluno(updated);
+        setAlunoOriginal(updated);
+      }
+    } else {
+      setErrorMenssage(
+        typeof result === "string" ? result : "Erro ao graduar aluno."
+      );
+    }
+  };
 
   const handleSave = async () => {
     if (!id || !aluno || !alunoOriginal) return;
@@ -152,7 +182,10 @@ export default function VisualizarAluno() {
 
     const faixa = alunoEditado.form?.rank;
 
-    if ((age && age < 16 && faixasEGrausMaior16.some((f) => f.faixa === faixa)) || (age && age >= 16 && faixasEGrausMenor16.some((f) => f.faixa === faixa))) {
+    if (
+      (age && age < 16 && faixasEGrausMaior16.some((f) => f.faixa === faixa)) ||
+      (age && age >= 16 && faixasEGrausMenor16.some((f) => f.faixa === faixa))
+    ) {
       setErrorMenssage("Idade incompatível com a faixa.");
       return;
     }
@@ -165,10 +198,10 @@ export default function VisualizarAluno() {
       rank: alunoEditado.form?.rank,
       rating: alunoEditado.form?.rating,
       presence: alunoEditado.form?.frequencie,
-      comments: alunoEditado.form?.comments
-    }
+      comments: alunoEditado.form?.comments,
+    };
 
-    const editPersonal= { 
+    const editPersonal = {
       name: alunoEditado.personal?.name,
       email: alunoEditado.personal?.email,
       CPF: alunoEditado.personal?.CPF,
@@ -177,9 +210,8 @@ export default function VisualizarAluno() {
       nickname: alunoEditado.personal?.nickName,
       gender: alunoEditado.personal?.gender,
       parentsContact: alunoEditado.personal?.parentContact,
-      parentName: alunoEditado.personal?.parent
-    
-    }
+      parentName: alunoEditado.personal?.parent,
+    };
 
     const result = await editStudent(id, editPersonal, editForm);
 
@@ -201,9 +233,9 @@ export default function VisualizarAluno() {
   const handleDelete = async () => {
     if (!id) return;
 
-    if(aluno?.form?.userID !== undefined){
+    if (aluno?.form?.userID !== undefined) {
       const response = await deleteUser(aluno?.form?.userID);
-      if(typeof response === 'string'){
+      if (typeof response === "string") {
         setErro(response);
         return;
       }
@@ -212,7 +244,7 @@ export default function VisualizarAluno() {
     const result = await deleteAluno(id);
 
     if (result === true) {
-      setErrorMenssage('');
+      setErrorMenssage("");
       setMensagemSucesso("Aluno apagado com sucesso!");
       setTimeout(() => {
         navigate("/alunos");
@@ -246,7 +278,8 @@ export default function VisualizarAluno() {
         <div className="bg-white rounded-2xl p-5 md:p-6 shadow-sm flex justify-between items-center">
           {!isEditing ? (
             <h1 className="text-2xl md:text-3xl font-semibold text-[#1E1E1E] leading-tight">
-              {aluno.personal.name} {aluno.personal.nickName ? `(${aluno.personal.nickName})` : ""}
+              {aluno.personal.name}{" "}
+              {aluno.personal.nickName ? `(${aluno.personal.nickName})` : ""}
             </h1>
           ) : (
             <div className="flex flex-col md:flex-row items-center gap-3 w-full">
@@ -254,14 +287,18 @@ export default function VisualizarAluno() {
                 type="text"
                 className="border border-gray-300 p-2 rounded-lg w-full md:w-1/2"
                 value={aluno.personal.name}
-                onChange={(e) => handleChange("personal", "name", e.target.value)}
+                onChange={(e) =>
+                  handleChange("personal", "name", e.target.value)
+                }
               />
               <input
                 type="text"
                 className="border border-gray-300 p-2 rounded-lg w-full md:w-1/3"
                 placeholder="Apelido"
                 value={aluno.personal.nickName || ""}
-                onChange={(e) => handleChange("personal","nickName", e.target.value)}
+                onChange={(e) =>
+                  handleChange("personal", "nickName", e.target.value)
+                }
               />
             </div>
           )}
@@ -271,8 +308,8 @@ export default function VisualizarAluno() {
               {/* BOTÃO PARA GRADUAR */}
               {aptoAGraduar && (
                 <button
-                  onClick={() => id ? GraduationStudent(id) : setErrorMenssage('Aluno não encontrado')}
-                  className="bg-black text-white text-xs md:text-sm px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium hover:opacity-80 transition  whitespace-nowrap cursor-pointer"
+                  onClick={handleGraduation}
+                  className="bg-black text-white text-xs md:text-sm px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium hover:opacity-80 transition whitespace-nowrap cursor-pointer"
                 >
                   Graduar aluno
                 </button>
@@ -331,7 +368,9 @@ export default function VisualizarAluno() {
                 {!isEditing ? (
                   <InfoField
                     label=""
-                    value={`${aluno.form?.rank || ""} / ${aluno.form?.rating || ""}`}
+                    value={`${aluno.form?.rank || ""} / ${
+                      aluno.form?.rating || ""
+                    }`}
                     editable={false}
                   />
                 ) : (
@@ -339,7 +378,9 @@ export default function VisualizarAluno() {
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
                       value={alunoEditado.form?.rank ?? aluno.form?.rank}
-                      onChange={(e) => handleChange("form","rank", e.target.value)}
+                      onChange={(e) =>
+                        handleChange("form", "rank", e.target.value)
+                      }
                     >
                       {((aluno.personal.age ?? 0) >= 16
                         ? faixasEGrausMaior16
@@ -353,23 +394,32 @@ export default function VisualizarAluno() {
 
                     <select
                       className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
-                      value=
-                      {
-                        alunoEditado.form?.rating !== undefined ? 
-                        alunoEditado.form.rating === 0
-                        ? "Nenhum"
-                        : String(alunoEditado.form.rating)
-                        : aluno.form?.rating && aluno.form.rating > 0
-                        ? String(aluno.form.rating)
-                        : "Nenhum" 
+                      value={
+                        alunoEditado.form?.rating !== undefined
+                          ? alunoEditado.form.rating === 0
+                            ? "Nenhum"
+                            : String(alunoEditado.form.rating)
+                          : aluno.form?.rating && aluno.form.rating > 0
+                          ? String(aluno.form.rating)
+                          : "Nenhum"
                       }
-                      onChange={(e) => handleChange('form',"rating", e.target.value === 'Nenhum' ? 0 : Number(e.target.value))}
+                      onChange={(e) =>
+                        handleChange(
+                          "form",
+                          "rating",
+                          e.target.value === "Nenhum"
+                            ? 0
+                            : Number(e.target.value)
+                        )
+                      }
                     >
-                      {Ranking[aluno.form?.rank ? aluno.form?.rank: ''].map((g) => (
-                        <option key={g} value={g > 0 ? g : "Nenhum"}>
-                          {g > 0 ? g : "Nenhum"}
-                        </option>
-                      ))}
+                      {Ranking[aluno.form?.rank ? aluno.form?.rank : ""].map(
+                        (g) => (
+                          <option key={g} value={g > 0 ? g : "Nenhum"}>
+                            {g > 0 ? g : "Nenhum"}
+                          </option>
+                        )
+                      )}
                     </select>
                   </div>
                 )}
@@ -398,9 +448,17 @@ export default function VisualizarAluno() {
                       min={0}
                       max={100}
                       className="w-24 border border-gray-300 rounded-lg p-2 text-center"
-                      value={(alunoEditado.form?.frequencie) ?? (aluno.form?.frequencie ?? 0)}
+                      value={
+                        alunoEditado.form?.frequencie ??
+                        aluno.form?.frequencie ??
+                        0
+                      }
                       onChange={(e) =>
-                        handleChange('form',"frequencie", Number(e.target.value))
+                        handleChange(
+                          "form",
+                          "frequencie",
+                          Number(e.target.value)
+                        )
                       }
                     />
                     <span className="font-medium"></span>
@@ -413,30 +471,41 @@ export default function VisualizarAluno() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <InfoField
               label="Data de Nascimento:"
-              value={(alunoEditado.personal?.birthDate) ??(aluno.personal.birthDate || "")}
+              value={
+                alunoEditado.personal?.birthDate ??
+                (aluno.personal.birthDate || "")
+              }
               editable={isEditing}
-              onChange={(val) => handleChange('personal',"birthDate", maskDate(val))}
+              onChange={(val) =>
+                handleChange("personal", "birthDate", maskDate(val))
+              }
             />
 
             <InfoField
               label="Telefone:"
-              value={(alunoEditado.personal?.contact) ?? (aluno.personal.contact || "")}
+              value={
+                alunoEditado.personal?.contact ?? (aluno.personal.contact || "")
+              }
               editable={isEditing}
-              onChange={(val) => handleChange("personal","contact", maskTelefone(val))}
+              onChange={(val) =>
+                handleChange("personal", "contact", maskTelefone(val))
+              }
             />
 
             <InfoField
               label="CPF:"
-              value={(alunoEditado.personal?.CPF) ?? (aluno.personal.CPF || "")}
+              value={alunoEditado.personal?.CPF ?? (aluno.personal.CPF || "")}
               editable={isEditing}
-              onChange={(val) => handleChange("personal","CPF", maskCPF(val))}
+              onChange={(val) => handleChange("personal", "CPF", maskCPF(val))}
             />
 
             <InfoField
               label="Matrícula (opcional):"
-              value={(alunoEditado.form?.enrollment) ?? (aluno.form?.enrollment || "")}
+              value={
+                alunoEditado.form?.enrollment ?? (aluno.form?.enrollment || "")
+              }
               editable={isEditing}
-              onChange={(val) => handleChange("form","enrollment", val)}
+              onChange={(val) => handleChange("form", "enrollment", val)}
             />
 
             <div className="md:col-span-2">
@@ -446,15 +515,23 @@ export default function VisualizarAluno() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
                 <InfoField
                   label=""
-                  value={(alunoEditado.personal?.parent) ?? (aluno.personal.parent || "")}
+                  value={
+                    alunoEditado.personal?.parent ??
+                    (aluno.personal.parent || "")
+                  }
                   editable={isEditing}
-                  onChange={(val) => handleChange('personal',"parent", val)}
+                  onChange={(val) => handleChange("personal", "parent", val)}
                 />
                 <InfoField
                   label=""
-                  value={(alunoEditado.personal?.parentContact) ?? (aluno.personal.parentContact || "")}
+                  value={
+                    alunoEditado.personal?.parentContact ??
+                    (aluno.personal.parentContact || "")
+                  }
                   editable={isEditing}
-                  onChange={(val) => handleChange('personal',"parentContact", maskTelefone(val))}
+                  onChange={(val) =>
+                    handleChange("personal", "parentContact", maskTelefone(val))
+                  }
                 />
               </div>
             </div>
@@ -507,18 +584,20 @@ export default function VisualizarAluno() {
 
             <InfoField
               label="E-mail:"
-              value={(alunoEditado.personal?.email) ?? (aluno.personal.email || "")}
+              value={
+                alunoEditado.personal?.email ?? (aluno.personal.email || "")
+              }
               editable={isEditing}
-              onChange={(val) => handleChange('personal',"email", val)}
+              onChange={(val) => handleChange("personal", "email", val)}
             />
           </div>
 
           <InfoField
             label="Observações do aluno:"
-            value={(alunoEditado.form?.comments) ?? (aluno.form?.comments || "")}
+            value={alunoEditado.form?.comments ?? (aluno.form?.comments || "")}
             editable={isEditing}
             multiline
-            onChange={(val) => handleChange('form',"comments", val)}
+            onChange={(val) => handleChange("form", "comments", val)}
           />
         </div>
 

@@ -10,7 +10,6 @@ interface Graduando {
   id: string;
   nome: string;
   apelido: string;
-  turma: string;
   faixaAtual: string;
   grauAtual: number;
   proximaFaixa: string;
@@ -60,10 +59,6 @@ const GraduandosSection: React.FC<GraduandosSectionProps> = ({
                 >
                   {g.nome}
                 </Link>
-
-                <span className="text-xs text-gray-600 whitespace-nowrap block mt-0.5">
-                  {g.turma}
-                </span>
               </div>
 
               {/* Faixas */}
@@ -114,7 +109,6 @@ const GraduandosSection: React.FC<GraduandosSectionProps> = ({
                 className="bg-[#FFFFFF] shadow-sm rounded-xl hover:bg-gray-50 transition"
               >
                 <td className="py-3 px-6 font-medium">{g.nome}</td>
-                <td className="py-3 px-6">{g.turma}</td>
                 <td className="py-3 px-6 text-center">
                   <BeltTag faixa={g.faixaAtual} grau={g.grauAtual} />
                 </td>
