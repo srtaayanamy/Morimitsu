@@ -8,7 +8,7 @@ export async function registerClass(name: string, MinAge: number, MaxAge: number
             return false
         }
 
-        if(!coachIds && coachIds === null){
+        if(!coachIds || coachIds === null){
             coachIds = [];
         }
 
