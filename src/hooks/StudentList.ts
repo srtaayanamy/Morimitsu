@@ -127,7 +127,7 @@ export async function NextGraduantionsPeople() {
         to_rank: item.nextRank
       }
     })
-    console.log(nextPeopleGraduation);
+    console.log("Próximos graduandos: \n",nextPeopleGraduation);
 
     //Armezena os alunos
     return nextPeopleGraduation;

@@ -217,12 +217,16 @@ export default function VisualizarTurma() {
           {!isEditing ? (
             <h1 className="text-3xl font-semibold">{turma.name}</h1>
           ) : (
+            role === 'ADMIN' ? (
             <input
               type="text"
               className="border border-gray-200 p-2 rounded-md w-full md:w-1/2"
               value={ClassEdited.name ?? turma.name}
               onChange={(e) => handleChange("name", e.target.value)}
             />
+            ):(
+              <h1 className="text-3xl font-semibold">{turma.name}</h1>
+            )
           )}
 
           {!isEditing ? (
@@ -237,6 +241,7 @@ export default function VisualizarTurma() {
               <SquarePen className="w-8 h-8" />
             </button>
           ) : (
+            
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
@@ -276,6 +281,7 @@ export default function VisualizarTurma() {
             )}
 
             {isEditing && (
+              role === 'ADMIN' &&
               <button
                 onClick={() => setIsOverlayOpen(true)}
                 className="absolute bottom-1 right-1 bg-black/60 hover:bg-black/80 text-white p-1.5 md:p-2 rounded-full flex items-center justify-center shadow-md cursor-pointer"
@@ -332,6 +338,7 @@ export default function VisualizarTurma() {
                         </span>
 
                         {isEditing && (
+                          role === 'ADMIN' &&
                           <button
                             className="text-black-600 hover:text-black-800 cursor-pointer"
                             title="Remover professor da turma"
@@ -373,34 +380,40 @@ export default function VisualizarTurma() {
                   {turma.MinAge} a {turma.MaxAge} anos
                 </p>
               ) : (
-                <div className="flex justify-center gap-2 mt-1">
-                  <input
-                    type="number"
-                    className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
-                    value={ClassEdited.MaxAge ?? turma.MinAge}
-                    onChange={(e) =>
-                      handleChange(
-                        "MinAge",
-                        typeof e.target.value === "string"
-                          ? Number(e.target.value)
-                          : e.target.value
-                      )
-                    }
-                  />
-                  <input
-                    type="number"
-                    className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
-                    value={ClassEdited.MaxAge ?? turma.MaxAge}
-                    onChange={(e) =>
-                      handleChange(
-                        "MaxAge",
-                        typeof e.target.value === "string"
-                          ? Number(e.target.value)
-                          : e.target.value
-                      )
-                    }
-                  />
-                </div>
+                role === 'ADMIN' ? (
+                  <div className="flex justify-center gap-2 mt-1">
+                    <input
+                      type="number"
+                      className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
+                      value={ClassEdited.MaxAge ?? turma.MinAge}
+                      onChange={(e) =>
+                        handleChange(
+                          "MinAge",
+                          typeof e.target.value === "string"
+                            ? Number(e.target.value)
+                            : e.target.value
+                        )
+                      }
+                    />
+                    <input
+                      type="number"
+                      className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-16 md:w-20 text-center text-sm md:text-base"
+                      value={ClassEdited.MaxAge ?? turma.MaxAge}
+                      onChange={(e) =>
+                        handleChange(
+                          "MaxAge",
+                          typeof e.target.value === "string"
+                            ? Number(e.target.value)
+                            : e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                ):(
+                  <p className="bg-[#F5F5F5] mt-1 p-2 md:p-3 rounded-xl mx-auto w-32 md:w-40 text-sm md:text-base">
+                    {turma.MinAge} a {turma.MaxAge} anos
+                  </p>
+                )
               )}
             </div>
 
@@ -412,21 +425,27 @@ export default function VisualizarTurma() {
                   {turma.startTime} → {turma.endTime}
                 </p>
               ) : (
-                <div className="flex justify-center gap-2 mt-1">
-                  <input
-                    type="time"
-                    className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
-                    value={ClassEdited.startTime ?? turma.startTime}
-                    onChange={(e) => handleChange("startTime", e.target.value)}
-                  />
+                role === 'ADMIN' ? (
+                  <div className="flex justify-center gap-2 mt-1">
+                    <input
+                      type="time"
+                      className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
+                      value={ClassEdited.startTime ?? turma.startTime}
+                      onChange={(e) => handleChange("startTime", e.target.value)}
+                    />
 
-                  <input
-                    type="time"
-                    className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
-                    value={ClassEdited.endTime ?? turma.endTime}
-                    onChange={(e) => handleChange("endTime", e.target.value)}
-                  />
-                </div>
+                    <input
+                      type="time"
+                      className="bg-[#EFEFEF] p-2 md:p-3 rounded-xl w-20 md:w-24 text-center text-sm md:text-base"
+                      value={ClassEdited.endTime ?? turma.endTime}
+                      onChange={(e) => handleChange("endTime", e.target.value)}
+                    />
+                  </div>
+                ):(
+                  <p className="bg-[#F5F5F5] mt-1 p-2 md:p-3 rounded-xl mx-auto w-32 md:w-40 text-sm md:text-base">
+                    {turma.startTime} → {turma.endTime}
+                  </p>
+                )
               )}
             </div>
           </div>
