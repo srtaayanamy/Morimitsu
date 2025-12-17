@@ -349,6 +349,7 @@ export default function TelaInicial() {
             events={events}
             editando={editandoCalendario}
             onDeleteEvent={deletarEvento}
+            onEventsChange={setEvents}
           />
         </SectionCard>
       </main>
