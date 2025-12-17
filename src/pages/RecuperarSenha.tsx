@@ -4,6 +4,7 @@ import LoginHeader from "../components/LoginHeader";
 import { useState } from "react";
 import { SendEmail } from "../HTTP/Auth/sendEmail";
 import { ErrorMessage } from "../components/ErrorMessage";
+import Cookies from "js-cookie";
 
 export default function RecuperarSenha() {
 
@@ -17,7 +18,11 @@ export default function RecuperarSenha() {
   
     if(codigo !== null){
       console.log("Email enviado com sucesso")
-      navigate('/ConfirmarEmail', {state:{codigo: codigo}})
+      Cookies.set('code', codigo, {
+            expires: 1,
+            path: "/",
+        });
+      navigate('/ConfirmarEmail');
     }
     else{
       console.log("Ocorreu um erro")
