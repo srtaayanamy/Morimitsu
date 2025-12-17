@@ -25,6 +25,9 @@ export async function getRegistersGraduations() {
                 afterPromotion: g.to_rank,
                 student: {
                     id: g.student_id,
+                    personal:{
+                        name: g.student_name
+                    }
                 }
             }
         })

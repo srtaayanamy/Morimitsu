@@ -17,7 +17,7 @@ import type { Student } from "../types/Student";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
 import EventModal from "../components/EventModal";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import { eventList } from "../hooks/eventList";
 import { registerEvent } from "../HTTP/Event/registerEvent";
 import Cookies from "js-cookie";
@@ -240,7 +240,6 @@ export default function TelaInicial() {
         </SectionCard>
 
         {/* SEÇÃO PRÓXIMOS GRADUANDOS */}
-        
         {role === "ADMIN" && (
           <GraduandosSection
             title="Próximos graduandos"
@@ -251,9 +250,9 @@ export default function TelaInicial() {
               nome: aluno.name,
               apelido: "",
               faixaAtual: aluno.from_rank,
-              grauAtual: 0, 
+              grauAtual: aluno.from_rating ?? 0,
               proximaFaixa: aluno.to_rank,
-              proximoGrau: 0, 
+              proximoGrau: aluno.to_rating ?? 0,
             }))}
           />
         )}
@@ -350,6 +349,7 @@ export default function TelaInicial() {
             events={events}
             editando={editandoCalendario}
             onDeleteEvent={deletarEvento}
+            onEventsChange={setEvents}
           />
         </SectionCard>
       </main>

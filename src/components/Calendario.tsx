@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import {
   format,
@@ -23,16 +23,19 @@ type Props = {
   events?: event[];
   editando?: boolean;
   onDeleteEvent?: (eventId: string) => void;
+  onEventsChange?: (events: event[]) => void;
 };
 
 export default function Calendario({
   events = [],
   editando = false,
   onDeleteEvent,
+  onEventsChange
 }: Props) {
   const [eventosEditados, setEventosEditados] = useState<Record<string, any>>(
     {}
   );
+  const [eventosLocais, setEventosLocais] = useState<event[]>(events);
   const [currentDate, setCurrentDate] = useState(new Date());
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -42,7 +45,7 @@ export default function Calendario({
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
   const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-  const monthEvents = events.filter((e) => {
+  const monthEvents = eventosLocais.filter((e) => {
     const d = new Date(e.event_date);
     return (
       d.getMonth() === currentDate.getMonth() &&
@@ -51,14 +54,17 @@ export default function Calendario({
   });
 
   const updateEvento = (id: string, field: string, value: any) => {
-    setEventosEditados((prev) => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        [field]: value,
-      },
-    }));
+    const updated = eventosLocais.map((ev) =>
+      ev.id === id ? { ...ev, [field]: value } : ev
+    );
+
+    setEventosLocais(updated);
+    onEventsChange?.(updated); // 🔥 envia para TelaInicial
   };
+
+  useEffect(() => {
+    setEventosLocais(events);
+  }, [events]);
 
   useEffect(() => {
     if (!editando) {
@@ -152,7 +158,7 @@ export default function Calendario({
                             className="rounded-md border w-65 md:w-full border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-red-900 focus:ring-1 focus:ring-red-200 outline-none"
                           >
                             <option value="">Selecione a turma</option>
-                            {events
+                            {eventosLocais
                               ?.map((ev) => ev.class)
                               .filter(
                                 (cls, index, self) =>

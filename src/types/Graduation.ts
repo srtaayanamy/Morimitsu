@@ -19,5 +19,7 @@ export type NextGraduantionStudent ={
     studentId: string,
     name: string,
     from_rank: string,
+    from_rating: number,
+    to_rating: number,
     to_rank: string
 }
