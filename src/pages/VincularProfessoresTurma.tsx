@@ -99,8 +99,7 @@ export default function VincularProfessoresTurma() {
             </span>
           }
         >
-          {/* BOTÕES APENAS DESKTOP */}
-          <div className="hidden md:flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => navigate(-1)}
               className="bg-[#333434] text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:opacity-90"

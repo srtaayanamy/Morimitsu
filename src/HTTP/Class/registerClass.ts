@@ -1,16 +1,7 @@
-import Cookies from "js-cookie";
 import api from "../../services/api"
 
 export async function registerClass(name: string, MinAge: number, MaxAge: number, startTime: string, endTime: string, URLimagem: string, coachIds: string[]) {
     try{
-        //Pega ID do usuário
-        const token = Cookies.get('token');
-
-        if(token !== undefined && token !== null ){
-            coachIds.push(token);
-        } else{
-            return 'Usuário não encontrado.';
-        }
 
         //Verifica de nome ou idade miníma não são inválidos
         if(name== ''|| MinAge==0){

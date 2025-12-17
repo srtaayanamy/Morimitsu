@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo.png";
 import LoginHeader from "../components/LoginHeader";
 import { ErrorMessage } from "../components/ErrorMessage";
+import Cookies from "js-cookie";
 
 export default function ConfirmarEmail() {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
@@ -13,8 +14,7 @@ export default function ConfirmarEmail() {
   const navigate = useNavigate();
 
   //Recebe e armazena o codigo e email recibidos da tela anterior
-  const location = useLocation();
-  const codigoRecebido = location.state?.codigo;
+  const codigoRecebido = Cookies.get('code');
 
   const VerificarCodigo = () => {
     // Junta os 4 inputs em uma string

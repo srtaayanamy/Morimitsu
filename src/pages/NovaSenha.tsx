@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginHeader from "../components/LoginHeader";
 import { editPassword } from "../HTTP/Auth/editPassword";
 import { ErrorMessage } from "../components/ErrorMessage";
+import Cookies from "js-cookie";
 
 // Campo de senha reutilizável, agora com suporte a onChange
 function PasswordField({
@@ -49,11 +50,9 @@ export default function NovaSenha() {
   const [erro, setErro] = useState("");
 
   //Definindo intâncias para as funções location e navigate
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const codigo = location.state?.codigo;
-  const codigoDigitado = location.state?.codigoDigitado;
+  const codigo = Cookies.get('code');
 
   async function handleRedefinirSenha() {
 
@@ -69,10 +68,11 @@ export default function NovaSenha() {
     }
 
     try {
-      const sucesso = await editPassword(novaSenha, codigo, codigoDigitado);
+      const sucesso = await editPassword(novaSenha, codigo ? codigo : '', codigo ? codigo : '');
 
       if (sucesso) {
         console.log("Senha alterada com sucesso!");
+        Cookies.remove('code', { path: "/" })
         navigate("/");
       } else {
         setErro("Falha ao redefinir a senha. Verifique os dados.");
