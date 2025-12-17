@@ -536,7 +536,7 @@ export default function VisualizarTurma() {
                   <div className="bg-white p-2 rounded-xl w-20 shadow-sm flex flex-col items-center justify-center">
                     <BeltTag faixa={a.form?.rank} grau={a.form?.rating} />
                     <p className="text-[0.6rem] font-semibold">
-                      Grau: {a.form?.rank}
+                      {a.form?.rank}
                     </p>
                   </div>
                 </div>
