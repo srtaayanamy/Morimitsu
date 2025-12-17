@@ -1,11 +1,15 @@
 import api from "../../services/api"
 
-export async function registerClass(name: string, MinAge: number, MaxAge: number, startTime: string, endTime: string, URLimagem: string, coachIds: string[]) {
+export async function registerClass(name: string, MinAge: number, MaxAge: number, startTime: string, endTime: string, URLimagem: string, coachIds?: string[]) {
     try{
 
         //Verifica de nome ou idade miníma não são inválidos
         if(name== ''|| MinAge==0){
             return false
+        }
+
+        if(!coachIds && coachIds === null){
+            coachIds = [];
         }
 
         //Formata os horários para um formato aceito pela API
