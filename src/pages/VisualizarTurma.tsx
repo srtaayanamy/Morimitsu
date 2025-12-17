@@ -126,7 +126,31 @@ export default function VisualizarTurma() {
     if (result === true) {
       setSuccessMessage("Turma atualizada com sucesso!");
       setErro("");
-      setTurmaOriginal(turma);
+      setTurma((prev) => {
+        if (!prev) return prev;
+
+        const turmaAtualizada: Class = {
+          ...prev,
+          ...ClassEdited,
+          // garante coerência de nomes caso sua API use campos diferentes
+          MinAge:
+            ClassEdited.MinAge !== undefined
+              ? Number(ClassEdited.MinAge)
+              : prev.MinAge,
+          MaxAge:
+            ClassEdited.MaxAge !== undefined
+              ? Number(ClassEdited.MaxAge)
+              : prev.MaxAge,
+          coachs: ClassEdited.coachs ?? prev.coachs,
+        };
+
+        // sincroniza o original
+        setTurmaOriginal(turmaAtualizada);
+
+        return turmaAtualizada;
+      });
+
+      setClassEdited({});
       setIsEditing(false);
     } else {
       setErro(result || "Erro ao atualizar turma.");

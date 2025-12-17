@@ -222,6 +222,29 @@ export default function VisualizarAluno() {
       setMensagemSucesso("Alterações salvas com sucesso!");
       setAlunoOriginal(aluno);
       setIsEditing(false);
+      setAluno((prev) => {
+        if (!prev) return prev;
+
+        const alunoAtualizado: Student = {
+          ...prev,
+          personal: {
+            ...prev.personal,
+            ...alunoEditado.personal,
+          },
+          form: {
+            ...prev.form,
+            ...alunoEditado.form,
+          },
+        };
+
+        // mantém o original sincronizado
+        setAlunoOriginal(alunoAtualizado);
+
+        return alunoAtualizado;
+      });
+
+      setAlunoEditado({});
+      setIsEditing(false);
     } else {
       setErrorMenssage(result || "Erro ao atualizar aluno.");
     }

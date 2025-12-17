@@ -121,8 +121,10 @@ export async function NextGraduantionsPeople() {
         id: item.id,
         studentId: item.student_id,
         name: item.name,
-        from_rank: item.from_rank,
-        to_rank: item.to_rank
+        from_rank: item.form.Rank,
+        from_rating: item.form.Rating,
+        to_rating: item.nextRating,
+        to_rank: item.nextRank
       }
     })
     console.log(nextPeopleGraduation);
