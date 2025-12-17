@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import api from "../../services/api";
-import { formatTime } from "../../utils/formatTime";
+// import { formatTime } from "../../utils/formatTime";
 import { isDateValid } from "../../utils/Validations";
 
 export async function editEvent(event: any) {

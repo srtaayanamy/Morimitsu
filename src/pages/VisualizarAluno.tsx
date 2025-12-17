@@ -272,7 +272,7 @@ export default function VisualizarAluno() {
               {aptoAGraduar && (
                 <button
                   onClick={() => id ? GraduationStudent(id) : setErrorMenssage('Aluno não encontrado')}
-                  className="bg-black text-white text-xs md:text-sm px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium hover:opacity-80 transition  whitespace-nowrap"
+                  className="bg-black text-white text-xs md:text-sm px-3 py-2 md:px-4 md:py-2 rounded-lg font-medium hover:opacity-80 transition  whitespace-nowrap cursor-pointer"
                 >
                   Graduar aluno
                 </button>
