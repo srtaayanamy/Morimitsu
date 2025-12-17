@@ -15,7 +15,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | boolean>("");
   const [mensagemSucesso, setMensagemSucesso] = useState(""); // só string agora
-  const { isLoged, setIsLoged } = useContext(isLogedContext);
+  const { setIsLoged } = useContext(isLogedContext);
 
   const navigate = useNavigate();
 
