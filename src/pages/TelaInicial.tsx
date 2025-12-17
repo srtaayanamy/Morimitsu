@@ -250,9 +250,9 @@ export default function TelaInicial() {
               nome: aluno.name,
               apelido: "",
               faixaAtual: aluno.from_rank,
-              grauAtual: 0, // se o backend não envia, mantemos 0
+              grauAtual: aluno.from_rating ?? 0,
               proximaFaixa: aluno.to_rank,
-              proximoGrau: 0, // idem
+              proximoGrau: aluno.to_rating ?? 0,
             }))}
           />
         )}

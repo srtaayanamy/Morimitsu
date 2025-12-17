@@ -1,5 +1,5 @@
 import api from "../services/api";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import Cookies from "js-cookie";
 
 export async function eventList() {

@@ -104,31 +104,28 @@ export default function VisualizarAluno() {
   }, [mensagemSucesso]);
 
   useEffect(() => {
-    async function fetchFrequencia() {
-      if (!aluno?.form?.rank) return;
-
-      const response = await getFrequencieRequired(
-        aluno.form.rank,
-        AgeCalculator(aluno.personal.birthDate ? aluno.personal.birthDate : "")
-      );
-
-      if (typeof response === "string") {
-        console.log("Erro ao carregar frequência necessária:", response);
-        return;
-      }
-
-      const needed = response.needed_frequency ?? 0;
-      setFreqNecessaria(needed);
-
-      if (!aluno.form.frequencie) return;
-
-      const percent = needed > 0 ? (aluno.form.frequencie / needed) * 100 : 0;
-
-      setPercentualProgresso(percent);
-    }
-
-    fetchFrequencia();
+    if (!aluno) return;
+    calcularPercentual(aluno);
   }, [aluno?.form?.rank]);
+
+  async function calcularPercentual(alunoAtual: Student) {
+    if (!alunoAtual.form?.rank) return;
+
+    const response = await getFrequencieRequired(
+      alunoAtual.form.rank,
+      AgeCalculator(alunoAtual.personal.birthDate || "")
+    );
+
+    if (typeof response === "string") return;
+
+    const needed = response.needed_frequency ?? 0;
+    setFreqNecessaria(needed);
+
+    const freq = alunoAtual.form.frequencie ?? 0;
+    const percent = needed > 0 ? (freq / needed) * 100 : 0;
+
+    setPercentualProgresso(percent);
+  }
 
   function handleChange(
     section: "personal" | "form",
@@ -236,6 +233,7 @@ export default function VisualizarAluno() {
             ...alunoEditado.form,
           },
         };
+        calcularPercentual(alunoAtualizado);
 
         // mantém o original sincronizado
         setAlunoOriginal(alunoAtualizado);
