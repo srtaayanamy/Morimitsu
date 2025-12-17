@@ -28,7 +28,7 @@ export async function getFrequencies(date?:string) {
                 }
             }
         )
-        console.log(response.data)
+        console.log("frequencias adquiridas:",response.data)
 
         const frequencies = response.data.body;
         const groups: Record<string, Frequencie> = {};
@@ -59,7 +59,6 @@ export async function getFrequencies(date?:string) {
                     }
                 };
             }
-
             groups[key].students.push(
                 {
                     idFrequencie: f.id,

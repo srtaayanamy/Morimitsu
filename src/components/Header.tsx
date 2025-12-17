@@ -6,12 +6,13 @@ import NotificationModal from "./NotificationModal";
 import type { notification } from "../types/User";
 import FilterOverlay from "./FilterOverlay";
 import { userNotifications } from "../HTTP/User/notifications";
+import Cookies from "js-cookie";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<notification[] | string>("");
-  const role = localStorage.getItem("role");
+  const role = Cookies.get("role");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
 

@@ -22,7 +22,7 @@ export default function CorrigirFrequenciaDoDia() {
         throw new Error();
       }
 
-      const filter: StudentParams = { classid: freq.class.id };
+      const filter: StudentParams = { class: freq.class.id };
 
       const result = await StudentList(filter);
 

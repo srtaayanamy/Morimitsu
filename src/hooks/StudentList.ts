@@ -1,4 +1,5 @@
 import api from "../services/api";
+import type { NextGraduantionStudent } from "../types/Graduation";
 import { type Student, type StudentParams } from "../types/Student";
 import Cookies from "js-cookie";
 
@@ -109,15 +110,25 @@ export async function NextGraduantionsPeople() {
     const token = Cookies.get('token');
 
     //Faz a requisição
-    const response = await api.get("/student/findCloseToPromote", {
+    const response = await api.get("/student/find_close_to_promotion", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data)
+    
+    const nextPeopleGraduation : NextGraduantionStudent[] = response.data.response.map((item: any) => {
+      return{
+        id: item.id,
+        studentId: item.student_id,
+        name: item.name,
+        from_rank: item.from_rank,
+        to_rank: item.to_rank
+      }
+    })
+    console.log(nextPeopleGraduation);
 
     //Armezena os alunos
-    return true;
+    return nextPeopleGraduation;
   } catch (error: any) {
     //Tratamento de erros
     if (error.response) {

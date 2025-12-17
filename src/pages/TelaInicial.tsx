@@ -9,17 +9,18 @@ import { ClassList } from "../hooks/ClassList";
 import type { Class } from "../types/Class";
 import TurmaCard from "../components/TurmaCard";
 import BirthdayCard from "../components/BirthdayCard";
-import { filtrarAniversariantes } from "../hooks/StudentList";
+import { filtrarAniversariantes, NextGraduantionsPeople } from "../hooks/StudentList";
 import type { Student } from "../types/Student";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
 import EventModal from "../components/EventModal";
-import type { event } from "../types/event";
+import type { event } from "../types/Event";
 import { eventList } from "../hooks/eventList";
 import { registerEvent } from "../HTTP/Event/registerEvent";
 import Cookies from "js-cookie";
 import GraduandosSection from "../components/GraduandosSection";
 import { deleteEvent } from "../HTTP/Event/deleteEvent";
+import type { NextGraduantionStudent } from "../types/Graduation";
 
 export default function TelaInicial() {
   //Variáveis de estado
@@ -32,6 +33,8 @@ export default function TelaInicial() {
     string | null
   >(null);
   const [aniversariantes, SetAniversariantes] = useState<Student[]>([]);
+  const [nextGraduantions, setNextGraduantions] = useState<NextGraduantionStudent[]>([]);
+  const [errorNextGraduantions, setErrorNextGraduantions] = useState<string | null>(null);
   const role = Cookies.get("role");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -82,15 +85,34 @@ export default function TelaInicial() {
   }
 };
 
-useEffect(() => {
-  if (!errorMsg) return;
+  useEffect(() => {
+    if (!errorMsg) return;
 
-  const timer = setTimeout(() => {
-    setErrorMsg(false);
-  }, 4000); 
+    const timer = setTimeout(() => {
+      setErrorMsg(false);
+    }, 4000); 
 
-  return () => clearTimeout(timer);
-}, [errorMsg]);
+    return () => clearTimeout(timer);
+  }, [errorMsg]);
+
+
+  useEffect(() => {
+    const fetchNextGraduantions = async () => {
+      setLoading(true);
+      const result = await NextGraduantionsPeople();
+
+      if (typeof result === "string") {
+        setErrorNextGraduantions(result);
+      } else {
+        setNextGraduantions(result);
+      }
+
+      setLoading(false);
+    };
+
+    fetchNextGraduantions();
+  }, []);
+
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -214,7 +236,7 @@ useEffect(() => {
 
         {/* SEÇÃO PRÓXIMOS GRADUANDOS */}
         {/* MOCK TEMPORARIO DE TEST DE FRONT */}
-        {(() => {
+        {role === 'ADMIN' && (() => {
           const graduandosMock = [
             {
               id: "1",

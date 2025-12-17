@@ -24,6 +24,7 @@ import { AgeCalculator } from "../utils/AgeCalculator";
 import { parseDateBRToISO } from "../utils/formatTime";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { GraduationStudent } from "../HTTP/Graduation/StudentGraduantion";
+import Cookies from "js-cookie";
 
 function maskTelefone(value: string) {
   value = value.replace(/\D/g, "");
@@ -76,6 +77,7 @@ export default function VisualizarAluno() {
   const [freqNecessaria, setFreqNecessaria] = useState<number>(0);
   const [percentualProgresso, setPercentualProgresso] = useState<number>(0);
   const aptoAGraduar = percentualProgresso >= 100;
+  const role = Cookies.get('role')
 
   useEffect(() => {
     async function fetchAluno() {
@@ -335,43 +337,53 @@ export default function VisualizarAluno() {
                     editable={false}
                   />
                 ) : (
-                  <div className="flex w-full gap-3 justify-center">
-                    <select
-                      className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
-                      value={alunoEditado.form?.rank ?? aluno.form?.rank}
-                      onChange={(e) => handleChange("form","rank", e.target.value)}
-                    >
-                      {((aluno.personal.age ?? 0) >= 16
-                        ? faixasEGrausMaior16
-                        : faixasEGrausMenor16
-                      ).map((item, index) => (
-                        <option key={index} value={item.faixa}>
-                          {item.faixa}
-                        </option>
-                      ))}
-                    </select>
+                  role === 'ADMIN' ?
+                  (
+                    <div className="flex w-full gap-3 justify-center">
+                      <select
+                        className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
+                        value={alunoEditado.form?.rank ?? aluno.form?.rank}
+                        onChange={(e) => handleChange("form","rank", e.target.value)}
+                      >
+                        {((aluno.personal.age ?? 0) >= 16
+                          ? faixasEGrausMaior16
+                          : faixasEGrausMenor16
+                        ).map((item, index) => (
+                          <option key={index} value={item.faixa}>
+                            {item.faixa}
+                          </option>
+                        ))}
+                      </select>
 
-                    <select
-                      className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
-                      value=
-                      {
-                        alunoEditado.form?.rating !== undefined ? 
-                        alunoEditado.form.rating === 0
-                        ? "Nenhum"
-                        : String(alunoEditado.form.rating)
-                        : aluno.form?.rating && aluno.form.rating > 0
-                        ? String(aluno.form.rating)
-                        : "Nenhum" 
-                      }
-                      onChange={(e) => handleChange('form',"rating", e.target.value === 'Nenhum' ? 0 : Number(e.target.value))}
-                    >
-                      {Ranking[aluno.form?.rank ? aluno.form?.rank: ''].map((g) => (
-                        <option key={g} value={g > 0 ? g : "Nenhum"}>
-                          {g > 0 ? g : "Nenhum"}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      <select
+                        className="w-full bg-[#F5F5F5] border border-[#D9D9D9] rounded-xl p-3"
+                        value=
+                        {
+                          alunoEditado.form?.rating !== undefined ? 
+                          alunoEditado.form.rating === 0
+                          ? "Nenhum"
+                          : String(alunoEditado.form.rating)
+                          : aluno.form?.rating && aluno.form.rating > 0
+                          ? String(aluno.form.rating)
+                          : "Nenhum" 
+                        }
+                        onChange={(e) => handleChange('form',"rating", e.target.value === 'Nenhum' ? 0 : Number(e.target.value))}
+                      >
+                        {Ranking[aluno.form?.rank ? aluno.form?.rank: ''].map((g) => (
+                          <option key={g} value={g > 0 ? g : "Nenhum"}>
+                            {g > 0 ? g : "Nenhum"}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                  ): (
+                    <InfoField
+                      label=""
+                      value={`${aluno.form?.rank || ""} / ${aluno.form?.rating || ""}`}
+                      editable={false}
+                    />
+                  )
                 )}
               </div>
 
