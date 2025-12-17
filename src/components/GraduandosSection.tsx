@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import BeltTag from "./BeltTag";
-import { Avatar } from "./Avatar";
 import SectionCard from "./SectionCard";
 
 interface Graduando {
