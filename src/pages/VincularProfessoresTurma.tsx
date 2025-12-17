@@ -32,18 +32,19 @@ export default function VincularProfessoresTurma() {
         setErro(turmaDados);
       } else {
         setTurma(turmaDados);
-        if(turmaDados.coachs){
+        if (turmaDados.coachs) {
           const professoresTurmaAtual = turmaDados.coachs;
           const lista = await CoachList();
           if (typeof lista !== "string" && lista !== false) {
-            const professores = lista.filter((teacher) => !professoresTurmaAtual.some(p => p.id === teacher.id))
+            const professores = lista.filter(
+              (teacher) =>
+                !professoresTurmaAtual.some((p) => p.id === teacher.id)
+            );
             setProfessoresTotais(professores);
           }
         }
       }
 
-      
-      
       setLoading(false);
     }
 
@@ -72,17 +73,19 @@ export default function VincularProfessoresTurma() {
     setMensagemSucesso("");
     setLoading(true);
 
-    const resultado = await includeCoachInClass( id, idsSelecionados);
+    const resultado = await includeCoachInClass(id, idsSelecionados);
     setLoading(false);
 
     if (resultado === true) {
-      setMensagemSucesso("Todos os professor(s) foram adicionados com sucesso!");
+      setMensagemSucesso(
+        "Todos os professor(s) foram adicionados com sucesso!"
+      );
       setTimeout(() => navigate(-1), 300);
     } else {
       setMensagemErro(resultado);
       return;
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-[#F1F1F1] font-outfit text-[#1E1E1E] flex flex-col">
@@ -96,22 +99,39 @@ export default function VincularProfessoresTurma() {
             </span>
           }
         >
+          {/* BOTÕES APENAS DESKTOP */}
           <div className="hidden md:flex gap-2">
             <button
               onClick={() => navigate(-1)}
-              className="bg-[#333434] text-white px-4 py-2 rounded-xl cursor-pointer text-xs sm:text-sm font-medium hover:opacity-90"
+              className="bg-[#333434] text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-medium hover:opacity-90"
             >
               Cancelar
             </button>
 
             <button
               onClick={() => inserirProfessores()}
-              className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-xs sm:text-sm cursor-pointer font-medium hover:opacity-90"
+              className="bg-[#7F1A17] text-white px-4 py-2 rounded-xl text-sm cursor-pointer font-medium hover:opacity-90"
             >
               Vincular professores
             </button>
           </div>
         </PageTitle>
+        {/* BOTÕES APENAS MOBILE */}
+        <div className="flex md:hidden gap-2">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex-1 bg-[#333434] text-white py-3 rounded-xl text-sm font-medium hover:opacity-90"
+          >
+            Cancelar
+          </button>
+
+          <button
+            onClick={() => inserirProfessores()}
+            className="flex-1 bg-[#7F1A17] text-white py-3 rounded-xl text-sm font-medium hover:opacity-90"
+          >
+            Vincular
+          </button>
+        </div>
 
         <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-6">
           {mensagemSucesso && <SuccessAlert message={mensagemSucesso} />}
@@ -139,7 +159,9 @@ export default function VincularProfessoresTurma() {
                       key={prof.id}
                       className="bg-white shadow-sm rounded-xl hover:bg-gray-50"
                     >
-                      <td className="py-3 px-6 font-medium">{prof.student.personal.name}</td>
+                      <td className="py-3 px-6 font-medium">
+                        {prof.student.personal.name}
+                      </td>
                       <td className="py-3 px-6 text-center">
                         <input
                           type="checkbox"
