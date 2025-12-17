@@ -35,7 +35,6 @@ export default function Calendario({
   const [eventosEditados, setEventosEditados] = useState<Record<string, any>>(
     {}
   );
-  const [eventosLocais, setEventosLocais] = useState<event[]>(events);
   const [currentDate, setCurrentDate] = useState(new Date());
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -45,7 +44,7 @@ export default function Calendario({
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
   const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
-  const monthEvents = eventosLocais.filter((e) => {
+  const monthEvents = events.filter((e) => {
     const d = new Date(e.event_date);
     return (
       d.getMonth() === currentDate.getMonth() &&
@@ -54,23 +53,28 @@ export default function Calendario({
   });
 
   const updateEvento = (id: string, field: string, value: any) => {
-    const updated = eventosLocais.map((ev) =>
-      ev.id === id ? { ...ev, [field]: value } : ev
-    );
-
-    setEventosLocais(updated);
-    onEventsChange?.(updated); // 🔥 envia para TelaInicial
+    setEventosEditados((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [field]: value,
+      },
+    }));
   };
-
-  useEffect(() => {
-    setEventosLocais(events);
-  }, [events]);
 
   useEffect(() => {
     if (!editando) {
       Object.entries(eventosEditados).forEach(([id, data]) => {
         editEvent({ id, ...data });
       });
+
+      const updatedEvents = events.map((ev) =>
+        eventosEditados[ev.id]
+          ? { ...ev, ...eventosEditados[ev.id] }
+          : ev
+      );
+
+      onEventsChange?.(updatedEvents);
 
       setEventosEditados({});
     }
@@ -158,7 +162,7 @@ export default function Calendario({
                             className="rounded-md border w-65 md:w-full border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:border-red-900 focus:ring-1 focus:ring-red-200 outline-none"
                           >
                             <option value="">Selecione a turma</option>
-                            {eventosLocais
+                            {events
                               ?.map((ev) => ev.class)
                               .filter(
                                 (cls, index, self) =>
