@@ -50,11 +50,9 @@ export default function NovaSenha() {
   const [erro, setErro] = useState("");
 
   //Definindo intâncias para as funções location e navigate
-  const location = useLocation();
   const navigate = useNavigate();
 
   const codigo = Cookies.get('code');
-  const codigoDigitado = location.state?.codigoDigitado;
 
   async function handleRedefinirSenha() {
 
@@ -70,10 +68,11 @@ export default function NovaSenha() {
     }
 
     try {
-      const sucesso = await editPassword(novaSenha, codigo ? codigo : '', codigoDigitado);
+      const sucesso = await editPassword(novaSenha, codigo ? codigo : '', codigo ? codigo : '');
 
       if (sucesso) {
         console.log("Senha alterada com sucesso!");
+        Cookies.remove('code', { path: "/" })
         navigate("/");
       } else {
         setErro("Falha ao redefinir a senha. Verifique os dados.");
