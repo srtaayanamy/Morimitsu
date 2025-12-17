@@ -1,9 +1,6 @@
-// src/components/GraduandosSection.tsx
-
 import React from "react";
 import { Link } from "react-router-dom";
 import BeltTag from "./BeltTag";
-import { Avatar } from "./Avatar";
 import SectionCard from "./SectionCard";
 
 interface Graduando {
@@ -46,11 +43,6 @@ const GraduandosSection: React.FC<GraduandosSectionProps> = ({
               key={g.id}
               className="bg-[#F1F1F1] shadow-sm rounded-xl p-3 flex items-center gap-3"
             >
-              {/* Avatar */}
-              <div className="w-16 h-16 rounded-xl bg-[#7F1A17] flex items-center justify-center overflow-hidden flex-shrink-0">
-                <Avatar sexo={"male"} idade={6} size={40} noWrapper />
-              </div>
-
               {/* Nome + Turma */}
               <div className="flex-1 min-w-0">
                 <Link
@@ -92,7 +84,6 @@ const GraduandosSection: React.FC<GraduandosSectionProps> = ({
           <thead>
             <tr>
               <th className="py-3 px-6 font-semibold text-[#1E1E1E]">Nome</th>
-              <th className="py-3 px-6 font-semibold text-[#1E1E1E]">Turma</th>
               <th className="py-3 px-6 font-semibold text-[#1E1E1E] text-center">
                 Faixa atual
               </th>

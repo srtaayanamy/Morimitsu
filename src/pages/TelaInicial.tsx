@@ -9,7 +9,10 @@ import { ClassList } from "../hooks/ClassList";
 import type { Class } from "../types/Class";
 import TurmaCard from "../components/TurmaCard";
 import BirthdayCard from "../components/BirthdayCard";
-import { filtrarAniversariantes } from "../hooks/StudentList";
+import {
+  filtrarAniversariantes,
+  NextGraduantionsPeople,
+} from "../hooks/StudentList";
 import type { Student } from "../types/Student";
 import Calendario from "../components/Calendario";
 import { SquarePen } from "lucide-react";
@@ -20,6 +23,7 @@ import { registerEvent } from "../HTTP/Event/registerEvent";
 import Cookies from "js-cookie";
 import GraduandosSection from "../components/GraduandosSection";
 import { deleteEvent } from "../HTTP/Event/deleteEvent";
+import type { NextGraduantionStudent } from "../types/Graduation";
 
 export default function TelaInicial() {
   //Variáveis de estado
@@ -32,6 +36,12 @@ export default function TelaInicial() {
     string | null
   >(null);
   const [aniversariantes, SetAniversariantes] = useState<Student[]>([]);
+  const [nextGraduantions, setNextGraduantions] = useState<
+    NextGraduantionStudent[]
+  >([]);
+  const [errorNextGraduantions, setErrorNextGraduantions] = useState<
+    string | null
+  >(null);
   const role = Cookies.get("role");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -68,29 +78,46 @@ export default function TelaInicial() {
   };
 
   const deletarEvento = async (eventId: string) => {
-  const result = await deleteEvent(eventId);
+    const result = await deleteEvent(eventId);
 
-  if (result === true) {
-    setSuccessMsg("Evento removido com sucesso!");
+    if (result === true) {
+      setSuccessMsg("Evento removido com sucesso!");
 
-    const updated = await eventList();
-    if (typeof updated !== "string") {
-      setEvents(updated);
+      const updated = await eventList();
+      if (typeof updated !== "string") {
+        setEvents(updated);
+      }
+    } else {
+      setErrorMsg(result);
     }
-  } else {
-    setErrorMsg(result);
-  }
-};
+  };
 
-useEffect(() => {
-  if (!errorMsg) return;
+  useEffect(() => {
+    if (!errorMsg) return;
 
-  const timer = setTimeout(() => {
-    setErrorMsg(false);
-  }, 4000); 
+    const timer = setTimeout(() => {
+      setErrorMsg(false);
+    }, 4000);
 
-  return () => clearTimeout(timer);
-}, [errorMsg]);
+    return () => clearTimeout(timer);
+  }, [errorMsg]);
+
+  useEffect(() => {
+    const fetchNextGraduantions = async () => {
+      setLoading(true);
+      const result = await NextGraduantionsPeople();
+
+      if (typeof result === "string") {
+        setErrorNextGraduantions(result);
+      } else {
+        setNextGraduantions(result);
+      }
+
+      setLoading(false);
+    };
+
+    fetchNextGraduantions();
+  }, []);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -213,47 +240,23 @@ useEffect(() => {
         </SectionCard>
 
         {/* SEÇÃO PRÓXIMOS GRADUANDOS */}
-        {/* MOCK TEMPORARIO DE TEST DE FRONT */}
-        {(() => {
-          const graduandosMock = [
-            {
-              id: "1",
-              nome: "Carlos Eduardo Silva",
+        
+        {role === "ADMIN" && (
+          <GraduandosSection
+            title="Próximos graduandos"
+            loading={loading}
+            error={errorNextGraduantions}
+            graduandos={nextGraduantions.map((aluno) => ({
+              id: aluno.id,
+              nome: aluno.name,
               apelido: "",
-              faixaAtual: "BRANCA",
-              grauAtual: 0,
-              proximaFaixa: "AZUL",
-              proximoGrau: 1,
-            },
-            {
-              id: "2",
-              nome: "Carlos Henrique Silva",
-              apelido: "",
-              faixaAtual: "BRANCA",
-              grauAtual: 0,
-              proximaFaixa: "AZUL",
-              proximoGrau: 1,
-            },
-            {
-              id: "3",
-              nome: "Juliana Alexana",
-              apelido: "",
-              faixaAtual: "PRETA",
-              grauAtual: 6,
-              proximaFaixa: "VERMELHA",
-              proximoGrau: 7,
-            },
-          ];
-
-          return (
-            <GraduandosSection
-              title="Próximos graduandos"
-              loading={false}
-              error={null}
-              graduandos={graduandosMock}
-            />
-          );
-        })()}
+              faixaAtual: aluno.from_rank,
+              grauAtual: 0, 
+              proximaFaixa: aluno.to_rank,
+              proximoGrau: 0, 
+            }))}
+          />
+        )}
 
         {/* SEÇÃO ANIVERSARIANTES DO MÊS */}
         <SectionCard title="Aniversariantes do mês">

@@ -14,7 +14,7 @@ export default function RegistrosGraduacao() {
         setError(result);
         return;
       } else {
-        setRegisters(result);
+        setRegisters([...result].reverse());
         return;
       }
     };
@@ -52,8 +52,7 @@ export default function RegistrosGraduacao() {
                 registers.map((register) => (
                   <tr key={register.id} className="border-b last:border-b-0">
                     <td className="py-2 px-2">
-                      {register.student?.personal?.name ??
-                        "Aluno não informado"}
+                      {register.student?.personal?.name ?? "Aluno não informado"}
                     </td>
 
                     <td className="py-2 px-2">

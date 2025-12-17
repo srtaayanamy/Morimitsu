@@ -13,3 +13,11 @@ export type graduationRegister = {
     afterPromotion: string,
     student: Partial<Student>
 }
+
+export type NextGraduantionStudent ={
+    id: string,
+    studentId: string,
+    name: string,
+    from_rank: string,
+    to_rank: string
+}
